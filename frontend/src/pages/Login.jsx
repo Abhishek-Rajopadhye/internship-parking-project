@@ -1,6 +1,6 @@
 import { Button, Container, Typography } from "@mui/material";
 import { useContext } from "react";
-import AuthContext from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
     const { login } = useContext(AuthContext);
@@ -18,4 +18,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export { Login };

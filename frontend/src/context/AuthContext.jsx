@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            axios.get("http://localhost:8000/api/v1/auth/profile", {
+            axios.get("http://localhost:8000/users/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             })
             .then((res) => setUser(res.data))
@@ -33,4 +33,4 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export default AuthContext;
+export { AuthContext };

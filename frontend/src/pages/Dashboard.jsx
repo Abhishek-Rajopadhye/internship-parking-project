@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { Container, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
 
 const Dashboard = () => {
     const { user, logout } = useContext(AuthContext);
@@ -35,4 +35,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export { Dashboard };

@@ -3,6 +3,9 @@
 import httpx
 from fastapi import HTTPException
 from app.core.config import settings
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 async def get_oauth_token(provider: str, code: str) -> dict:
     """Exchange OAuth2 code for an access token."""
