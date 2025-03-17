@@ -20,7 +20,6 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-
     # Google OAuth
     
     GOOGLE_CLIENT_ID: str = str(os.getenv("GOOGLE_CLIENT_ID"))
@@ -47,7 +46,8 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]  # Allowed frontend origins
 
     # Payment Gateway (example)
-    PAYMENT_GATEWAY_API_KEY: str = "your_payment_gateway_key"
+    RAZORPAY_KEY_ID:str = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_SECRET:str = os.getenv("RAZORPAY_KEY_SECRET")
 
 @lru_cache()
 def get_settings():
