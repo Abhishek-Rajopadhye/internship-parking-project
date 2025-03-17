@@ -4,13 +4,13 @@ from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 from urllib.parse import quote_plus
+import urllib.parse
 
 load_dotenv()
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Smart Parking"
     API_V1_STR: str = "/api/v1"
-
     # Database Configuration
     DB_USER: str = os.getenv("DB_USER")
     DB_PASSWORD: str = str(os.getenv("DB_PASSWORD", ""))
