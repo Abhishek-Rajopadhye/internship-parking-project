@@ -7,14 +7,22 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            axios.get("http://localhost:8000/users/profile", {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            .then((res) => setUser(res.data))
-            .catch(() => setUser(null));
-        }
+        const fetchProfile = async () => {
+            const token = localStorage.getItem("token");
+            const user_id = String(localStorage.getItem("user_id"));
+            try {
+                const response = await axios.get(`http://localhost:8000/users/profile/${user_id}`,{
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await response.json();
+                setUser(data);
+            } catch (error) {
+                setUser(null);
+                console.error("Error fetching profile:", error);
+            }
+        };
+
+        fetchProfile();
     }, []);
 
     const login = (provider) => {

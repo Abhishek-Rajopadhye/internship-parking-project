@@ -5,7 +5,7 @@ from sqlalchemy import pool
 
 from alembic import context
 from app.db.session import Base  # Import Base from session.py
-from backend.app.db.oauth_model import OAuthUser  # Ensure models are imported
+from app.db.oauth_model import OAuthUser  # Ensure models are imported
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

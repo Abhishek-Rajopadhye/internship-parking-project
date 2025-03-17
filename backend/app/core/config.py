@@ -4,13 +4,13 @@ from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from functools import lru_cache
 from urllib.parse import quote_plus
+import urllib.parse
 
 load_dotenv()
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Smart Parking"
     API_V1_STR: str = "/api/v1"
-
     # Database Configuration
     DB_USER: str = os.getenv("DB_USER")
     DB_PASSWORD: str = str(os.getenv("DB_PASSWORD", ""))
@@ -19,7 +19,6 @@ class Settings(BaseSettings):
     DB_NAME: str = os.getenv("DB_NAME", "smart_parking")
 
     DATABASE_URL: str = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
 
     # Google OAuth
     
@@ -44,10 +43,11 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # Token expiry in minutes
 
     # CORS Settings
-    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000"]  # Allowed frontend origins
+    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]  # Allowed frontend origins
 
     # Payment Gateway (example)
-    PAYMENT_GATEWAY_API_KEY: str = "your_payment_gateway_key"
+    RAZORPAY_KEY_ID:str = os.getenv("RAZORPAY_KEY_ID")
+    RAZORPAY_KEY_SECRET:str = os.getenv("RAZORPAY_KEY_SECRET")
 
 @lru_cache()
 def get_settings():
