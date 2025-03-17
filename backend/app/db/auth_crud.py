@@ -1,7 +1,7 @@
-# app/db/crud.py
+# app/db/auth_crud.py
 
 from sqlalchemy.orm import Session
-from app.db.models import OAuthUser
+from backend.app.db.oauth_model import OAuthUser
 
 def get_user_by_provider_id(db: Session, provider: str, provider_id: str):
     """Fetch a user by provider and provider ID."""
