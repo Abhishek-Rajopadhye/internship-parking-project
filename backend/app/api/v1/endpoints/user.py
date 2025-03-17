@@ -1,0 +1,27 @@
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from app.db.session import get_db
+from app.db.models import OAuthUser
+from app.schemas.user import UserProfile
+from app.core.oauth import oauth2_scheme
+from app.core.security import decode_access_token
+
+router = APIRouter()
+
+@router.get("/profile", response_model=UserProfile)
+async def get_profile(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """Fetch authenticated user profile."""
+    payload = decode_access_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    user = db.query(OAuthUser).filter(OAuthUser.email == payload["email"]).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return UserProfile(
+        name=user.name, 
+        email=user.email, 
+        phone=user.phone,  # Include phone number
+        profile_picture=user.profile_picture
+    )
