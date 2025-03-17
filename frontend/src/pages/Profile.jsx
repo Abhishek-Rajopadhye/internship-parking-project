@@ -7,6 +7,7 @@ const Profile = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
+
     if (!user) return <Typography variant="h5">Loading profile...</Typography>;
 
     return (

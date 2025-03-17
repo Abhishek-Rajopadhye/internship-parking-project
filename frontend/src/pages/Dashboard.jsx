@@ -10,10 +10,11 @@ const Dashboard = () => {
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
-
+        const user_id = params.get("user_id");
         if (token) {
-            localStorage.setItem("token", token);
-            navigate("/dashboard");
+            localStorage.setItem("token", String(token));
+            localStorage.setItem("user_id", String(user_id))
+            navigate("/profile");
         }
     }, [navigate]);
 
