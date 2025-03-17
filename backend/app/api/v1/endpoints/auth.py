@@ -1,6 +1,6 @@
 # app/api/v1/endpoints/auth.py
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from app.core.oauth import get_oauth_token, get_oauth_user_info
@@ -12,9 +12,21 @@ router = APIRouter()
 
 @router.get("/{provider}/login")
 async def login(provider: str):
-    """Redirect user to OAuth provider login page."""
+    """
+    Redirect user to OAuth provider login page.
+
+    Parameters:
+        provider (str): The OAuth provider (e.g., 'google', 'github')
+
+    Returns:
+        RedirectResponse: Redirects to the OAuth provider's login page
+
+    Raises:
+        HTTPException:
+             400: If the provider is invalid
+    """
     if provider not in ["google", "github"]:
-        return {"error": "Invalid provider"}
+        raise HTTPException(status_code=400, detail="Invalid provider")
 
     config = settings.dict()
     auth_url = (
@@ -26,27 +38,52 @@ async def login(provider: str):
 
 @router.get("/{provider}/callback")
 async def callback(provider: str, request: Request, db: Session = Depends(get_db)):
-    """Handle OAuth2 callback."""
+    """
+    Handle OAuth2 callback.
+
+    Parameters:
+        provider (str): The OAuth provider (e.g., 'google', 'github')
+        request (Request): The incoming request object
+        db (Session): The database session
+
+    Returns:
+        RedirectResponse: Redirects to the dashboard with token and user_id
+
+    Raises:
+        HTTPException:
+            401: If the authorization code is not provided
+            400: If the access token cannot be obtained
+            500: Any other error occurs during the process
+    """
     code = request.query_params.get("code")
     if not code:
-        return {"error": "Authorization code not provided"}
+        raise HTTPException(status_code=401, detail="Authorization code not provided")
 
-    # Exchange code for token
-    token_data = await get_oauth_token(provider, code)
-    access_token = token_data.get("access_token")
+    try:
+        # Exchange code for token
+        token_data = await get_oauth_token(provider, code)
+        access_token = token_data.get("access_token")
 
-    # Get user info
-    user_info = await get_oauth_user_info(provider, access_token)
+        if not access_token:
+            raise HTTPException(status_code=400, detail="Failed to obtain access token")
 
-    user_data = {
-        "provider": provider,
-        "provider_id": str(user_info.get("id")),
-        "email": user_info.get("email"),
-        "name": user_info.get("name"),
-        "profile_picture": user_info.get("avatar_url") if provider == "github" else user_info.get("picture"),
-        "access_token": access_token
-    }
+        # Get user info
+        user_info = await get_oauth_user_info(provider, access_token)
 
-    # Save user in the database
-    user = create_oauth_user(db, user_data)
-    return RedirectResponse(f"http://localhost:5173/dashboard?token={access_token}&user_id={user_data['provider_id']}")
+        user_data = {
+            "provider": provider,
+            "provider_id": str(user_info.get("id")),
+            "email": user_info.get("email"),
+            "name": user_info.get("name"),
+            "profile_picture": user_info.get("avatar_url") if provider == "github" else user_info.get("picture"),
+            "access_token": access_token
+        }
+
+        # Save user in the database
+        user = create_oauth_user(db, user_data)
+        return RedirectResponse(f"http://localhost:5173/dashboard?token={access_token}&user_id={user_data['provider_id']}")
+
+    except HTTPException as http_error:
+        raise http_error
+    except Exception as general_error:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(general_error)}")

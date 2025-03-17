@@ -8,12 +8,16 @@ from typing import Optional, Literal
 def verify_google_token(token: str) -> Optional[dict]:
     """
     Verify a Google OAuth token by calling Google's tokeninfo endpoint.
-    
+
     Parameters:
         token (str): The Google OAuth token to verify
-    
+
     Returns:
         Optional[dict]: User information if token is valid, None otherwise
+
+    Raises:
+        requests.RequestException: If there is an error with the request
+        ValueError: If the response cannot be parsed as JSON
     """
     try:
         # Google's token verification endpoint
@@ -36,19 +40,26 @@ def verify_google_token(token: str) -> Optional[dict]:
         else:
             print(f"Google token verification failed: {response.status_code}, {response.text}")
             return None
-    except Exception as e:
-        print(f"Google token verification error: {e}")
+    except requests.RequestException as request_error:
+        print(f"Google token verification request error: {request_error}")
+        return None
+    except ValueError as value_error:
+        print(f"Google token verification value error: {value_error}")
         return None
 
 def verify_github_token(token: str) -> Optional[dict]:
     """
     Verify a GitHub OAuth token by calling GitHub's user API endpoint.
-    
+
     Parameters:
         token (str): The GitHub OAuth token to verify
-    
+
     Returns:
         Optional[dict]: User information if token is valid, None otherwise
+
+    Raises:
+        requests.RequestException: If there is an error with the request
+        ValueError: If the response cannot be parsed as JSON
     """
     try:
         # GitHub's user API endpoint
@@ -91,21 +102,27 @@ def verify_github_token(token: str) -> Optional[dict]:
             "picture": user_info.get("avatar_url"),
             "raw_info": user_info
         }
-    except Exception as e:
-        print(f"GitHub token verification error: {e}")
+    except requests.RequestException as request_error:
+        print(f"GitHub token verification request error: {request_error}")
+        return None
+    except ValueError as value_error:
+        print(f"GitHub token verification value error: {value_error}")
         return None
 
 def verify_oauth_token(token: str, provider: Literal["google", "github"] = None) -> Optional[dict]:
     """
     Verify an OAuth token from either Google or GitHub.
-    
+
     Parameters:
         token (str): The OAuth token to verify
         provider (str, optional): The provider ("google" or "github"). 
                                   If not provided, will attempt to detect.
-    
+
     Returns:
         Optional[dict]: User information if token is valid, None otherwise
+
+    Raises:
+        ValueError: If the token cannot be verified
     """
     # If provider is specified, use the appropriate verification
     if provider == "google":
@@ -126,11 +143,30 @@ def verify_oauth_token(token: str, provider: Literal["google", "github"] = None)
         return verify_google_token(token)
 
 def get_user_by_provider_id(db: Session, provider: str, provider_id: str):
-    """Fetch a user by provider and provider ID."""
+    """
+    Fetch a user by provider and provider ID.
+
+    Parameters:
+        db (Session): The database session
+        provider (str): The OAuth provider (e.g., 'google', 'github')
+        provider_id (str): The provider ID of the user
+
+    Returns:
+        OAuthUser: The user object if found, None otherwise
+    """
     return db.query(OAuthUser).filter(OAuthUser.provider == provider, OAuthUser.provider_id == provider_id).first()
 
 def create_oauth_user(db: Session, user_data: dict):
-    """Create a new OAuth user or update an existing one."""
+    """
+    Create a new OAuth user or update an existing one.
+
+    Parameters:
+        db (Session): The database session
+        user_data (dict): The user data to create or update
+
+    Returns:
+        OAuthUser: The created or updated user object
+    """
     user = get_user_by_provider_id(db, user_data["provider"], user_data["provider_id"])
 
     if user:
