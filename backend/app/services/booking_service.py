@@ -10,7 +10,7 @@ RAZORPAY_KEY_SECRET = settings.RAZORPAY_KEY_SECRET
 
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
-def create_booking(db: Session, booking_data):
+async def create_booking(db: Session, booking_data):
     try:
         # Step 1: Create Razorpay Order
         order_data = {
