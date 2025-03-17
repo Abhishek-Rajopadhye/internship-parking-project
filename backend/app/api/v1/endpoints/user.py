@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from backend.app.db.oauth_model import OAuthUser
+from app.db.oauth_model import OAuthUser
 from app.schemas.user import UserProfile
 from app.core.oauth import oauth2_scheme
 from app.core.security import decode_access_token
