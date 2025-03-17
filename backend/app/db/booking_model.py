@@ -6,7 +6,7 @@ class Booking(Base):
     __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, nullable=False)
+    user_id = Column(String, nullable=False)
     spot_id = Column(Integer, nullable=False) #slot_id(parking_id)
     total_slots = Column(Integer, nullable=False)
     start_date = Column(String, nullable=False)

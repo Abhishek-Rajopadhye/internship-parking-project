@@ -10,7 +10,7 @@ def get_user_by_provider_id(db: Session, provider: str, provider_id: str):
 def create_oauth_user(db: Session, user_data: dict):
     """Create a new OAuth user or update an existing one."""
     user = get_user_by_provider_id(db, user_data["provider"], user_data["provider_id"])
-    
+
     if user:
         user.access_token = user_data["access_token"]
         db.commit()

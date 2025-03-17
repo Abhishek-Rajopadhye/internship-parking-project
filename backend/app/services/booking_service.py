@@ -1,12 +1,12 @@
 import razorpay
-import os
 from sqlalchemy.orm import Session
+from app.core.config import settings
 from app.db.booking_model import Booking
 from app.db.payment_model import Payment
 
 # Load Razorpay keys
-RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
-RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
+RAZORPAY_KEY_ID = settings.RAZORPAY_KEY_ID
+RAZORPAY_KEY_SECRET = settings.RAZORPAY_KEY_SECRET
 
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
