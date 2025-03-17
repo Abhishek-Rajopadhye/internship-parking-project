@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # Token expiry in minutes
 
     # CORS Settings
-    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000"]  # Allowed frontend origins
+    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]  # Allowed frontend origins
 
     # Payment Gateway (example)
     PAYMENT_GATEWAY_API_KEY: str = "your_payment_gateway_key"
