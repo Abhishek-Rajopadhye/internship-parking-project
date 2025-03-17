@@ -1,7 +1,9 @@
+# app/api/v1/endpoints/user.py
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.db.models import OAuthUser
+from backend.app.db.oauth_model import OAuthUser
 from app.schemas.user import UserProfile
 from app.core.oauth import oauth2_scheme
 from app.core.security import decode_access_token
@@ -20,6 +22,7 @@ async def get_profile(token: str = Depends(oauth2_scheme), db: Session = Depends
         raise HTTPException(status_code=404, detail="User not found")
 
     return UserProfile(
+        id=user.id,
         name=user.name, 
         email=user.email, 
         phone=user.phone,  # Include phone number
