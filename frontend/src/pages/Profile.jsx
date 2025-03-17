@@ -7,7 +7,6 @@ const Profile = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
-
     if (!user) return <Typography variant="h5">Loading profile...</Typography>;
 
     return (
@@ -19,7 +18,7 @@ const Profile = () => {
             />
             <Typography variant="h4">{user.name}</Typography>
             <Typography variant="h6">{user.email}</Typography>
-            <Typography variant="h6">{user.phone || "Not provided"}</Typography>
+            <Typography variant="h6">Ph.No: {user.phone || "Not provided"}</Typography>
             <Button 
                 variant="contained" 
                 color="error" 

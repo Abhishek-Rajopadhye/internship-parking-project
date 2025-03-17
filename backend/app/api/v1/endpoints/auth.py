@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 from app.core.oauth import get_oauth_token, get_oauth_user_info
 from app.db.session import get_db
-from app.db.auth_crud import create_oauth_user
+from app.services.auth_service import create_oauth_user
 from app.core.config import settings
 
 router = APIRouter()
