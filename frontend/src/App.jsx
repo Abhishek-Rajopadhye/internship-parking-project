@@ -1,18 +1,4 @@
-<<<<<<< HEAD
 import Home from "./pages/Home";
-
-
-
-
-function App(){
-  return <>
-   <Home></Home>
-  
-  </>
-}
-
-export default App;
-=======
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Login } from "./pages/Login";
@@ -27,6 +13,7 @@ function App() {
                     <Route path="/" element={<Login />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/home" element={<Home/>}/>
                 </Routes>
             </Router>
         </AuthProvider>
@@ -34,4 +21,3 @@ function App() {
 }
 
 export default App;
->>>>>>> c7fa38e76e336bc71867903f4e8728366fa0a2de
