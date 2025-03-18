@@ -2,11 +2,9 @@
 
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
-
 from app.core.config import settings
 
 # Password Hashing
@@ -59,7 +57,9 @@ def decode_access_token(token: str) -> Optional[dict]:
         Optional[dict]: The decoded payload if the token is valid, None otherwise.
     """
     try:
+        print(f"Token sections count: {token.count('.')}")
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         return payload
-    except JWTError:
+    except JWTError as e:
+        print(f"JWTError: {e}")
         return None

@@ -10,7 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@react-google-maps/api": "^2.20.6",
+=======
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.7",
+>>>>>>> c7fa38e76e336bc71867903f4e8728366fa0a2de
     "axios": "^1.8.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
