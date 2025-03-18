@@ -1,14 +1,28 @@
 import { useContext, useState } from "react";
-import { Container, Typography, Avatar, Button } from "@mui/material";
+import { Container, Typography, Avatar, Button, Box } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
 import { EditProfileModal } from "../components/EditProfileModal";
 import axios from "axios";
 
 const Profile = () => {
-    const { user, logout, fetchProfile } = useContext(AuthContext);
-    const navigate = useNavigate();
+    const { user, setUser } = useContext(AuthContext);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const fetchProfile = async () => {
+        const token = localStorage.getItem("token");
+        const user_id = String(localStorage.getItem("user_id"));
+        try {
+            const response = await axios.get(`http://localhost:8000/users/profile/${user_id}`,{
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = response.data;
+            data.id = user_id;
+            setUser(data);
+        } catch (error) {
+            setUser(null);
+            console.error("Error fetching profile:", error);
+        }
+    };
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -56,17 +70,9 @@ const Profile = () => {
                 variant="contained" 
                 color="primary" 
                 onClick={handleOpenModal} 
-                style={{ margin: "5px" }}
+                style={{ marginTop: "20px" }}
             >
                 Edit Profile
-            </Button>
-            <Button 
-                variant="contained" 
-                color="error" 
-                onClick={() => { logout(); navigate("/"); }} 
-                style={{ margin: "5px" }}
-            >
-                Logout
             </Button>
             <EditProfileModal 
                 open={isModalOpen} 
