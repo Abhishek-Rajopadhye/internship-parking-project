@@ -1,4 +1,4 @@
-import { Box, Avatar, Typography, Button, Divider, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Avatar, Typography, Button, Divider, List, ListItemText, ListItemButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const NavBar = ({ user, logout }) => {
@@ -27,18 +27,18 @@ const NavBar = ({ user, logout }) => {
                 </Box>
                 <Divider />
                 <List>
-                    <ListItem button onClick={() => navigate("/profile")}>
+                    <ListItemButton onClick={() => navigate("/profile")}>
                         <ListItemText primary="User Profile" />
-                    </ListItem>
-                    <ListItem button onClick={() => navigate("/booking-history")}>
+                    </ListItemButton>
+                    <ListItemButton onClick={() => navigate("/booking-history")}>
                         <ListItemText primary="My Booking History" />
-                    </ListItem>
-                    <ListItem button onClick={() => navigate("/my-spots")}>
+                    </ListItemButton>
+                    <ListItemButton onClick={() => navigate("/my-spots")}>
                         <ListItemText primary="My Spots" />
-                    </ListItem>
-                    <ListItem button onClick={() => navigate("/home")}>
+                    </ListItemButton>
+                    <ListItemButton onClick={() => navigate("/home")}>
                         <ListItemText primary="Home" />
-                    </ListItem>
+                    </ListItemButton>
                 </List>
             </Box>
             <Box>
