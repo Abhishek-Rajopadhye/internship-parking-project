@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.6",
     "axios": "^1.8.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-google-maps": "^9.4.5",
+    "react-places-autocomplete": "^7.3.0",
     "react-router-dom": "^7.3.0"
   },
   "devDependencies": {

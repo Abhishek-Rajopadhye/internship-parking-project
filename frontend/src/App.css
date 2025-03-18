@@ -1,42 +1,85 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+.autocomplete-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 2rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  overflow-y: auto; /* Enables scrolling if content exceeds viewport height */
+}
+
+.autocomplete-input {
+  width: 80%;
+  max-width: 500px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.place-info {
+  margin-top: 20px;
+  text-align: left;
+  width: 100%;
+  max-width: 800px;
+}
+
+.place-info h2 {
+  margin-bottom: 10px;
+}
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.photo {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
   text-align: center;
+  width: 200px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.photo img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.photo p {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #555;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.autocomplete-dropdown {
+  position: absolute;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid #ccc;
+  width: 80%;
+  max-width: 500px;
 }
 
-.card {
-  padding: 2em;
+.suggestion-item {
+  padding: 10px;
+  cursor: pointer;
 }
 
-.read-the-docs {
-  color: #888;
+.suggestion-item:hover {
+  background-color: #f5f5f5;
+}
+
+body,html{
+  width: 100%;
+  align-items: center;
+}
+
+#root{
+  width: 100%;
 }
