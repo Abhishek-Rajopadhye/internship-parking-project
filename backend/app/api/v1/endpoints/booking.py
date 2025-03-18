@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.post("/book-spot")
 async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):
-    response = create_booking(db, booking_data)
-    if response.error:
+    response = await create_booking(db, booking_data)
+    if "error" in response:
         raise HTTPException(status_code=400, detail="Booking request failed. Please check your inputs")
     return response
