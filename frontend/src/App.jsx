@@ -1,6 +1,8 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Drawer, IconButton } from "@mui/material";
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { NavBar } from "./components/NavBar";
 import { Login } from "./pages/Login";
@@ -13,18 +15,22 @@ import { Auth } from "./pages/Auth";
 const AppLayout = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
         const user_id = params.get("user_id");
-        console.log(token, user_id);
         if (token) {
             localStorage.setItem("token", String(token));
             localStorage.setItem("user_id", String(user_id))
             navigate("/home");
         }
     }, [navigate]);
+    
+    const handleDrawerToggle = () => {
+        setIsDrawerOpen(!isDrawerOpen);
+    };
 
     if (!user) {
         return (
@@ -36,7 +42,37 @@ const AppLayout = () => {
 
     return (
         <Box sx={{ display: "flex" }}>
-            <NavBar user={user} logout={logout} />
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    onClick={handleDrawerToggle}
+                    sx={{ margin: 1 }}
+                >
+                    <MenuIcon />
+                </IconButton>
+            </Box>
+            <Drawer
+                variant="persistent"
+                anchor="left"
+                open={isDrawerOpen}
+                sx={{
+                    width: 350,
+                    flexShrink: 0,
+                    '& .MuiDrawer-paper': {
+                        width: 350,
+                        boxSizing: 'border-box',
+                    },
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', padding: 1 }}>
+                    <IconButton onClick={handleDrawerToggle}>
+                        <ChevronLeftIcon />
+                    </IconButton>
+                </Box>
+                <NavBar user={user} logout={logout} />
+            </Drawer>
             <Box sx={{ flexGrow: 1, p: 3 }}>
                 <Routes>
                     <Route path="/profile" element={<Profile />} />
