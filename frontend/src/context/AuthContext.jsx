@@ -5,23 +5,24 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    
+    const fetchProfile = async () => {
+        const token = localStorage.getItem("token");
+        const user_id = String(localStorage.getItem("user_id"));
+        try {
+            const response = await axios.get(`http://localhost:8000/users/profile/${user_id}`,{
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = response.data;
+            data.id = user_id;
+            setUser(data);
+        } catch (error) {
+            setUser(null);
+            console.error("Error fetching profile:", error);
+        }
+    };
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            const token = localStorage.getItem("token");
-            const user_id = String(localStorage.getItem("user_id"));
-            try {
-                const response = await axios.get(`http://localhost:8000/users/profile/${user_id}`,{
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const data = response.data;
-                setUser(data);
-            } catch (error) {
-                setUser(null);
-                console.error("Error fetching profile:", error);
-            }
-        };
-
         fetchProfile();
     }, []);
 
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, login, logout, fetchProfile }}>
             {children}
         </AuthContext.Provider>
     );
