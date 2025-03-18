@@ -72,6 +72,7 @@ def check_available_slots(db: Session, spot_id: int, total_slots: int):
 #Create a new booking
 async def create_booking(db: Session, booking_data):
     try:
+        print("This is in service model");
         # print("This is service method")
         # Step 1: Check slot availability
         if not check_available_slots(db, booking_data.spot_id, booking_data.total_slots):
@@ -79,6 +80,7 @@ async def create_booking(db: Session, booking_data):
 
         # Step 2: Create Razorpay Order
         try:
+           
             order_data = {
                 "amount": booking_data.total_amount * 100,  # Convert INR to paise
                 "currency": "INR",

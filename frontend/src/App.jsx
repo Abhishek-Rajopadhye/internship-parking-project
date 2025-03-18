@@ -16,7 +16,7 @@ function App() {
         //         </Routes>
         //     </Router>
         // </AuthProvider>
-        <Booking user_id = {1} spot_id = {2} charges_per_hr = {30}></Booking>
+        <Booking user_id = {2} spot_id = {2} charges_per_hr = {20}></Booking>
     );
 }
 
