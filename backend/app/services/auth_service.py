@@ -2,8 +2,8 @@
 
 from sqlalchemy.orm import Session
 from app.db.oauth_model import OAuthUser
-import requests
 from typing import Optional, Literal
+import requests
 
 def verify_google_token(token: str) -> Optional[dict]:
     """

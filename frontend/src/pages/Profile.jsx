@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Container, Typography, Avatar, Button, Box } from "@mui/material";
+import { Container, Typography, Avatar, Button } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import axios from "axios";
