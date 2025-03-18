@@ -116,10 +116,8 @@ async def create_booking(db: Session, booking_data):
             user_id=booking_data.user_id,
             spot_id=booking_data.spot_id,
             total_slots=booking_data.total_slots,
-            start_date=booking_data.start_date,
-            start_time=booking_data.start_time,
-            end_date=booking_data.end_date,
-            end_time=booking_data.end_time,
+            start_date_time=booking_data.start_date_time,
+            end_date_time=booking_data.end_date_time,
             payment_id=new_payment.id
         )
         db.add(new_booking)
@@ -127,6 +125,9 @@ async def create_booking(db: Session, booking_data):
         db.refresh(new_booking)
 
         return {
+            "order_id": razorpay_order["id"], 
+            "amount": razorpay_order["amount"], 
+            "currency": razorpay_order["currency"],
             "booking_id": new_booking.id,
             "payment_status": "success",
             "receipt": razorpay_order["receipt"]
