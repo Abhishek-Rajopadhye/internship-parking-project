@@ -1,21 +1,25 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Box, Grid, Button, Typography, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
+import { Box, Grid, Button, Typography, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, IconButton } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
-
-export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
+//spot_information is object which hold the all information
+export const Booking = ({spot_information, user_id}) => {
+    // const navigate = useNavigate()
     const [totalSlots, setTotalSlots] = useState(1);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
-    const [ratePerHour] = useState(charges_per_hr);
+    const [ratePerHour] = useState(spot_information.charge_per_hour);
     const [openDialog, setOpenDialog] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState({ open: false, message: "", severity: "info" });
     const [paymentDetails, setPaymentDetails] = useState(null);
+    const [paymentStatus, setPaymentStatus] = useState(false);
 
     const showSnackbar = (message, severity = "info") => {
         setOpenSnackbar({ open: true, message, severity });
@@ -34,6 +38,9 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
     };
 
     const calculateAmount = () => {
+        if(paymentStatus) {
+            return;
+        }
         if (!startTime || !endTime) {
             showSnackbar("Please select start and end time.", "warning");
             return false;
@@ -78,6 +85,9 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
     };
 
     const processPayment = async () => {
+        if(paymentStatus) {
+            return;
+        }
         try {
             const razorpayLoaded = await loadRazorpay();
             if (!razorpayLoaded) {
@@ -88,9 +98,13 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
             const start_time = dateTimeToString(startTime);
             const end_time = dateTimeToString(endTime);
 
+            if(spot_information.available_slots < totalSlots){
+                showSnackbar("No Slots availables", "error");
+                return;
+            }
             const orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
                 user_id: user_id.toString(),
-                spot_id: spot_id,
+                spot_id: spot_information.spot_id,
                 total_slots: totalSlots,
                 total_amount: totalAmount,
                 start_date_time: start_time,
@@ -122,6 +136,7 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
                         start_time,
                         end_time,
                     });
+                    setPaymentStatus(true);
                     showSnackbar("Booking Successful!", "success");
                 },
                 theme: { color: "#4F46E5" }
@@ -142,13 +157,14 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
         doc.text("Parking Booking Receipt", 70, 20);
 
         doc.setFontSize(12);
-        doc.text(`Spot Name: ABC Parking spots`, 20, 40);
-        doc.text(`Total Slots: ${totalSlots}`, 20, 50);
-        doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 60);
-        doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 70);
-        doc.text(`Total Amount: ₹${paymentDetails.amount}`, 20, 80);
-        doc.text(`Start Time: ${paymentDetails.start_time}`, 20, 90);
-        doc.text(`End Time: ${paymentDetails.end_time}`, 20, 100);
+        doc.text(`Spot Name: ${spot_information.spot_title}`, 20, 40);
+        doc.text(`Spot Address: ${spot_information.spot_address}`, 20, 50);
+        doc.text(`Total Slots: ${totalSlots}`, 20, 60);
+        doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 70);
+        doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 80);
+        doc.text(`Total Amount: ₹${paymentDetails.amount}`, 20, 90);
+        doc.text(`Start Time: ${paymentDetails.start_time}`, 20, 100);
+        doc.text(`End Time: ${paymentDetails.end_time}`, 20, 110);
         
         doc.save("booking_receipt.pdf");
     };
@@ -156,6 +172,21 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box className="form-container">
+                <Box className="form-container">
+                {/* Circular Button to Go Back */}
+                    <IconButton
+                        // onClick={() => navigate(-1)}
+                        sx={{
+                        position: "absolute",
+                        top: 10,
+                        left: 10,
+                        backgroundColor: "white",
+                        border: "1px solid gray",
+                        "&:hover": { backgroundColor: "lightgray" }
+                    }}
+                >
+                        <ArrowBackIcon />
+                    </IconButton>
                 <Box className="form-box">
                     <Typography variant="h5" gutterBottom align="center">
                         Book Your Parking Spot
@@ -179,25 +210,18 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
                                 Book Spot
                             </Button>
                             { paymentDetails &&
-                            <Button variant="contained" color="primary" onClick={downloadPDF} sx={{ mt: 2 }}>
+                            <Button variant="contained" color="primary" onClick={downloadPDF} sx={{ mt: 2, mr: 2 }}>
                         Download Receipt
                             </Button>
                         }
+                        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+                       GO HOME
+                            </Button>
                         </Grid>
                     </Grid>
                 </Box>
+                </Box>
             </Box>
-            {/* {paymentDetails && (
-                <Box textAlign="center" mt={3}> */}
-                    {/* <Typography variant="h6">Payment Successful!</Typography>
-                    <Typography>Spot Name: ABC Parking spot</Typography>
-                    <Typography>Total SLots: {totalSlots}</Typography>
-                    <Typography>Total Amount: ₹{paymentDetails.amount}</Typography>
-                    <Typography>Order ID: {paymentDetails.order_id}</Typography>
-                    <Typography>Payment ID: {paymentDetails.payment_id}</Typography>
-                    <Typography>Total Amount: ₹{paymentDetails.amount}</Typography> */}
-                {/* </Box>
-            )} */}
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
                 <DialogTitle>Total Amount</DialogTitle>
                 <DialogContent>
@@ -221,4 +245,4 @@ export const Booking = ({ user_id, spot_id, charges_per_hr }) => {
             </Snackbar>
         </LocalizationProvider>
     );
-};
+}; 
