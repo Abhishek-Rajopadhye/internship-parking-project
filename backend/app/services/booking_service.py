@@ -138,7 +138,6 @@ async def create_booking(db: Session, booking_data):
     except SlotUnavailableException as e:
         db.rollback()
         raise HTTPException(status_code=400, detail="No Slot Available")
-    
     except PaymentFailedException as e:
         db.rollback()
         raise HTTPException(status_code=402, detail=str(e))  # 402 Payment Required

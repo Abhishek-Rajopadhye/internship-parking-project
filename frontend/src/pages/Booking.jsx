@@ -7,9 +7,10 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
+import { useNavigate } from "react-router-dom";
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
     const [totalSlots, setTotalSlots] = useState(1);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
@@ -110,11 +111,14 @@ export const Booking = ({spot_information, user_id}) => {
                 end_date_time: end_time,
                 receipt: `booking_${Date.now()}`
             });
-
+            if(orderResponse.status !== 200) {
+                showSnackbar(orderResponse.data.detail, "error");
+                return;
+            }
             const orderData = orderResponse.data;
 
             if (!orderData.order_id) {
-                showSnackbar("Error creating order", "error");
+                showSnackbar(orderResponse.data.detail, "error");
                 return;
             }
 
@@ -144,12 +148,21 @@ export const Booking = ({spot_information, user_id}) => {
             const rzp1 = new window.Razorpay(options);
             rzp1.open();
         } catch (error) {
-            showSnackbar("Booking failed!", error);
+            console.error("Booking failed:", error);
+            if (error.response) {
+                showSnackbar(error.response.data.detail || "Booking failed, please try again.", "error");
+            } else if (error.request) {
+                showSnackbar("No response from server. Please check your connection.", "error");
+            } else {
+                showSnackbar("An unexpected error occurred.", "error");
+            }
         }
     };
 
     const downloadPDF = () => {
-        if (!paymentDetails) return;
+        if (!paymentDetails) {
+            return;
+        } 
 
         const doc = new jsPDF();
         doc.setFontSize(18);
@@ -213,7 +226,7 @@ export const Booking = ({spot_information, user_id}) => {
                         Download Receipt
                             </Button>
                         }
-                        <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+                        <Button variant="contained" color="primary" onClick={() => {navigate("/home")}} sx={{ mt: 2 }}>
                        GO HOME
                             </Button>
                         </Grid>
