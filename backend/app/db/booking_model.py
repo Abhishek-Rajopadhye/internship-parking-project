@@ -7,7 +7,7 @@ class Booking(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, nullable=False)
-    spot_id = Column(Integer, nullable=False) #slot_id(parking_id)
+    spot_id = Column(Integer, nullable=False)
     total_slots = Column(Integer, nullable=False)
     start_date_time = Column(String, nullable=False)
     end_date_time = Column(String, nullable=False)
