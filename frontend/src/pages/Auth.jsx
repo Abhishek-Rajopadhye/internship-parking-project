@@ -1,22 +1,31 @@
 import { useContext, useEffect } from "react";
-import { Container, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Box, CircularProgress } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 
-const Dashboard = () => {
-    const { user, logout } = useContext(AuthContext);
+const Auth = () => {
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
         const user_id = params.get("user_id");
+        console.log(token, user_id);
         if (token) {
             localStorage.setItem("token", String(token));
             localStorage.setItem("user_id", String(user_id))
-            navigate("/profile");
+            navigate("/home");
         }
     }, [navigate]);
+
+    if (!user) {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
 
     return (
         <Container maxWidth="sm" style={{ textAlign: "center", marginTop: "50px" }}>
@@ -24,10 +33,6 @@ const Dashboard = () => {
                 <>
                     <Typography variant="h4">Welcome, {user.name}!</Typography>
                     <img src={user.profile_picture} alt="Profile" width="100" style={{ borderRadius: "50%" }} />
-                    <Typography>Email: {user.email}</Typography>
-                    <Button variant="contained" color="error" onClick={logout} style={{ marginTop: "20px" }}>
-                        Logout
-                    </Button>
                 </>
             ) : (
                 <Typography variant="h5">Loading user data...</Typography>
@@ -36,4 +41,4 @@ const Dashboard = () => {
     );
 };
 
-export { Dashboard };
+export { Auth };

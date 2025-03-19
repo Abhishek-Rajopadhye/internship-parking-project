@@ -1,7 +1,6 @@
+// Home.jsx
+
 import Map from "../components/map";
-
-
-
 
 function Home(){
   return <>
@@ -10,4 +9,4 @@ function Home(){
   </>
 }
 
-export default Home;
+export { Home };

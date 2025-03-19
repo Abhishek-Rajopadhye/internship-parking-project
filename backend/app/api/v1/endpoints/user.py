@@ -4,27 +4,109 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.db.oauth_model import OAuthUser
-from app.schemas.user import UserProfile
+from app.schemas.user import UserProfile, UserUpdate
 from app.core.oauth import oauth2_scheme
-from app.core.security import decode_access_token
+from app.services.auth_service import verify_oauth_token
 
 router = APIRouter()
 
 @router.get("/profile/{user_id}", response_model=UserProfile)
-async def get_profile(user_id:int, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """Fetch authenticated user profile."""
-    payload = decode_access_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid token")
+async def get_profile(user_id: str, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """
+    Fetch authenticated user profile.
 
-    user = db.query(OAuthUser).filter(OAuthUser.provider_id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    Parameters:
+        user_id (str): The ID of the user
+        token (str): The OAuth2 token
+        db (Session): The database session
 
-    return UserProfile(
-        id=user.id,
-        name=user.name, 
-        email=user.email, 
-        phone=user.phone,  # Include phone number
-        profile_picture=user.profile_picture
-    )
+    Returns:
+        UserProfile: The user's profile information
+
+    Raises:
+        HTTPException: 
+            404: If the user is not found
+            401: If the token is invalid
+            500: Any other error occurs during the process
+    """
+    try:
+        user = db.query(OAuthUser).filter(OAuthUser.provider_id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        payload = verify_oauth_token(token, provider=user.provider)
+        if not payload:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        return UserProfile(
+            id=user.provider_id,
+            name=user.name, 
+            email=user.email, 
+            phone=user.phone,
+            profile_picture=user.profile_picture
+        )
+    except HTTPException as http_error:
+        raise http_error
+    except ValueError as value_error:
+        raise HTTPException(status_code=500, detail=f"Value error: {str(value_error)}")
+    except TypeError as type_error:
+        raise HTTPException(status_code=500, detail=f"Type error: {str(type_error)}")
+    except Exception as general_error:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(general_error)}")
+
+@router.put("/profile/{user_id}", response_model=UserProfile)
+async def update_profile(user_id: str, user_update: UserUpdate, token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """
+    Update authenticated user profile.
+
+    Parameters:
+        user_id (str): The ID of the user
+        user_update (UserUpdate): The user details to update
+        token (str): The OAuth2 token
+        db (Session): The database session
+
+    Returns:
+        UserProfile: The updated user's profile information
+
+    Raises:
+        HTTPException: 
+            404: If the user is not found
+            401: If the token is invalid
+            500: Any other error occurs during the process
+    """
+    try:
+        user = db.query(OAuthUser).filter(OAuthUser.provider_id == user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        payload = verify_oauth_token(token, provider=user.provider)
+        if not payload:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        if user_update.name is not None:
+            user.name = user_update.name
+        if user_update.email is not None:
+            user.email = user_update.email
+        if user_update.phone is not None:
+            user.phone = user_update.phone
+        if user_update.profile_picture is not None:
+            user.profile_picture = user_update.profile_picture
+        
+        db.commit()
+        db.refresh(user)
+        
+        return UserProfile(
+            id=user.provider_id,
+            name=user.name, 
+            email=user.email, 
+            phone=user.phone,
+            profile_picture=user.profile_picture
+        )
+    except HTTPException as http_error:
+        raise http_error
+    except ValueError as value_error:
+        raise HTTPException(status_code=500, detail=f"Value error: {str(value_error)}")
+    except TypeError as type_error:
+        raise HTTPException(status_code=500, detail=f"Type error: {str(type_error)}")
+    except Exception as general_error:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(general_error)}")
