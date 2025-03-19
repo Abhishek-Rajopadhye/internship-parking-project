@@ -1,5 +1,4 @@
 // Home.jsx
-
 import { Map } from "../components/Map";
 
 function Home(){
