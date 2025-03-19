@@ -1,4 +1,3 @@
-import React from 'react';
 import { InfoWindow } from '@react-google-maps/api';
 import car from "../assets/Images/parking.svg"
 
@@ -42,4 +41,4 @@ function MarkerInfo({ selectedMarker, newMarker, setSelectedMarker, calculateDis
   );
 }
 
-export default MarkerInfo;
+export { MarkerInfo };
