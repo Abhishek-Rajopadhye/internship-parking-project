@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box, Grid, Button, Typography, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, IconButton } from "@mui/material";
@@ -145,7 +144,7 @@ export const Booking = ({spot_information, user_id}) => {
             const rzp1 = new window.Razorpay(options);
             rzp1.open();
         } catch (error) {
-            showSnackbar("Booking failed!", "error");
+            showSnackbar("Booking failed!", error);
         }
     };
 
