@@ -25,4 +25,4 @@ function MarkerInfo({ selectedMarker, newMarker, setSelectedMarker, calculateDis
   );
 }
 
-export default MarkerInfo;
+export { MarkerInfo };
