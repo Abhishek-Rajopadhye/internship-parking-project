@@ -1,4 +1,3 @@
-import React from 'react';
 import { InfoWindow } from '@react-google-maps/api';
 
 function MarkerInfo({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) {

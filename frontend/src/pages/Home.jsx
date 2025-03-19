@@ -1,11 +1,13 @@
 // Home.jsx
 
-import Map from "../components/Map";
+import { Map } from "../components/Map";
 
 function Home(){
-  return <>
-   <Map></Map>
-  </>
+    return (
+        <>
+            <Map></Map>
+        </>
+    )
 }
 
 export { Home };
