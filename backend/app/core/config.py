@@ -3,8 +3,6 @@ import os
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-from urllib.parse import quote_plus
-import urllib.parse
 
 load_dotenv()
 
