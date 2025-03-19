@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 
 function SearchBar({ setNewMarker, markers, setDistances }) {
@@ -63,4 +63,4 @@ function SearchBar({ setNewMarker, markers, setDistances }) {
   );
 }
 
-export default SearchBar;
+export { SearchBar };

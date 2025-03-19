@@ -1,5 +1,3 @@
-import React from 'react';
-
 function DistanceList({ newMarker, distances }) {
   if (!newMarker || Object.keys(distances).length === 0) return null;
 
@@ -17,4 +15,4 @@ function DistanceList({ newMarker, distances }) {
   );
 }
 
-export default DistanceList;
+export { DistanceList };
