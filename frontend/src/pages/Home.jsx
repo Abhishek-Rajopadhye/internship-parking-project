@@ -1,9 +1,12 @@
 // Home.jsx
-import React from "react";
-import { Typography } from "@mui/material";
 
-const Home = () => {
-    return <Typography variant="h5">Home</Typography>;
-};
+import Map from "../components/map";
+
+function Home(){
+  return <>
+   <Map></Map>
+  
+  </>
+}
 
 export { Home };
