@@ -7,10 +7,22 @@ import { AuthProvider, AuthContext } from "./context/AuthContext";
 import { NavBar } from "./components/NavBar";
 import { Login } from "./pages/Login";
 import { Profile } from "./pages/Profile";
+import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
 import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import { Auth } from "./pages/Auth";
+
+const spot = {
+    spot_id: 1,
+    charge_per_hour: 50, // Assuming price per hour
+    spot_title: "Green Park Charging Spot",
+    spot_address: "A convenient EV charging station located in the heart of the city with fast chargers.",
+    available_slots: 9,
+    open_time: "08:00 AM",
+    close_time: "10:00 PM"
+  };
+<Booking spot_information = {spot} user_id={101}></Booking>
 
 const AppLayout = () => {
     const { user, logout } = useContext(AuthContext);
