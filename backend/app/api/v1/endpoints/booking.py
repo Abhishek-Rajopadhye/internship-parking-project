@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session #interact with database
 from app.db.session import get_db
-from app.db.session import SessionLocal
 from app.services.booking_service import create_booking
 from app.schemas.booking import BookingCreate
 

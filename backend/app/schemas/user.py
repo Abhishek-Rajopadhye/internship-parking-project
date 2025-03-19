@@ -9,3 +9,10 @@ class UserProfile(BaseModel):
     email: EmailStr
     phone: Optional[str] = None
     profile_picture: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    id: int
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    profile_picture: Optional[str] = None
