@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { GoogleMap, Marker, useJsApiLoader, InfoWindow } from '@react-google-maps/api';
 import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-import MarkerInfo from "./markerPopUp"
+import { MarkerInfo } from "./MarkerPopUp"
 
 function Map() {
   const { isLoaded } = useJsApiLoader({
@@ -14,11 +14,6 @@ function Map() {
   const [address, setAddress] = useState("");
   const [newMarker, setNewMarker] = useState(null);
   const mapRef = useRef(null);
-
-  const containerStyle = {
-    width: '90vw',
-    height: '70vh',
-  };
 
   const mapStyles = {
     width: '80%',
@@ -176,4 +171,4 @@ function Map() {
   );
 }
 
-export default Map;
+export { Map };
