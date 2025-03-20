@@ -13,8 +13,6 @@ import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import { Auth } from "./pages/Auth";
 
-
-
 const AppLayout = () => {
     const spot = {
         spot_id: 1,
@@ -22,8 +20,10 @@ const AppLayout = () => {
         spot_title: "Green Park Charging Spot",
         spot_address: "A convenient EV charging station located in the heart of the city with fast chargers.",
         open_time: "08:00 AM",
-        close_time: "10:00 PM"
+        close_time: "20:00 PM",
+        open_days: ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     };
+    
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);

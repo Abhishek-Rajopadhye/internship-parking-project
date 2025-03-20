@@ -30,6 +30,45 @@ export const Booking = ({spot_information, user_id}) => {
             showSnackbar("Please select a future date and time.", "error");
             return false;
         }
+        const openDay = new Date(selectedDate).toDateString().split(" ")[0];
+
+        if (!spot_information.open_days.includes(openDay)) {
+            showSnackbar(`Spot is closed on ${openDay}.`, "warning");
+            return false;
+        }
+
+        const isoString = selectedDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }); // 
+        console.log(isoString);
+        const dateParts = isoString.split(",")[0].split("/");
+        const timeParts = isoString.split(",")[1].trim().split(":");
+        let hours = parseInt(timeParts[0]);
+        const minutes = parseInt(timeParts[1]);
+        const period = timeParts[2].split(" ")[1];
+
+        if (period === "pm" && hours !== 12) hours += 12;
+        if (period === "am" && hours === 12) hours = 0;
+
+        let [openTimeHour, openTimeMin] = spot_information.open_time.split(" ")[0].split(":");
+        let [closeTimeHour, closeTimeMin] = spot_information.close_time.split(" ")[0].split(":");
+        openTimeHour = parseInt(openTimeHour);
+        openTimeMin = parseInt(openTimeMin);
+        closeTimeHour = parseInt(closeTimeHour);
+        closeTimeMin = parseInt(closeTimeMin);
+        
+        if(hours < openTimeHour || hours > closeTimeHour) {
+            showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
+            return false;
+        }
+
+        if(hours === openTimeHour && minutes < openTimeMin) {
+            showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
+            return false;
+        }
+
+        if(hours === closeTimeHour && minutes > closeTimeMin) {
+            showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
+            return false;
+        }
         return true;
     };
 
@@ -50,7 +89,7 @@ export const Booking = ({spot_information, user_id}) => {
             showSnackbar("Total Slot should be greater than zero.", "warning");
             return false;
         }
-
+        console.log(startTime, endTime);
         if (!validateDateTime(startTime) || !validateDateTime(endTime)) {
             return false;
         }
@@ -94,7 +133,7 @@ export const Booking = ({spot_information, user_id}) => {
                 showSnackbar("Failed to load Razorpay SDK.", "error");
                 return;
             }
-
+            console.log(startTime)
             const start_time = dateTimeToString(startTime);
             const end_time = dateTimeToString(endTime);
 
@@ -150,7 +189,7 @@ export const Booking = ({spot_information, user_id}) => {
         } catch (error) {
             console.error("Booking failed:", error);
             if (error.response) {
-                showSnackbar(error.response.data.detail || "Booking failed, please try again.", "error");
+                showSnackbar("Booking failed, please try again.", "error");
             } else if (error.request) {
                 showSnackbar("No response from server. Please check your connection.", "error");
             } else {
