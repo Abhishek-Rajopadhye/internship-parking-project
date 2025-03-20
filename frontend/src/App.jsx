@@ -15,13 +15,19 @@ import { Auth } from "./pages/Auth";
 
 const AppLayout = () => {
     const spot = {
-        spot_id: 1,
-        charge_per_hour: 50,
+        owner_id: 101,
+        spot_id: 2,
+        hourly_rate: 50,
         spot_title: "Green Park Charging Spot",
-        spot_address: "A convenient EV charging station located in the heart of the city with fast chargers.",
+        address: "A convenient EV charging station located in the heart of the city with fast chargers.",
         open_time: "08:00 AM",
         close_time: "20:00 PM",
-        open_days: ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        available_days: ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        latitude: 51.5074,
+        longitude: 0.1278,
+        no_of_slots: 5,
+        available_slots: 3,
+        description: "This is a convenient EV charging station located in the heart of the city with fast chargers. The station is open from 08:00 AM to 20:00 PM from Tuesday to Sunday. The hourly rate is $50. There are 5 charging slots available, out of which 3 are currently available. The station is located at Green Park, London.",
     };
     
     const { user, logout } = useContext(AuthContext);

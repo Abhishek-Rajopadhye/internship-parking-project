@@ -15,7 +15,7 @@ export const Booking = ({spot_information, user_id}) => {
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
-    const [ratePerHour] = useState(spot_information.charge_per_hour);
+    const [ratePerHour] = useState(spot_information.hourly_rate);
     const [openDialog, setOpenDialog] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState({ open: false, message: "", severity: "info" });
     const [paymentDetails, setPaymentDetails] = useState(null);
@@ -32,7 +32,7 @@ export const Booking = ({spot_information, user_id}) => {
         }
         const openDay = new Date(selectedDate).toDateString().split(" ")[0];
 
-        if (!spot_information.open_days.includes(openDay)) {
+        if (!spot_information.available_days.includes(openDay)) {
             showSnackbar(`Spot is closed on ${openDay}.`, "warning");
             return false;
         }
@@ -170,7 +170,7 @@ export const Booking = ({spot_information, user_id}) => {
                 order_id: orderData.order_id,
                 handler: function (response) {
                     setPaymentDetails({
-                        name: "ABC Parking Service",
+                        name: spot_information.spot_title,
                         description: `Booking for ${totalSlots} slot(s)`,
                         order_id: response.razorpay_order_id,
                         payment_id: response.razorpay_payment_id,
@@ -209,7 +209,7 @@ export const Booking = ({spot_information, user_id}) => {
 
         doc.setFontSize(12);
         doc.text(`Spot Name: ${spot_information.spot_title}`, 20, 40);
-        doc.text(`Spot Address: ${spot_information.spot_address}`, 20, 50);
+        doc.text(`Spot Address: ${spot_information.address}`, 20, 50);
         doc.text(`Total Slots: ${totalSlots}`, 20, 60);
         doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 70);
         doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 80);
