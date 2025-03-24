@@ -1,22 +1,8 @@
 import { useState } from 'react';
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
-function SearchBar({ setNewMarker, markers, setDistances }) {
+const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
   const [address, setAddress] = useState("");
-
-  const calculateDistance = (origin, destination) => {
-    if (!window.google) return null;
-
-    const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
-    const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
-
-    const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
-      originLatLng,
-      destinationLatLng
-    );
-
-    return (distanceInMeters / 1000).toFixed(2);
-  };
 
   const handleSelect = async (selectedAddress) => {
     setAddress(selectedAddress);
@@ -25,17 +11,17 @@ function SearchBar({ setNewMarker, markers, setDistances }) {
       const results = await geocodeByAddress(selectedAddress);
       const latLng = await getLatLng(results[0]);
 
-      const newSearchMarker = { name: selectedAddress, location: latLng };
-      
-      setNewMarker(newSearchMarker);
+      const newSearchMarker = {
+        name: selectedAddress,
+        location: latLng
+      };
 
-      if (window.google) {
-        const newDistances = {};
-        markers.forEach(marker => {
-          const distance = calculateDistance(latLng, marker.location);
-          newDistances[marker.name] = distance;
-        });
-        setDistances(newDistances);
+      setNewMarker(newSearchMarker);
+      setSelectedMarker(newSearchMarker)
+
+      if (mapRef.current) {
+        mapRef.current.panTo(latLng);
+        mapRef.current.setZoom(15);
       }
     } catch (error) {
       console.error("Error fetching location details: ", error);
@@ -43,12 +29,12 @@ function SearchBar({ setNewMarker, markers, setDistances }) {
   };
 
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <div className="search-bar-container">
       <PlacesAutocomplete value={address} onChange={setAddress} onSelect={handleSelect}>
         {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
           <div>
             <input {...getInputProps({ placeholder: "Enter an address..." })} />
-            <div>
+            <div className="autocomplete-dropdown">
               {loading && <div>Loading...</div>}
               {suggestions.map(suggestion => (
                 <div key={suggestion.placeId} {...getSuggestionItemProps(suggestion)}>
@@ -59,8 +45,8 @@ function SearchBar({ setNewMarker, markers, setDistances }) {
           </div>
         )}
       </PlacesAutocomplete>
-    </div>
+      </div>
   );
 }
 
-export { SearchBar };
+export default  SearchBar ;
