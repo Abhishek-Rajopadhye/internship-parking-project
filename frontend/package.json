@@ -25,6 +25,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-google-maps": "^9.4.5",
+    "react-icons": "^5.5.0",
     "react-places-autocomplete": "^7.3.0",
     "react-router-dom": "^7.3.0"
   },
