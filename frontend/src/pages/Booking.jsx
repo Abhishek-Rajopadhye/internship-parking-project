@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box, Grid, Button, Typography, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, IconButton } from "@mui/material";
@@ -7,7 +8,6 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
-import { useNavigate } from "react-router-dom";
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
     const navigate = useNavigate()
@@ -75,6 +75,12 @@ export const Booking = ({spot_information, user_id}) => {
     const dateTimeToString = (date) => {
         return date.toISOString().replace("T", " ").slice(0, 19);
     };
+
+    useEffect(() => {
+        if (paymentStatus) {
+            navigate("/home");
+        }
+    }, [paymentStatus, navigate]);
 
     const calculateAmount = () => {
         if(paymentStatus) {
@@ -266,6 +272,7 @@ export const Booking = ({spot_information, user_id}) => {
                             </Button>
                         }
                         <Button variant="contained" color="primary" onClick={() => {navigate("/home")}} sx={{ mt: 2 }}>
+
                        GO HOME
                             </Button>
                         </Grid>
