@@ -42,7 +42,7 @@ def check_available_slots(db: Session, spot_id: int, total_slots: int):
     """
     Check if the required number of slots are available for booking.
 
-    Args:
+    Parameters:
         db (Session): SQLAlchemy database session
         spot_id (int): Spot ID
         total_slots (int): Number of slots to book
@@ -95,7 +95,7 @@ async def create_booking(db: Session, booking_data):
     simulate payment verification and store the booking details in the database.
     Add the booking details to the database.
 
-    Args:
+    Parameters:
         db (Session): SQLAlchemy database session
         booking_data (BookingCreate): Booking data
 
