@@ -2,8 +2,9 @@ import { InfoWindow } from '@react-google-maps/api';
 import car from "../assets/Images/parking.svg"
 
 function MarkerInfo({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) {
-  const isExistingMarker = selectedMarker && newMarker && selectedMarker.name !== newMarker.name;
-  console.log({ selectedMarker, newMarker, setSelectedMarker, calculateDistance });
+    const isExistingMarker = selectedMarker && newMarker && selectedMarker.name !== newMarker.name;
+    console.log({ selectedMarker, newMarker, setSelectedMarker, calculateDistance });
+
 
   return (
     <InfoWindow 
