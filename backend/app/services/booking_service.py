@@ -39,6 +39,22 @@ class BookingFailedException(Exception):
 
 #Check slot availability before processing payment
 def check_available_slots(db: Session, spot_id: int, total_slots: int):
+    """
+    Check if the required number of slots are available for booking.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        spot_id (int): Spot ID
+        total_slots (int): Number of slots to book
+
+    Returns:
+        bool: True if slots are available, False otherwise
+
+    Example:
+        check_available_slots(db, 1, 2)
+        checking if 2 slots are available for spot ID 1
+        slots are available, return True otherwise return False
+    """
     try:
         query = text("SELECT * FROM spots WHERE spot_id = :spot_id")
         result = db.execute(query, {"spot_id": spot_id})
@@ -71,6 +87,26 @@ def check_available_slots(db: Session, spot_id: int, total_slots: int):
 
 #Create a new booking
 async def create_booking(db: Session, booking_data):
+    """
+    Create a new booking for the user and add the details to the database.
+    first check if the required number of slots are available for booking.
+    then create a Razorpay order for the payment.
+    stroe the payment info in the database.
+    simulate payment verification and store the booking details in the database.
+    Add the booking details to the database.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        booking_data (BookingCreate): Booking data
+
+    Returns:
+        dict: Booking details
+
+    Example:
+        create_booking(db, booking_data)
+        create a new booking with the given booking data
+        return booking details else raise an exception
+    """
     try:
         print("This is in service model");
         # print("This is service method")
@@ -138,7 +174,6 @@ async def create_booking(db: Session, booking_data):
     except SlotUnavailableException as e:
         db.rollback()
         raise HTTPException(status_code=400, detail="No Slot Available")
-    
     except PaymentFailedException as e:
         db.rollback()
         raise HTTPException(status_code=402, detail=str(e))  # 402 Payment Required

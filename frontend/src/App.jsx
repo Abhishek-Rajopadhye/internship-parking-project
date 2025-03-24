@@ -14,6 +14,22 @@ import { Home } from "./pages/Home";
 import { Auth } from "./pages/Auth";
 
 const AppLayout = () => {
+    const spot = {
+        owner_id: 101,
+        spot_id: 2,
+        hourly_rate: 50,
+        spot_title: "Green Park Charging Spot",
+        address: "A convenient EV charging station located in the heart of the city with fast chargers.",
+        open_time: "08:00 AM",
+        close_time: "20:00 PM",
+        available_days: ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        latitude: 51.5074,
+        longitude: 0.1278,
+        no_of_slots: 5,
+        available_slots: 3,
+        description: "This is a convenient EV charging station located in the heart of the city with fast chargers. The station is open from 08:00 AM to 20:00 PM from Tuesday to Sunday. The hourly rate is $50. There are 5 charging slots available, out of which 3 are currently available. The station is located at Green Park, London.",
+    };
+    
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -90,6 +106,7 @@ const AppLayout = () => {
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/booking" element={<Booking spot_information={spot} user_id={user.id}/>} />
                     <Route path="*" element={<Navigate to="/home" />} />
+                    <Route path="/booking" element={<Booking spot_information = {spot} user_id = {101}/> }/>
                 </Routes>
             </Box>
         </Box>
