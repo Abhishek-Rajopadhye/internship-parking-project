@@ -78,7 +78,7 @@ export const Booking = ({spot_information, user_id}) => {
 
     useEffect(() => {
         if (paymentStatus) {
-            navigate("/home");
+            navigate("/booking");
         }
     }, [paymentStatus, navigate]);
 
@@ -133,6 +133,7 @@ export const Booking = ({spot_information, user_id}) => {
         if(paymentStatus) {
             return;
         }
+        let orderResponse
         try {
             const razorpayLoaded = await loadRazorpay();
             if (!razorpayLoaded) {
@@ -147,7 +148,7 @@ export const Booking = ({spot_information, user_id}) => {
                 showSnackbar("No Slots availables", "error");
                 return;
             }
-            const orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
+            orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
                 user_id: user_id.toString(),
                 spot_id: spot_information.spot_id,
                 total_slots: totalSlots,
@@ -193,9 +194,9 @@ export const Booking = ({spot_information, user_id}) => {
             const rzp1 = new window.Razorpay(options);
             rzp1.open();
         } catch (error) {
-            console.error("Booking failed:", error);
+            console.log("Booking failed:", error);
             if (error.response) {
-                showSnackbar("Booking failed, please try again.", "error");
+                showSnackbar("No Slots Available", "error");
             } else if (error.request) {
                 showSnackbar("No response from server. Please check your connection.", "error");
             } else {
@@ -232,7 +233,7 @@ export const Booking = ({spot_information, user_id}) => {
                 <Box className="form-container">
                 {/* Circular Button to Go Back */}
                     <IconButton
-                        // onClick={() => navigate(-1)}
+                        onClick={() => navigate(-1)}
                         sx={{
                         position: "relative",
                         bottom: '20%',
