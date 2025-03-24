@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
-// import SearchBar from './SearchBar';
 import SearchBar2 from './SearchBar2';
 import MarkerComponent from './MarkerComponent';
 import InfoWindowComponent from './InfoWindowComponent';
