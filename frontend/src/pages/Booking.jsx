@@ -8,13 +8,15 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
+import { useNavigate } from "react-router-dom";
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
+    const navigate = useNavigate()
     const [totalSlots, setTotalSlots] = useState(1);
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
-    const [ratePerHour] = useState(spot_information.charge_per_hour);
+    const [ratePerHour] = useState(spot_information.hourly_rate);
     const [openDialog, setOpenDialog] = useState(false);
     const [openSnackbar, setOpenSnackbar] = useState({ open: false, message: "", severity: "info" });
     const [paymentDetails, setPaymentDetails] = useState(null);
@@ -27,6 +29,45 @@ export const Booking = ({spot_information, user_id}) => {
     const validateDateTime = (selectedDate) => {
         if (!selectedDate || new Date(selectedDate).getTime() <= new Date().getTime()) {
             showSnackbar("Please select a future date and time.", "error");
+            return false;
+        }
+        const openDay = new Date(selectedDate).toDateString().split(" ")[0];
+
+        if (!spot_information.available_days.includes(openDay)) {
+            showSnackbar(`Spot is closed on ${openDay}.`, "warning");
+            return false;
+        }
+
+        const isoString = selectedDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }); // 
+        console.log(isoString);
+        const dateParts = isoString.split(",")[0].split("/");
+        const timeParts = isoString.split(",")[1].trim().split(":");
+        let hours = parseInt(timeParts[0]);
+        const minutes = parseInt(timeParts[1]);
+        const period = timeParts[2].split(" ")[1];
+
+        if (period === "pm" && hours !== 12) hours += 12;
+        if (period === "am" && hours === 12) hours = 0;
+
+        let [openTimeHour, openTimeMin] = spot_information.open_time.split(" ")[0].split(":");
+        let [closeTimeHour, closeTimeMin] = spot_information.close_time.split(" ")[0].split(":");
+        openTimeHour = parseInt(openTimeHour);
+        openTimeMin = parseInt(openTimeMin);
+        closeTimeHour = parseInt(closeTimeHour);
+        closeTimeMin = parseInt(closeTimeMin);
+        
+        if(hours < openTimeHour || hours > closeTimeHour) {
+            showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
+            return false;
+        }
+
+        if(hours === openTimeHour && minutes < openTimeMin) {
+            showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
+            return false;
+        }
+
+        if(hours === closeTimeHour && minutes > closeTimeMin) {
+            showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
             return false;
         }
         return true;
@@ -57,7 +98,7 @@ export const Booking = ({spot_information, user_id}) => {
             showSnackbar("Total Slot should be greater than zero.", "warning");
             return false;
         }
-
+        console.log(startTime, endTime);
         if (!validateDateTime(startTime) || !validateDateTime(endTime)) {
             return false;
         }
@@ -101,7 +142,7 @@ export const Booking = ({spot_information, user_id}) => {
                 showSnackbar("Failed to load Razorpay SDK.", "error");
                 return;
             }
-
+            console.log(startTime)
             const start_time = dateTimeToString(startTime);
             const end_time = dateTimeToString(endTime);
 
@@ -118,11 +159,14 @@ export const Booking = ({spot_information, user_id}) => {
                 end_date_time: end_time,
                 receipt: `booking_${Date.now()}`
             });
-
+            if(orderResponse.status !== 200) {
+                showSnackbar(orderResponse.data.detail, "error");
+                return;
+            }
             const orderData = orderResponse.data;
 
             if (!orderData.order_id) {
-                showSnackbar("Error creating order", "error");
+                showSnackbar(orderResponse.data.detail, "error");
                 return;
             }
 
@@ -135,7 +179,7 @@ export const Booking = ({spot_information, user_id}) => {
                 order_id: orderData.order_id,
                 handler: function (response) {
                     setPaymentDetails({
-                        name: "ABC Parking Service",
+                        name: spot_information.spot_title,
                         description: `Booking for ${totalSlots} slot(s)`,
                         order_id: response.razorpay_order_id,
                         payment_id: response.razorpay_payment_id,
@@ -152,12 +196,21 @@ export const Booking = ({spot_information, user_id}) => {
             const rzp1 = new window.Razorpay(options);
             rzp1.open();
         } catch (error) {
-            showSnackbar("Booking failed!", error);
+            console.error("Booking failed:", error);
+            if (error.response) {
+                showSnackbar("Booking failed, please try again.", "error");
+            } else if (error.request) {
+                showSnackbar("No response from server. Please check your connection.", "error");
+            } else {
+                showSnackbar("An unexpected error occurred.", "error");
+            }
         }
     };
 
     const downloadPDF = () => {
-        if (!paymentDetails) return;
+        if (!paymentDetails) {
+            return;
+        } 
 
         const doc = new jsPDF();
         doc.setFontSize(18);
@@ -165,7 +218,7 @@ export const Booking = ({spot_information, user_id}) => {
 
         doc.setFontSize(12);
         doc.text(`Spot Name: ${spot_information.spot_title}`, 20, 40);
-        doc.text(`Spot Address: ${spot_information.spot_address}`, 20, 50);
+        doc.text(`Spot Address: ${spot_information.address}`, 20, 50);
         doc.text(`Total Slots: ${totalSlots}`, 20, 60);
         doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 70);
         doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 80);
@@ -221,7 +274,8 @@ export const Booking = ({spot_information, user_id}) => {
                         Download Receipt
                             </Button>
                         }
-                        <Button onClick={()=>{navigate("/home")}} variant="contained" color="primary" sx={{ mt: 2 }}>
+                        <Button variant="contained" color="primary" onClick={() => {navigate("/home")}} sx={{ mt: 2 }}>
+
                        GO HOME
                             </Button>
                         </Grid>

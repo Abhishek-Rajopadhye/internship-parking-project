@@ -5,12 +5,14 @@ html, body {
 }
 
 .form-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  width: 50vw; /* Ensure it takes full viewport width */
-  background: #f5f5f5;
+
+  height: 100vh;
+  width: 50vw;
+  background: white;
 }
 
 .form-box {

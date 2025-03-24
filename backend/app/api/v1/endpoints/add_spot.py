@@ -1,30 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session #interact with database
 from app.db.session import get_db
-from app.services.booking_service import create_booking
-from app.schemas.booking import BookingCreate
+from app.services.add_spot_service import add_spot
+from app.schemas.add_spot import AddSpot
 
 router = APIRouter()
 
-@router.post("/book-spot")
-async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):
+@router.post("/add-spot")
+def add_spot_route(spot_data: AddSpot, db: Session = Depends(get_db)):
     """
-    Book a parking spot for the user.
+    Add a parking spot for the user.
 
-    Parameters:
-        booking_data (BookingCreate): Booking data
+    Args:
+        spot_data (AddSpot): Spot data
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
         dict: Response message otherwise raise appropriate HTTPException and return the error message
 
     Example:
-        book_spot(booking_data)
-        booking a parking spot for the user
-        return the booking details
+        add_spot_route(spot_data)
+        add a parking spot for the user
+        return the spot details
     """
     try:
-        response = await create_booking(db, booking_data)
+        response = add_spot(spot_data, db)
         print(response)
         if "error" in response:
             raise HTTPException(status_code=400, detail=response["detail"])
