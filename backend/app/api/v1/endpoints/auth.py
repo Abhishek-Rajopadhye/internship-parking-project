@@ -23,18 +23,24 @@ async def login(provider: str):
 
     Raises:
         HTTPException:
-             400: If the provider is invalid
+            400: If the provider is invalid
+            500: If an internal server error occurs
     """
-    if provider not in ["google", "github"]:
-        raise HTTPException(status_code=400, detail="Invalid provider")
+    try:
+        if provider not in ["google", "github"]:
+            raise HTTPException(status_code=400, detail="Invalid provider")
 
-    config = settings.dict()
-    auth_url = (
-        f"{config[f'{provider.upper()}_AUTH_URL']}?client_id={config[f'{provider.upper()}_CLIENT_ID']}"
-        f"&redirect_uri={config[f'{provider.upper()}_REDIRECT_URI']}&response_type=code&scope=openid email profile"
-    )
+        config = settings.model_dump()
+        auth_url = (
+            f"{config[f'{provider.upper()}_AUTH_URL']}?client_id={config[f'{provider.upper()}_CLIENT_ID']}"
+            f"&redirect_uri={config[f'{provider.upper()}_REDIRECT_URI']}&response_type=code&scope=openid email profile"
+        )
 
-    return RedirectResponse(auth_url)
+        return RedirectResponse(auth_url)
+    except HTTPException as http_error:
+        raise http_error
+    except Exception as general_error:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(general_error)}")
 
 @router.get("/{provider}/callback")
 async def callback(provider: str, request: Request, db: Session = Depends(get_db)):
@@ -53,7 +59,7 @@ async def callback(provider: str, request: Request, db: Session = Depends(get_db
         HTTPException:
             401: If the authorization code is not provided
             400: If the access token cannot be obtained
-            500: Any other error occurs during the process
+            500: If an internal server error occurs
     """
     code = request.query_params.get("code")
     if not code:

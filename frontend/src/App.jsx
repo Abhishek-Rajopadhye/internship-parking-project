@@ -48,14 +48,6 @@ const AppLayout = () => {
     const handleDrawerToggle = () => {
         setIsDrawerOpen(!isDrawerOpen);
     };
-    const spot = {
-        spot_id: 2,
-        charge_per_hour: 50,
-        spot_title: "Green Park Charging Spot",
-        spot_address: "A convenient EV charging station located in the heart of the city with fast chargers.",
-        open_time: "08:00 AM",
-        close_time: "10:00 PM"
-    };
     if (!user) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>

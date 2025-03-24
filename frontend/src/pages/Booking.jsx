@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
@@ -8,7 +9,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
-import { useNavigate } from "react-router-dom";
+
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
     const navigate = useNavigate()
@@ -77,11 +78,9 @@ export const Booking = ({spot_information, user_id}) => {
         return date.toISOString().replace("T", " ").slice(0, 19);
     };
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         if (paymentStatus) {
-            navigate("/home");
+            navigate("/booking");
         }
     }, [paymentStatus, navigate]);
 
@@ -136,6 +135,7 @@ export const Booking = ({spot_information, user_id}) => {
         if(paymentStatus) {
             return;
         }
+        let orderResponse
         try {
             const razorpayLoaded = await loadRazorpay();
             if (!razorpayLoaded) {
@@ -150,7 +150,7 @@ export const Booking = ({spot_information, user_id}) => {
                 showSnackbar("No Slots availables", "error");
                 return;
             }
-            const orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
+            orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
                 user_id: user_id.toString(),
                 spot_id: spot_information.spot_id,
                 total_slots: totalSlots,
@@ -196,9 +196,9 @@ export const Booking = ({spot_information, user_id}) => {
             const rzp1 = new window.Razorpay(options);
             rzp1.open();
         } catch (error) {
-            console.error("Booking failed:", error);
+            console.log("Booking failed:", error);
             if (error.response) {
-                showSnackbar("Booking failed, please try again.", "error");
+                showSnackbar("No Slots Available", "error");
             } else if (error.request) {
                 showSnackbar("No response from server. Please check your connection.", "error");
             } else {
@@ -235,11 +235,11 @@ export const Booking = ({spot_information, user_id}) => {
                 <Box className="form-container">
                 {/* Circular Button to Go Back */}
                     <IconButton
-                        // onClick={() => navigate(-1)}
+                        onClick={() => navigate(-1)}
                         sx={{
                         position: "relative",
-                        top: -200,
-                        left: -10,
+                        bottom: '20%',
+                        right: '5%',
                         backgroundColor: "white",
                         border: "1px solid gray",
                         "&:hover": { backgroundColor: "lightgray" }
