@@ -1,5 +1,5 @@
 // Home.jsx
-import { Map } from "../components/Map";
+import Map from "../components/MapContainer";
 
 function Home(){
     return (
