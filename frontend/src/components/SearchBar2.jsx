@@ -1,12 +1,10 @@
 
 import { StandaloneSearchBox } from "@react-google-maps/api";
 import { useRef, useState } from "react";
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
+import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 import { FaTimes, FaFilter, FaRupeeSign } from 'react-icons/fa';
 import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineDateRange } from "react-icons/md";
-
-
 
 const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
     const searchBoxRef = useRef(null);
@@ -47,7 +45,6 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
     const handleFilter = () => {
         setShowFilter(prev => !prev)
     }
-
 
     return (
         <div style={{ marginBottom: '20px', textAlign: 'center', position: 'relative', display: 'inline-block' }}>
@@ -144,7 +141,7 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
                             borderRadius: '4px',
                             cursor: 'pointer'
                         }}
-                        onClick={() => setShowFilters(false)}
+                        onClick={() => setShowFilter(false)}
                     >
                         Apply Filters
                     </button>
