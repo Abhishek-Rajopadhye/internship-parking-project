@@ -228,9 +228,9 @@ export const Booking = ({spot_information, user_id}) => {
                     <IconButton
                         // onClick={() => navigate(-1)}
                         sx={{
-                        position: "absolute",
-                        top: 10,
-                        left: 10,
+                        position: "relative",
+                        bottom: '20%',
+                        right: '5%',
                         backgroundColor: "white",
                         border: "1px solid gray",
                         "&:hover": { backgroundColor: "lightgray" }

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session #interact with database
 from app.db.session import get_db
-from app.services.add_spot_service import add_spot
-from app.schemas.add_spot import AddSpot
+from backend.app.services.spot_service import add_spot
+from backend.app.schemas.spot import AddSpot
 
 router = APIRouter()
 
