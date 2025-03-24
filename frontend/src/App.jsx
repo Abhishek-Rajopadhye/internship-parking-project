@@ -32,7 +32,14 @@ const AppLayout = () => {
     const handleDrawerToggle = () => {
         setIsDrawerOpen(!isDrawerOpen);
     };
-
+    const spot = {
+        spot_id: 2,
+        charge_per_hour: 50,
+        spot_title: "Green Park Charging Spot",
+        spot_address: "A convenient EV charging station located in the heart of the city with fast chargers.",
+        open_time: "08:00 AM",
+        close_time: "10:00 PM"
+    };
     if (!user) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -81,6 +88,7 @@ const AppLayout = () => {
                     <Route path="/my-spots" element={<MySpots />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/auth" element={<Auth />} />
+                    <Route path="/booking" element={<Booking spot_information={spot} user_id={user.id}/>} />
                     <Route path="*" element={<Navigate to="/home" />} />
                 </Routes>
             </Box>
@@ -95,7 +103,6 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/*" element={<AppLayout />} />
-                    <Route path="/booking" element={<Booking />} />
                 </Routes>
             </Router>
         </AuthProvider>
