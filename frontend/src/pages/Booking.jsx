@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Box, Grid, Button, Typography, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, IconButton } from "@mui/material";
@@ -75,6 +76,14 @@ export const Booking = ({spot_information, user_id}) => {
     const dateTimeToString = (date) => {
         return date.toISOString().replace("T", " ").slice(0, 19);
     };
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (paymentStatus) {
+            navigate("/home");
+        }
+    }, [paymentStatus, navigate]);
 
     const calculateAmount = () => {
         if(paymentStatus) {
@@ -228,9 +237,9 @@ export const Booking = ({spot_information, user_id}) => {
                     <IconButton
                         // onClick={() => navigate(-1)}
                         sx={{
-                        position: "absolute",
-                        top: 10,
-                        left: 10,
+                        position: "relative",
+                        top: -200,
+                        left: -10,
                         backgroundColor: "white",
                         border: "1px solid gray",
                         "&:hover": { backgroundColor: "lightgray" }
@@ -266,6 +275,7 @@ export const Booking = ({spot_information, user_id}) => {
                             </Button>
                         }
                         <Button variant="contained" color="primary" onClick={() => {navigate("/home")}} sx={{ mt: 2 }}>
+
                        GO HOME
                             </Button>
                         </Grid>
