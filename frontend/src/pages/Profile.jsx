@@ -57,7 +57,7 @@ const Profile = () => {
     if (!user) return <Typography variant="h5">Loading profile...</Typography>;
 
     return (
-        <Container maxWidth="sm" style={{ textAlign: "center", marginTop: "50px" }}>
+        <Container style={{ textAlign: "center", marginTop: "50px" }} maxWidth="lg">
             <Avatar 
                 src={user.profile_picture} 
                 alt={user.name} 

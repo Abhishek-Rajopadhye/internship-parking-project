@@ -1,6 +1,6 @@
 // BookingHistory.jsx
 import { useState } from "react";
-import { Typography, Tabs, Tab } from "@mui/material";
+import { Typography, Tabs, Tab, Box } from "@mui/material";
 import { OwnerBookingView } from "../components/OwnerBookingView";
 import { UserBookingView } from "../components/UserBookingView";
 
@@ -9,8 +9,7 @@ const BookingHistory = () => {
 
     return (
         <>
-            <Typography variant="h5">My Booking History</Typography>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Box sx={{ position:"relative", top:0, borderBottom: 1, borderColor: 'divider' }} variant="fullWidth">
                 <Tabs centered variant="fullWidth" value={bookingHistoryToggle} onChange={()=>{
                     if(bookingHistoryToggle === 0){
                         setBookingHistoryToggle(1);

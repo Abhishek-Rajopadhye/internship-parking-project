@@ -1,10 +1,8 @@
 from typing import List
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.endpoints import auth, user, booking ,parking
-from app.db.session import Base
-from app.db.session import engine
-from backend.app.api.v1.endpoints import spot
+from app.api.v1.endpoints import auth, user, booking, parking
+from app.api.v1.endpoints import spot
 
 app = fastapi.FastAPI(title="Smart Parking")
 
@@ -22,8 +20,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-Base.metadata.create_all(bind=engine)
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user.router, prefix="/users", tags=["Users"])

@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
-import { Box, CircularProgress, Drawer, IconButton } from "@mui/material";
+import { useContext, useEffect, useState, useRef } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Box, CircularProgress, Drawer, IconButton, AppBar, Toolbar, Typography, Container } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { AuthProvider, AuthContext } from "./context/AuthContext";
@@ -11,6 +11,7 @@ import { Booking } from "./pages/Booking";
 import { BookingHistory } from "./pages/BookingHistory";
 import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
+import SearchBar from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
 
 const AppLayout = () => {
@@ -32,7 +33,12 @@ const AppLayout = () => {
     
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [selectedMarker, setSelectedMarker] = useState(null);
+    const [newMarker, setNewMarker] = useState(null);
+    const [markers, setMarkers] = useState([])
+    const mapRef = useRef(null);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -49,6 +55,26 @@ const AppLayout = () => {
         setIsDrawerOpen(!isDrawerOpen);
     };
 
+    const getPageTitle = () => {
+        switch (location.pathname) {
+            case "/profile":
+                return "Profile";
+            case "/booking-history":
+                return "Booking History";
+            case "/my-spots":
+                return "My Spots";
+            case "/home":
+                return "Home";
+            case "/auth":
+                return "Auth";
+            case "/booking":
+                return "Booking";
+            default:
+                return "Home";
+        }
+    };
+
+
     if (!user) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
@@ -58,18 +84,28 @@ const AppLayout = () => {
     }
 
     return (
-        <Box sx={{ display: "flex" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
-                    onClick={handleDrawerToggle}
-                    sx={{ margin: 1 }}
-                >
-                    <MenuIcon />
-                </IconButton>
-            </Box>
+        <Box sx={{ display: "flex", width: "100%" }}>
+            <AppBar position="fixed">
+                <Toolbar>
+                    <IconButton
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        onClick={handleDrawerToggle}
+                        sx={{ marginRight: 2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                    <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
+                        {getPageTitle()}
+                    </Typography>
+                    {getPageTitle() === "Home" && (
+                        <Box sx={{ flexShrink: 0 }}>
+                            <SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
+                        </Box>
+                    )}
+                </Toolbar>
+            </AppBar>
             <Drawer
                 variant="persistent"
                 anchor="left"
@@ -90,16 +126,15 @@ const AppLayout = () => {
                 </Box>
                 <NavBar user={user} logout={logout} />
             </Drawer>
-            <Box sx={{ flexGrow: 1, p: 3 }}>
+            <Box sx={{ flexGrow: 1, p: 3, marginTop: '64px', alignItems: "center", justifyItems: "center" }} variant="main">
                 <Routes>
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/booking-history" element={<BookingHistory />} />
                     <Route path="/my-spots" element={<MySpots />} />
-                    <Route path="/home" element={<Home />} />
+                    <Route path="/home" element={<Home selectedMarker={selectedMarker} setSelectedMarker={setSelectedMarker} newMarker={newMarker} setNewMarker={setNewMarker} markers={markers} setMarkers={setMarkers} mapRef={mapRef} />} />
                     <Route path="/auth" element={<Auth />} />
-                    <Route path="/booking" element={<Booking spot_information={spot} user_id={user.id}/>} />
+                    <Route path="/booking" element={<Booking spot_information={spot} user_id={user.id} />} />
                     <Route path="*" element={<Navigate to="/home" />} />
-                    <Route path="/booking" element={<Booking spot_information = {spot} user_id = {101}/> }/>
                 </Routes>
             </Box>
         </Box>
