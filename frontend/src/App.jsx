@@ -48,6 +48,7 @@ const AppLayout = () => {
     const handleDrawerToggle = () => {
         setIsDrawerOpen(!isDrawerOpen);
     };
+
     if (!user) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>

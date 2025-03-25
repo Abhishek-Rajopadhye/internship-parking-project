@@ -5,6 +5,10 @@ import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-au
 import { FaTimes, FaFilter, FaRupeeSign } from 'react-icons/fa';
 import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineDateRange } from "react-icons/md";
+import * as React from 'react';
+
+ 
+
 
 
 
@@ -34,7 +38,8 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
 
         if (mapRef.current) {
             mapRef.current.panTo(latLng);
-            mapRef.current.setZoom(15);
+            mapRef.current.setZoom(14);
+            mapRef.current.center(latLng);
         }
     };
 
@@ -55,46 +60,48 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
                 onLoad={(ref) => (searchBoxRef.current = ref)}
                 onPlacesChanged={onPlacesChanged}
             >
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <input
-                        type="text"
-                        placeholder="enter text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        style={{
-                            width: '300px',
-                            height: '40px',
-                            padding: '8px',
-                            borderRadius: '8px',
-                            border: '1px solid #ccc',
-                            backgroundColor: '#fff',
-                            color: '#000',
-                        }}
-
-                    />
-                    {address && (
-                        <FaTimes
-                            onClick={clearInput}
-                            style={{
-                                position: 'absolute',
-                                right: '40px',
-                                cursor: 'pointer',
-                                color: '#888',
-                            }}
-                        />
-
-
-                    )}
-                    <FaFilter
-                        onClick={handleFilter}
-                        style={{
-                            position: 'absolute',
-                            right: '10px',
-                            cursor: 'pointer',
-                            color: '#888',
-                        }}
-                    />
-                </div>
+               <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+  <input
+    type="text"
+    placeholder="Enter text"
+    value={address}
+    onChange={(e) => setAddress(e.target.value)}
+    style={{
+      width: '300px',
+      height: '40px',
+      padding: '8px 40px 8px 12px', // Adjusted padding for icons
+      borderRadius: '8px',
+      border: '1px solid #ccc',
+      backgroundColor: '#fff',
+      color: '#333', // Darker text color for better readability
+      fontSize: '16px', // Slightly larger font size
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+      outline: 'none', // Remove default outline on focus
+    }}
+  />
+  {address && (
+    <FaTimes
+      onClick={clearInput}
+      style={{
+        position: 'absolute',
+        right: '40px',
+        cursor: 'pointer',
+        color: '#888',
+        fontSize: '18px', // Slightly larger icon
+      }}
+    />
+  )}
+  <FaFilter
+    onClick={handleFilter}
+    style={{
+      position: 'absolute',
+      right: '10px',
+      cursor: 'pointer',
+      color: '#888',
+      fontSize: '18px', // Slightly larger icon
+    }}
+  />
+</div>
             </StandaloneSearchBox>
 
             {showFilter && (
