@@ -1,6 +1,6 @@
 // BookingHistory.jsx
 import { useState } from "react";
-import { Typography, Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box } from "@mui/material";
 import { OwnerBookingView } from "../components/OwnerBookingView";
 import { UserBookingView } from "../components/UserBookingView";
 
