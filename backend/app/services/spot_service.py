@@ -1,13 +1,13 @@
-from backend.app.schemas.spot import AddSpot
+from app.schemas.spot import AddSpot
 from sqlalchemy.orm import Session
-from backend.app.db.spot_model import Spot
+from app.db.spot_model import Spot
 from fastapi import HTTPException
 
 def add_spot(spot: AddSpot, db: Session):
     """
     Add a parking spot for the user.
 
-    Args:
+    Parameters:
         spot_data (AddSpot): Spot data
         db (Session): SQLAlchemy database session
 

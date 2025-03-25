@@ -85,7 +85,7 @@ def check_available_slots(db: Session, spot_id: int, total_slots: int):
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-#Create a new booking
+
 async def create_booking(db: Session, booking_data):
     """
     Create a new booking for the user and add the details to the database.

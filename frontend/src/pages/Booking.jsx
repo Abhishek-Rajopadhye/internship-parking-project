@@ -8,6 +8,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
+import { set } from "date-fns";
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
     const navigate = useNavigate()
@@ -20,12 +21,14 @@ export const Booking = ({spot_information, user_id}) => {
     const [openSnackbar, setOpenSnackbar] = useState({ open: false, message: "", severity: "info" });
     const [paymentDetails, setPaymentDetails] = useState(null);
     const [paymentStatus, setPaymentStatus] = useState(false);
-
+    const[indianStartTime, setIndianStartTime] = useState(null);
+    const[indianEndTime, setIndianEndTime] = useState(null);
+    const [open, setOpen] = useState(false);
     const showSnackbar = (message, severity = "info") => {
         setOpenSnackbar({ open: true, message, severity });
     };
 
-    const validateDateTime = (selectedDate) => {
+    const validateDateTime = (selectedDate, msg) => {
         if (!selectedDate || new Date(selectedDate).getTime() <= new Date().getTime()) {
             showSnackbar("Please select a future date and time.", "error");
             return false;
@@ -69,6 +72,14 @@ export const Booking = ({spot_information, user_id}) => {
             showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
             return false;
         }
+        if(msg == "start") {
+            console.log("Start", isoString);
+            setIndianStartTime(isoString);
+            // setOpen(true);
+        } else {
+            console.log("End", isoString);
+            setIndianEndTime(isoString);
+        }
         return true;
     };
 
@@ -96,7 +107,7 @@ export const Booking = ({spot_information, user_id}) => {
             return false;
         }
         console.log(startTime, endTime);
-        if (!validateDateTime(startTime) || !validateDateTime(endTime)) {
+        if (!validateDateTime(startTime, "start") || !validateDateTime(endTime, "end")) {
             return false;
         }
 
@@ -128,7 +139,10 @@ export const Booking = ({spot_information, user_id}) => {
             document.body.appendChild(script);
         });
     };
-
+    /**
+     * 
+     * @returns 
+     */
     const processPayment = async () => {
         if(paymentStatus) {
             return;
@@ -153,8 +167,8 @@ export const Booking = ({spot_information, user_id}) => {
                 spot_id: spot_information.spot_id,
                 total_slots: totalSlots,
                 total_amount: totalAmount,
-                start_date_time: start_time,
-                end_date_time: end_time,
+                start_date_time: indianStartTime,
+                end_date_time: indianEndTime,
                 receipt: `booking_${Date.now()}`
             });
             if(orderResponse.status !== 200) {
@@ -221,8 +235,8 @@ export const Booking = ({spot_information, user_id}) => {
         doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 70);
         doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 80);
         doc.text(`Total Amount: ₹${paymentDetails.amount}`, 20, 90);
-        doc.text(`Start Time: ${paymentDetails.start_time}`, 20, 100);
-        doc.text(`End Time: ${paymentDetails.end_time}`, 20, 110);
+        doc.text(`Start Time: ${indianStartTime}`, 20, 100);
+        doc.text(`End Time: ${indianEndTime}`, 20, 110);
         
         doc.save("booking_receipt.pdf");
     };

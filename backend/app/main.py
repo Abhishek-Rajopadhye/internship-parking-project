@@ -1,10 +1,10 @@
 from typing import List
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.endpoints import auth, user, booking
+from app.api.v1.endpoints import auth, user, booking, spot
 from app.db.session import Base
 from app.db.session import engine
-from backend.app.api.v1.endpoints import spot
+
 
 app = fastapi.FastAPI(title="Smart Parking")
 
