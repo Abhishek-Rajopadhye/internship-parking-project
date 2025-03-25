@@ -13,7 +13,7 @@ const UserBookingView = () => {
         // Fetch user bookings from the API
         const fetchBookings = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/v1/bookings/user/${user.id}`);
+                const response = await axios.get(`http://localhost:8000/bookings/user/${user.id}`);
                 setBookings(response.data);
             } catch (error) {
                 console.error('Error fetching bookings:', error);

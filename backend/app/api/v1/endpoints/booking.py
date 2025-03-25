@@ -17,7 +17,7 @@ async def get_booking(db: Session = Depends(get_db)):
     Returns:
         List[Booking]: List of all bookings
     """
-    return get_bookings(db)
+    return await get_bookings(db)
 
 @router.get("/user/{user_id}")
 async def get_booking_by_user_id(user_id: int, db: Session = Depends(get_db)):
@@ -31,7 +31,7 @@ async def get_booking_by_user_id(user_id: int, db: Session = Depends(get_db)):
     Returns:
         List[Booking]: List of bookings for the specified user
     """
-    return get_booking_by_user(db, user_id)
+    return await get_booking_by_user(db, user_id)
 
 @router.get("/owner/{user_id}")
 async def get_booking_of_spots_of_owner(user_id: int, db: Session = Depends(get_db)):
@@ -45,7 +45,7 @@ async def get_booking_of_spots_of_owner(user_id: int, db: Session = Depends(get_
     Returns:
         List[Booking]: List of bookings for the specified user
     """
-    return get_bookings_of_spots_of_owner(db, user_id)
+    return await get_bookings_of_spots_of_owner(db, user_id)
 
 @router.get("/spot/{spot_id}")
 async def get_booking_by_spot_id(spot_id: int, db: Session = Depends(get_db)):
@@ -59,7 +59,7 @@ async def get_booking_by_spot_id(spot_id: int, db: Session = Depends(get_db)):
     Returns:
         List[Booking]: List of bookings for the specified spot
     """
-    return get_booking_by_spot(db, spot_id)
+    return await get_booking_by_spot(db, spot_id)
 
 @router.post("/book-spot")
 async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):

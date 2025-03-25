@@ -1,16 +1,57 @@
-
 import { StandaloneSearchBox } from "@react-google-maps/api";
 import { useRef, useState } from "react";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
-import { FaTimes, FaFilter, FaRupeeSign } from 'react-icons/fa';
 import { GiPathDistance } from "react-icons/gi";
 import { MdOutlineDateRange } from "react-icons/md";
+import { Container, Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Button, Box } from "@mui/material";
+import { styled, alpha } from '@mui/material/styles';
+import InputBase from '@mui/material/InputBase';
+import { FilterAlt as FilterAltIcon, Clear as ClearIcon, CurrencyRupee as CurrencyRupeeIcon, Search as SearchIcon } from '@mui/icons-material';
+
+const Search = styled('div')(({ theme }) => ({
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    '&:hover': {
+        backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+        marginLeft: theme.spacing(3),
+        width: 'auto',
+    },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: 'inherit',
+    '& .MuiInputBase-input': {
+        padding: theme.spacing(1, 1, 1, 0),
+        // vertical padding + font size from searchIcon
+        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+        transition: theme.transitions.create('width'),
+        width: '100%',
+        [theme.breakpoints.up('md')]: {
+            width: '20ch',
+        },
+    },
+}));
 
 const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
     const searchBoxRef = useRef(null);
     const [address, setAddress] = useState("");
     const [showFilter, setShowFilter] = useState(false);
-
 
     const onPlacesChanged = async () => {
         const places = searchBoxRef.current.getPlaces();
@@ -42,113 +83,59 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
         setNewMarker(null);
         setSelectedMarker(null);
     }
+
     const handleFilter = () => {
         setShowFilter(prev => !prev)
     }
 
     return (
-        <div style={{ marginBottom: '20px', textAlign: 'center', position: 'relative', display: 'inline-block' }}>
+        <Container sx={{ position: 'relative', zIndex: 1200 }}>
             <StandaloneSearchBox
                 onLoad={(ref) => (searchBoxRef.current = ref)}
                 onPlacesChanged={onPlacesChanged}
             >
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <input
-                        type="text"
-                        placeholder="enter text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        style={{
-                            width: '300px',
-                            height: '40px',
-                            padding: '8px',
-                            borderRadius: '8px',
-                            border: '1px solid #ccc',
-                            backgroundColor: '#fff',
-                            color: '#000',
-                        }}
-
-                    />
-                    {address && (
-                        <FaTimes
-                            onClick={clearInput}
-                            style={{
-                                position: 'absolute',
-                                right: '40px',
-                                cursor: 'pointer',
-                                color: '#888',
-                            }}
+                <Box sx={{ display: 'flex', alignItems: 'center', borderRadius: 2 }}>
+                    <Search value={address} onChange={(e) => setAddress(e.target.value)}>
+                        <SearchIconWrapper>
+                            <SearchIcon />
+                        </SearchIconWrapper>
+                        <StyledInputBase
+                            placeholder="Enter text"
+                            inputProps={{ 'aria-label': 'search' }}
                         />
-
-
+                    </Search>
+                    {address && (
+                        <IconButton onClick={clearInput}>
+                            <ClearIcon />
+                        </IconButton>
                     )}
-                    <FaFilter
-                        onClick={handleFilter}
-                        style={{
-                            position: 'absolute',
-                            right: '10px',
-                            cursor: 'pointer',
-                            color: '#888',
-                        }}
-                    />
-                </div>
+                    <IconButton onClick={handleFilter}>
+                        <FilterAltIcon />
+                    </IconButton>
+                </Box>
             </StandaloneSearchBox>
 
-            {showFilter && (
-                <div style={{
-                    position: 'absolute',
-                    top: '45px',
-                    right: '0',
-                    width: '50%',
-                    backgroundColor: 'white',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '10px',
-                    zIndex: 999,
-                }}>
-
-                    <FaRupeeSign
-                        style={{
-                            position: 'absolute',
-                            left: '10px',
-                            color: 'black',
-                        }}
-
-
-                    />
-                    <br></br>
-                    <GiPathDistance
+            <Dialog open={showFilter} onClose={handleFilter}>
+                <DialogTitle>Filter Options</DialogTitle>
+                <DialogContent>
+                    <CurrencyRupeeIcon
                         style={{
                             position: 'absolute',
                             left: '10px',
                             color: 'black',
                         }}
                     />
-                    <br></br>
-                    <MdOutlineDateRange style={{
-                        position: 'absolute',
-                        left: '10px',
-                        color: 'black',
-                    }} />
                     <br />
-                    <button
-                        style={{
-                            marginTop: '10px',
-                            padding: '5px 10px',
-                            backgroundColor: '#4CAF50',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                        onClick={() => setShowFilter(false)}
-                    >
-                        Apply Filters
-                    </button>
-                </div>
-            )}
-        </div>
+                    <GiPathDistance />
+                    <br />
+                    <MdOutlineDateRange />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleFilter}>Apply Filters</Button>
+                </DialogActions>
+            </Dialog>
+        </Container>
     );
 }
 
-export default SearchBar
+export default SearchBar;

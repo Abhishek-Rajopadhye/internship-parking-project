@@ -12,7 +12,7 @@ const OwnerBookingView = () => {
         // Fetch bookings for all spots owned by the user from the API
         const fetchBookings = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/api/v1/bookings/owner/${user.id}`);
+                const response = await axios.get(`http://localhost:8000/bookings/owner/${user.id}`);
                 setBookings(response.data);
             } catch (error) {
                 console.error('Error fetching bookings:', error);
