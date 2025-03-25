@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Autocomplete, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
-import { Clear as ClearIcon, Search as SearchIcon, FilterAlt as FilterAltIcon } from "@mui/icons-material";
+import { Search as SearchIcon, FilterAlt as FilterAltIcon } from "@mui/icons-material";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
 const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
@@ -63,7 +63,8 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
                             width: isFocused ? '300px' : '200px',
                             backgroundColor: isFocused ? 'white' : 'transparent',
                             transition: 'width 0.3s ease, background-color 0.3s ease',
-                            borderRadius: '4px'
+                            borderRadius: '8px',
+                            input: { color: isFocused ? 'black' : 'white' }
                         }}
                     />
                 )}
