@@ -73,7 +73,8 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
 
         if (mapRef.current) {
             mapRef.current.panTo(latLng);
-            mapRef.current.setZoom(15);
+            mapRef.current.setZoom(14);
+            mapRef.current.center(latLng);
         }
     };
 
@@ -94,7 +95,8 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
                 onLoad={(ref) => (searchBoxRef.current = ref)}
                 onPlacesChanged={onPlacesChanged}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center', borderRadius: 2 }}>
+                
+               <Box sx={{ display: 'flex', alignItems: 'center', borderRadius: 2 }}>
                     <Search value={address} onChange={(e) => setAddress(e.target.value)}>
                         <SearchIconWrapper>
                             <SearchIcon />

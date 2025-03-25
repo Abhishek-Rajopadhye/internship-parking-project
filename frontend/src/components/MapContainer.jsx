@@ -3,6 +3,8 @@ import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
 import MarkerComponent from './MarkerComponent';
 import InfoWindowComponent from './InfoWindowComponent';
+import Button from '@mui/material/Button';
+import { IoLocationSharp } from "react-icons/io5";
 
 function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef}) {
     const { isLoaded } = useJsApiLoader({
@@ -20,7 +22,7 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
         position: "fixed",
         top:50,
         left:-300
-    };
+  };
 
     const center = {
         lat: 18.519584,
@@ -75,23 +77,53 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
                         zoom={10}
                         onLoad={map => (mapRef.current = map)}
                     >
-                        {markers.map(marker => (
-                            <MarkerComponent
-                            key={marker.spot_id || marker.location}
-                                marker={marker}
-                                setSelectedMarker={setSelectedMarker}
-                            />
-                        ))}
-                        {selectedMarker && (
-                            <InfoWindowComponent
-                                selectedMarker={selectedMarker}
-                                newMarker={newMarker}
-                                setSelectedMarker={setSelectedMarker}
-                                calculateDistance={calculateDistance}
-                            />
-                        )}
-                    </GoogleMap>
-                </>
+                        {markers.map((marker, index) => (
+              <MarkerComponent
+                key={index}
+                marker={marker}
+                setSelectedMarker={setSelectedMarker}
+              />
+            ))}
+
+            {
+              newMarker && <MarkerComponent
+                marker={newMarker}
+                setSelectedMarker={setSelectedMarker}
+                isSearchMarker={true}
+              />
+            }
+
+            {selectedMarker && (
+              <InfoWindowComponent
+                selectedMarker={selectedMarker}
+                newMarker={newMarker}
+                setSelectedMarker={setSelectedMarker}
+                calculateDistance={calculateDistance}
+              />
+            )}
+          </GoogleMap>
+          <div style={{
+            display: 'flex',
+            position: 'fixed',
+            bottom: '8%',
+            left: '10%',
+            // transform: 'translateX(-50%)',
+            // zIndex: 10,
+            alignContent: center,
+          }}>
+
+            <Button variant="contained" disableElevation>
+              <IoLocationSharp size={20} />
+              <span
+                style={{
+                  marginLeft: "10px",
+                  paddingTop: "5px",
+                  paddingBottom: "4px"
+                }}>Add Parking Spot</span>
+            </Button>
+          </div>
+
+        </>
             )}
         </div>
     );
