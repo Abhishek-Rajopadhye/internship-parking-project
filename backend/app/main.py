@@ -1,7 +1,7 @@
 from typing import List
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.endpoints import auth, user, booking, add_spot
+from app.api.v1.endpoints import auth, user, booking, add_spot ,parking
 from app.db.session import Base
 from app.db.session import engine
 
@@ -28,6 +28,7 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(user.router, prefix="/users", tags=["Users"])
 app.include_router(booking.router, prefix="/bookings", tags=["Bookings"])
 app.include_router(add_spot.router, prefix="/spots", tags=["Spots"])
+app.include_router(parking.router,prefix="/spotdetails")
 
 
 @app.get("/getparkingspot", response_model=List[dict])
