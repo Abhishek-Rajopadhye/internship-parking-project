@@ -1,8 +1,10 @@
 import razorpay
+import numpy as np
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.booking_model import Booking
 from app.db.payment_model import Payment
+from app.db.spot_model import Spot  # Import Spot model
 from fastapi import HTTPException
 from sqlalchemy import text
 
@@ -12,7 +14,7 @@ RAZORPAY_KEY_SECRET = settings.RAZORPAY_KEY_SECRET
 
 razorpay_client = razorpay.Client(auth=(RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET))
 
-#Custom Exceptions
+# Custom Exceptions
 class SlotUnavailableException(Exception):
     """Raised when no slots are available for booking."""
     
@@ -37,7 +39,7 @@ class BookingFailedException(Exception):
         super().__init__(self.message)
 
 
-#Check slot availability before processing payment
+# Check slot availability before processing payment
 def check_available_slots(db: Session, spot_id: int, total_slots: int):
     """
     Check if the required number of slots are available for booking.
@@ -73,25 +75,24 @@ def check_available_slots(db: Session, spot_id: int, total_slots: int):
             db.commit()
             return True
         else:
-            # raise SlotUnavailableException("No slots available.")
             return False
     
-    except SlotUnavailableException as e:
+    except SlotUnavailableException as slot_error:
         db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(slot_error))
     
-    except Exception as e:
+    except Exception as db_error:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
 
 
-#Create a new booking
+# Create a new booking
 async def create_booking(db: Session, booking_data):
     """
     Create a new booking for the user and add the details to the database.
     first check if the required number of slots are available for booking.
     then create a Razorpay order for the payment.
-    stroe the payment info in the database.
+    store the payment info in the database.
     simulate payment verification and store the booking details in the database.
     Add the booking details to the database.
 
@@ -109,14 +110,12 @@ async def create_booking(db: Session, booking_data):
     """
     try:
         print("This is in service model");
-        # print("This is service method")
         # Step 1: Check slot availability
         if not check_available_slots(db, booking_data.spot_id, booking_data.total_slots):
             raise SlotUnavailableException()
 
         # Step 2: Create Razorpay Order
         try:
-           
             order_data = {
                 "amount": booking_data.total_amount * 100,  # Convert INR to paise
                 "currency": "INR",
@@ -124,8 +123,8 @@ async def create_booking(db: Session, booking_data):
                 "payment_capture": 1  # Auto capture
             }
             razorpay_order = razorpay_client.order.create(order_data)
-        except Exception as e:
-            raise PaymentFailedException(f"Failed to create Razorpay order: {str(e)}")
+        except Exception as payment_error:
+            raise PaymentFailedException(f"Failed to create Razorpay order: {str(payment_error)}")
 
         # Step 3: Store Payment Info in DB
         new_payment = Payment(
@@ -171,17 +170,107 @@ async def create_booking(db: Session, booking_data):
             "receipt": razorpay_order["receipt"]
         }
     
-    except SlotUnavailableException as e:
+    except SlotUnavailableException as slot_error:
         db.rollback()
         raise HTTPException(status_code=400, detail="No Slot Available")
-    except PaymentFailedException as e:
+    except PaymentFailedException as payment_error:
         db.rollback()
-        raise HTTPException(status_code=402, detail=str(e))  # 402 Payment Required
+        raise HTTPException(status_code=402, detail=str(payment_error))  # 402 Payment Required
     
-    except BookingFailedException as e:
+    except BookingFailedException as booking_error:
         db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(booking_error))
     
-    except Exception as e:
+    except Exception as unexpected_error:
         db.rollback()
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(unexpected_error)}")
+
+async def get_bookings(db: Session):
+    """
+    Retrieve all bookings from the database.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+
+    Returns:
+        List[Booking]: List of all bookings
+
+    Example:
+        get_bookings(db)
+        retrieve all bookings from the database
+        return list of all bookings
+    """
+    try:
+        bookings = db.query(Booking).all()
+        return bookings
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
+async def get_booking_by_user(db: Session, user_id: int):
+    """
+    Retrieve all bookings for a specific user.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        user_id (int): User ID
+
+    Returns:
+        List[Booking]: List of bookings for the specified user
+
+    Example:
+        get_booking_by_user(db, 1)
+        retrieve all bookings for user ID 1
+        return list of bookings for the user
+    """
+    try:
+        bookings = db.query(Booking).filter(Booking.user_id == user_id).all()
+        return bookings
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
+async def get_booking_by_spot(db: Session, spot_id: int):
+    """
+    Retrieve all bookings for a specific spot.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        spot_id (int): Spot ID
+
+    Returns:
+        List[Booking]: List of bookings for the specified spot
+
+    Example:
+        get_booking_by_spot(db, 1)
+        retrieve all bookings for spot ID 1
+        return list of bookings for the spot
+    """
+    try:
+        bookings = db.query(Booking).filter(Booking.spot_id == spot_id).all()
+        return bookings
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
+async def get_bookings_of_spots_of_owner(db: Session, user_id: int):
+    """
+    Retrieve all bookings for the spots of a specific owner.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        user_id (int): User ID
+
+    Returns:
+        List[Booking]: List of bookings for the spots of the specified owner
+
+    Example:
+        get_bookings_of_spots_of_owner(db, 1)
+        retrieve all bookings for the spots of owner ID 1
+        return list of bookings for the spots of the owner
+    """
+    try:
+        spots = db.query(Spot).filter(Spot.owner_id == user_id).all()
+        spot_ids = [spot.spot_id for spot in spots]
+        bookings_matrix = [get_booking_by_spot(db, spot_id) for spot_id in spot_ids]
+        bookings = np.array(bookings_matrix).flatten().tolist()
+        return bookings
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
