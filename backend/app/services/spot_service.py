@@ -1,6 +1,6 @@
-from app.schemas.add_spot import AddSpot
+from backend.app.schemas.spot import AddSpot
 from sqlalchemy.orm import Session
-from app.db.add_spot_model import Spot
+from backend.app.db.spot_model import Spot
 from fastapi import HTTPException
 
 def add_spot(spot: AddSpot, db: Session):
