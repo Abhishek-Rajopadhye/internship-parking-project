@@ -128,7 +128,7 @@ const AppLayout = () => {
                 </Box>
                 <NavBar user={user} logout={logout} />
             </Drawer>
-            <Box sx={{ flexGrow: 1, p: 3, marginTop: '64px', alignItems: "center", justifyItems: "center" }} variant="main">
+            <Box sx={{ position: "fixed", flexGrow: 1, p: 3, top: 15, left: 150, width:"100%" }} variant="main">
                 <Routes>
                     <Route path="/spot" element={<Spot userId = {providerId}></Spot>}></Route>
                     <Route path="/profile" element={<Profile />} />
