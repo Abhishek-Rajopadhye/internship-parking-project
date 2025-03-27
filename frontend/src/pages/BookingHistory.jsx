@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Container, Tabs, Tab } from "@mui/material";
-import UserBookingView from "./UserBookingView";
-import OwnerBookingView from "./OwnerBookingView";
+import { UserBookingView } from "../components/UserBookingView";
+import { OwnerBookingView } from "../components/OwnerBookingView";
 
 const BookingHistory = () => {
     const [tabIndex, setTabIndex] = useState(0);
