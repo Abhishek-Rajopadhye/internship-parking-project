@@ -85,7 +85,6 @@ def check_available_slots(db: Session, spot_id: int, total_slots: int):
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
 
-
 # Create a new booking
 async def create_booking(db: Session, booking_data):
     """

@@ -33,7 +33,7 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
     useEffect(() => {
         const fetchMarkers = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
+                const response = await axios.get("http://127.0.0.1:8000/getparkingspot");
                 setMarkers(response.data);
 
             } catch (error) {
@@ -68,19 +68,19 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
         if (!window.google) return null;
 
         const originLatLng = new window.google.maps.LatLng(
-        origin.lat,
-        origin.lng
+            origin.lat,
+            origin.lng
         );
 
         const destinationLatLng = new window.google.maps.LatLng(
-        destination.lat,
-        destination.lng
+            destination.lat,
+            destination.lng
         );
 
         // Distance in meters
         const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
-        originLatLng,
-        destinationLatLng
+            originLatLng,
+            destinationLatLng
         );
 
         // Convert to kilometers with 2 decimal places
@@ -98,12 +98,12 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
                         onLoad={map => (mapRef.current = map)}
                     >
                         {markers.map((marker, index) => (
-              <MarkerComponent
-                key={index}
-                marker={marker}
-                setSelectedMarker={setSelectedMarker}
-              />
-            ))}
+                            <MarkerComponent
+                                key={index}
+                                marker={marker}
+                                setSelectedMarker={setSelectedMarker}
+                            />
+                        ))}
 
             {
               newMarker && <MarkerComponent
@@ -112,11 +112,7 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
                 isSearchMarker={true}
               />
             }
-<Marker
-position={draggleMarker}
-draggable={true}
-onDragEnd={onMarkerDragEnd}
-/>
+
             {selectedMarker && (
               <InfoWindowComponent
                 selectedMarker={selectedMarker}
@@ -125,7 +121,6 @@ onDragEnd={onMarkerDragEnd}
                 calculateDistance={calculateDistance}
               />
             )}
-
           </GoogleMap>
           <div style={{
             display: 'flex',
@@ -137,18 +132,17 @@ onDragEnd={onMarkerDragEnd}
             alignContent: center,
           }}>
 
-            <Button variant="contained" disableElevation>
-              <IoLocationSharp size={20} />
-              <span
-                style={{
-                  marginLeft: "10px",
-                  paddingTop: "5px",
-                  paddingBottom: "4px"
-                }}>Add Parking Spot</span>
-            </Button>
-          </div>
-
-        </>
+                        <Button variant="contained" disableElevation>
+                        <IoLocationSharp size={20} />
+                        <span
+                            style={{
+                                marginLeft: "10px",
+                                paddingTop: "5px",
+                                paddingBottom: "4px"
+                            }}>Add Parking Spot</span>
+                        </Button>
+                    </div>
+                </>
             )}
         </div>
     );

@@ -24,6 +24,7 @@ def add_spot_route(spot_data: AddSpot, db: Session = Depends(get_db)):
         return the spot details
     """
     try:
+        print("Hi")
         response = add_spot(spot_data, db)
         print(response)
         if "error" in response:
