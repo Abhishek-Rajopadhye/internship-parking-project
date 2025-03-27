@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.sql import func
-from app.db.session import Base
-
+from app.db.db import Base
 class Booking(Base):
     __tablename__ = "bookings"
 

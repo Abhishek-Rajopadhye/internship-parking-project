@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float, ARRAY, LargeBinary
 from sqlalchemy.sql import func
-from app.db.session import Base
+from app.db.db import Base
 
 class Spot(Base):
     __tablename__ = "spots"
