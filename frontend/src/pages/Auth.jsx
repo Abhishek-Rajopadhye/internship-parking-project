@@ -28,7 +28,7 @@ const Auth = () => {
     }
 
     return (
-        <Container maxWidth="sm" style={{ textAlign: "center", marginTop: "50px" }}>
+        <Container maxWidth="sm" sx={{ textAlign: "center", marginTop: "50px" }}>
             {user ? (
                 <>
                     <Typography variant="h4">Welcome, {user.name}!</Typography>

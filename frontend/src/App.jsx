@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate, useLocation } from "react-router-dom";
-import { Box, CircularProgress, Drawer, IconButton, AppBar, Toolbar, Typography, Container } from "@mui/material";
+import { Box, CircularProgress, Drawer, IconButton, AppBar, Toolbar, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { AuthProvider, AuthContext } from "./context/AuthContext";

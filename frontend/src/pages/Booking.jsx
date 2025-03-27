@@ -9,7 +9,6 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
-import { set } from "date-fns";
 
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {

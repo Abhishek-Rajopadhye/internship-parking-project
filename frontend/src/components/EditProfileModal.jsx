@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogTitle, TextField, Button, Box } from "@mui/material";
 
 const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
