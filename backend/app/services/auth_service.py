@@ -42,10 +42,10 @@ def verify_google_token(token: str) -> Optional[dict]:
             return None
     except requests.RequestException as request_error:
         print(f"Google token verification request error: {request_error}")
-        return None
+        raise request_error
     except ValueError as value_error:
         print(f"Google token verification value error: {value_error}")
-        return None
+        raise value_error
 
 def verify_github_token(token: str) -> Optional[dict]:
     """
@@ -104,10 +104,10 @@ def verify_github_token(token: str) -> Optional[dict]:
         }
     except requests.RequestException as request_error:
         print(f"GitHub token verification request error: {request_error}")
-        return None
+        raise request_error
     except ValueError as value_error:
         print(f"GitHub token verification value error: {value_error}")
-        return None
+        raise value_error
 
 def verify_oauth_token(token: str, provider: Literal["google", "github"] = None) -> Optional[dict]:
     """
@@ -115,32 +115,30 @@ def verify_oauth_token(token: str, provider: Literal["google", "github"] = None)
 
     Parameters:
         token (str): The OAuth token to verify
-        provider (str, optional): The provider ("google" or "github"). 
-                                  If not provided, will attempt to detect.
+        provider (str, optional): The provider ("google" or "github"). If not provided, will attempt to detect.
 
     Returns:
         Optional[dict]: User information if token is valid, None otherwise
 
     Raises:
-        ValueError: If the token cannot be verified
+        KeyError: If invalid OAuth provider is specified
+        ValueError: If the response cannot be parsed as JSON
+        requests.RequestException: If there is an error with the request
     """
     # If provider is specified, use the appropriate verification
-    if provider == "google":
-        return verify_google_token(token)
-    elif provider == "github":
-        return verify_github_token(token)
-    
-    # Try to detect provider if not specified
-    # Google tokens typically start with "ya29."
-    if token.startswith("ya29."):
-        return verify_google_token(token)
-    else:
-        # Try GitHub first, then fallback to Google if it fails
-        github_result = verify_github_token(token)
-        if github_result:
-            return github_result
-        
-        return verify_google_token(token)
+    try:
+        if provider == "google":
+            return verify_google_token(token)
+        elif provider == "github":
+            return verify_github_token(token)
+        else:
+            raise KeyError("Invalid OAuth provider")        
+    except KeyError as invalidOAuthProvider:
+        raise invalidOAuthProvider
+    except ValueError as value_error:
+        raise value_error
+    except requests.RequestException as request_error:
+        raise request_error
 
 def get_user_by_provider_id(db: Session, provider: str, provider_id: str):
     """
