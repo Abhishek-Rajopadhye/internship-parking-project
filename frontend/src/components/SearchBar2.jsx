@@ -1,157 +1,90 @@
-
-import { StandaloneSearchBox } from "@react-google-maps/api";
-import { useRef, useState } from "react";
-import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
-import { FaTimes, FaFilter, FaRupeeSign } from 'react-icons/fa';
-import { GiPathDistance } from "react-icons/gi";
-import { MdOutlineDateRange } from "react-icons/md";
-
-
+import { useState } from "react";
+import { Autocomplete, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { Search as SearchIcon, FilterAlt as FilterAltIcon } from "@mui/icons-material";
+import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
 const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
-    const searchBoxRef = useRef(null);
     const [address, setAddress] = useState("");
+    const [suggestions, setSuggestions] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
 
+    const handleInputChange = (event, value) => {
+        setAddress(value);
+        if (value.length > 2) {
+            const service = new window.google.maps.places.AutocompleteService();
+            service.getPlacePredictions({ input: value }, (predictions, status) => {
+                if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                    setSuggestions(predictions.map(prediction => prediction.description));
+                }
+            });
+        } else {
+            setSuggestions([]);
+        }
+    };
 
-    const onPlacesChanged = async () => {
-        const places = searchBoxRef.current.getPlaces();
-        if (places.length === 0) return;
-
-        const place = places[0];
-
-        setAddress(place.formatted_address);
-        const results = await geocodeByAddress(place.formatted_address);
+    const handleSelect = async (event, value) => {
+        if (!value) return;
+        setAddress(value);
+        const results = await geocodeByAddress(value);
         const latLng = await getLatLng(results[0]);
 
-        const newSearchMarker = {
-            name: place.formatted_address,
-            location: latLng
-        };
-
+        const newSearchMarker = { name: value, location: latLng };
         setNewMarker(newSearchMarker);
         setSelectedMarker(newSearchMarker);
 
         if (mapRef.current) {
             mapRef.current.panTo(latLng);
-            mapRef.current.setZoom(15);
+            mapRef.current.setZoom(14);
         }
     };
 
-    // Function to clear the search input
-    const clearInput = () => {
-        setAddress("");
-        setNewMarker(null);
-        setSelectedMarker(null);
-    }
     const handleFilter = () => {
-        setShowFilter(prev => !prev)
-    }
-
+        setShowFilter(prev => !prev);
+    };
 
     return (
-        <div style={{ marginBottom: '20px', textAlign: 'center', position: 'relative', display: 'inline-block' }}>
-            <StandaloneSearchBox
-                onLoad={(ref) => (searchBoxRef.current = ref)}
-                onPlacesChanged={onPlacesChanged}
-            >
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <input
-                        type="text"
-                        placeholder="enter text"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        style={{
-                            width: '300px',
-                            height: '40px',
-                            padding: '8px',
+        <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
+            <SearchIcon style={{ marginRight: 8 }} />
+            <Autocomplete
+                freeSolo
+                options={suggestions}
+                value={address}
+                onInputChange={handleInputChange}
+                onChange={handleSelect}
+                renderInput={(params) => (
+                    <TextField {...params} 
+                        placeholder="Search location" 
+                        variant="outlined" 
+                        size="small" 
+                        onFocus={() => setIsFocused(true)}
+                        onBlur={() => setIsFocused(false)}
+                        sx={{
+                            width: isFocused ? '300px' : '200px',
+                            backgroundColor: isFocused ? 'white' : 'transparent',
+                            transition: 'width 0.3s ease, background-color 0.3s ease',
                             borderRadius: '8px',
-                            border: '1px solid #ccc',
-                            backgroundColor: '#fff',
-                            color: '#000',
-                        }}
-
-                    />
-                    {address && (
-                        <FaTimes
-                            onClick={clearInput}
-                            style={{
-                                position: 'absolute',
-                                right: '40px',
-                                cursor: 'pointer',
-                                color: '#888',
-                            }}
-                        />
-
-
-                    )}
-                    <FaFilter
-                        onClick={handleFilter}
-                        style={{
-                            position: 'absolute',
-                            right: '10px',
-                            cursor: 'pointer',
-                            color: '#888',
+                            input: { color: isFocused ? 'black' : 'white' }
                         }}
                     />
-                </div>
-            </StandaloneSearchBox>
+                )}
+            />
+            <IconButton onClick={handleFilter}>
+                <FilterAltIcon />
+            </IconButton>
 
-            {showFilter && (
-                <div style={{
-                    position: 'absolute',
-                    top: '45px',
-                    right: '0',
-                    width: '50%',
-                    backgroundColor: 'white',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    padding: '10px',
-                    zIndex: 999,
-                }}>
-
-                    <FaRupeeSign
-                        style={{
-                            position: 'absolute',
-                            left: '10px',
-                            color: 'black',
-                        }}
-
-
-                    />
-                    <br></br>
-                    <GiPathDistance
-                        style={{
-                            position: 'absolute',
-                            left: '10px',
-                            color: 'black',
-                        }}
-                    />
-                    <br></br>
-                    <MdOutlineDateRange style={{
-                        position: 'absolute',
-                        left: '10px',
-                        color: 'black',
-                    }} />
-                    <br />
-                    <button
-                        style={{
-                            marginTop: '10px',
-                            padding: '5px 10px',
-                            backgroundColor: '#4CAF50',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                        onClick={() => setShowFilters(false)}
-                    >
-                        Apply Filters
-                    </button>
-                </div>
-            )}
+            <Dialog open={showFilter} onClose={handleFilter}>
+                <DialogTitle>Filter Options</DialogTitle>
+                <DialogContent>
+                    {/* Add your filter components here */}
+                    <p>Filter settings will go here.</p>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleFilter}>Apply Filters</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
-}
+};
 
-export default SearchBar
+export default SearchBar;

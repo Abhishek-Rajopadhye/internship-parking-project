@@ -1,17 +1,17 @@
+from typing import List
 from pydantic import BaseModel
-from datetime import time
 
-class ParkingSchema(BaseModel):
-    owner_id: int
+class ParkingSpot(BaseModel):
     spot_id: int
+    owner_id: str
+    spot_title: str
     address: str
-    lat:float
-    lng:float
+    latitude: float
+    longitude: float
     hourly_rate: int
     no_of_slots: int
     available_slots: int
-    openTime:time
-    closeTime:time
-    instruction: str
-    days_available: List[str]
-    image:List[str]
+    open_time: str
+    close_time: str
+    description: str
+    available_days: List[str]

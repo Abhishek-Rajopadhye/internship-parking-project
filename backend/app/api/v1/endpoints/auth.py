@@ -31,11 +31,10 @@ async def login(provider: str):
             raise HTTPException(status_code=400, detail="Invalid provider")
 
         config = settings.model_dump()
-        auth_url = (
-            f"{config[f'{provider.upper()}_AUTH_URL']}?client_id={config[f'{provider.upper()}_CLIENT_ID']}"
-            f"&redirect_uri={config[f'{provider.upper()}_REDIRECT_URI']}&response_type=code&scope=openid email profile"
+        auth_url = (    
+            f"{config[f'{provider.upper()}_AUTH_URL']}?client_id={config[f'{provider.upper()}_CLIENT_ID'].strip()}"
+            f"&redirect_uri={config[f'{provider.upper()}_REDIRECT_URI']}&response_type=code&scope=openid%20email%20profile"
         )
-
         return RedirectResponse(auth_url)
     except HTTPException as http_error:
         raise http_error
