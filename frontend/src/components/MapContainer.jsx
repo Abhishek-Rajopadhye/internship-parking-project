@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
+import { useEffect, useState } from 'react';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import axios from 'axios';
 import MarkerComponent from './MarkerComponent';
 import InfoWindowComponent from './InfoWindowComponent';
@@ -12,6 +12,7 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
         googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries: ['places', 'geometry'] // Added geometry library for distance calculation
     });
+    const[draggleMarker,setDraggableMarker]=useState({ lat: 18.519584, lng: 73.855421 })
 
     const mapStyles = {
         display: 'flex',
@@ -32,7 +33,7 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
     useEffect(() => {
         const fetchMarkers = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/getparkingspot");
+                const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
                 setMarkers(response.data);
 
             } catch (error) {
@@ -42,6 +43,25 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
 
         fetchMarkers();
     }, [setMarkers]);
+
+    const onMarkerDragEnd = (event) => {
+      if (!event || !event.latLng) {
+          console.error("Error: event.latLng is undefined.", event);
+          return;
+      }
+  
+      const newLat = event.latLng.lat?.();
+      const newLng = event.latLng.lng?.();
+  
+      if (newLat === undefined || newLng === undefined) {
+          console.error("Error: Could not retrieve lat/lng from event.", event);
+          return;
+      }
+  
+      setDraggableMarker({ lat: newLat, lng: newLng });
+  
+      console.log("New Position:", newLat, newLng);
+  };
 
     // Calculate distance between two points
     const calculateDistance = (origin, destination) => {
@@ -92,7 +112,11 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
                 isSearchMarker={true}
               />
             }
-
+<Marker
+position={draggleMarker}
+draggable={true}
+onDragEnd={onMarkerDragEnd}
+/>
             {selectedMarker && (
               <InfoWindowComponent
                 selectedMarker={selectedMarker}
@@ -101,6 +125,7 @@ function MapContainer({selectedMarker, setSelectedMarker, newMarker, markers, se
                 calculateDistance={calculateDistance}
               />
             )}
+
           </GoogleMap>
           <div style={{
             display: 'flex',
