@@ -2,6 +2,7 @@ from app.schemas.spot import AddSpot
 from sqlalchemy.orm import Session
 from app.db.spot_model import Spot
 from fastapi import HTTPException
+import base64 
 
 def add_spot(spot: AddSpot, db: Session):
     """
@@ -20,7 +21,8 @@ def add_spot(spot: AddSpot, db: Session):
         return the spot details
     """
     try:
-      print(spot)
+    #   print(spot)
+      image_data = base64.b64decode(spot.image)  
       new_spot = Spot(
           address=spot.spot_address,
           owner_id=spot.owner_id,
@@ -29,11 +31,12 @@ def add_spot(spot: AddSpot, db: Session):
           longitude=spot.longitude,
           available_slots=spot.available_slots,
           no_of_slots=spot.total_slots,
-          hourly_rate=spot.price_per_hour,
+          hourly_rate=spot.hourly_rate,
           open_time=spot.open_time,
           close_time=spot.close_time,
-          description=spot.description,
-          available_days=spot.available_days
+          description=spot.spot_description,
+          available_days=spot.available_days,
+          image=image_data
       )
       db.add(new_spot)
       db.commit()

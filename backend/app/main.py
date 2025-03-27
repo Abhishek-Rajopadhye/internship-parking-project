@@ -30,10 +30,3 @@ app.include_router(user.router, prefix="/users", tags=["Users"])
 app.include_router(booking.router, prefix="/bookings", tags=["Bookings"])
 app.include_router(spot.router, prefix="/spots", tags=["Spots"])
 
-
-@app.get("/getparkingspot", response_model=List[dict])
-def parkinglatlng():
-    return [
-        {"spot_id": 1, "lat": 18.559322, "lng": 73.792407, "hourly_rate": 10, "openTime": "10:00 AM","address":"101 baner" },
-        {"spot_id": 2, "lat": 18.509890, "lng": 73.807182, "hourly_rate": 15, "openTime": "9:00 AM","address": "201 baner" }
-    ]
