@@ -8,6 +8,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
         email: "",
         phone: "",
         profile_picture: "",
+        total_earnings: 0,
     });
 
     useEffect(() => {
@@ -19,6 +20,7 @@ const EditProfileModal = ({ open, handleClose, user, handleSave }) => {
                 email: user.email,
                 phone: user.phone,
                 profile_picture: user.profile_picture,
+                total_earnings: user.total_earnings
             });
         }
     }, [user]);

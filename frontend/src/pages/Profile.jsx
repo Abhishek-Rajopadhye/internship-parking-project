@@ -3,6 +3,7 @@ import { Container, Typography, Avatar, Button } from "@mui/material";
 import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import axios from "axios";
+import { CurrencyRupee } from "@mui/icons-material";
 
 const Profile = () => {
     const { user, setUser } = useContext(AuthContext);
@@ -65,6 +66,7 @@ const Profile = () => {
             />
             <Typography variant="h4">{user.name}</Typography>
             <Typography variant="h6">{user.email}</Typography>
+            <Typography variant="h6">Total Earnings: <CurrencyRupee fontSize="small"/>{user.total_earnings}</Typography>
             <Typography variant="h6">Ph.No: {user.phone || "Not provided"}</Typography>
             <Button 
                 variant="contained" 

@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { Box, Button, Container, Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelIcon from '@mui/icons-material/Cancel';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext'; // Adjust the import path as necessary
 import { CurrencyRupee } from '@mui/icons-material';
