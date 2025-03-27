@@ -9,7 +9,11 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
+<<<<<<< HEAD
+import { set } from "date-fns";
+=======
 
+>>>>>>> d0256f2e434dd78d26c3c4a784a9fb1dbc4137c2
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
     const navigate = useNavigate()
@@ -22,12 +26,24 @@ export const Booking = ({spot_information, user_id}) => {
     const [openSnackbar, setOpenSnackbar] = useState({ open: false, message: "", severity: "info" });
     const [paymentDetails, setPaymentDetails] = useState(null);
     const [paymentStatus, setPaymentStatus] = useState(false);
-
+    const[indianStartTime, setIndianStartTime] = useState(null);
+    const[indianEndTime, setIndianEndTime] = useState(null);
     const showSnackbar = (message, severity = "info") => {
         setOpenSnackbar({ open: true, message, severity });
     };
 
-    const validateDateTime = (selectedDate) => {
+    /**
+     * This function is used to validate the date and time
+     * It will check the selected date is future date or not
+     * It will check the selected day is available day or not
+     * It will check the selected time is between open time and close time
+     * It will check the selected time is between open time and close time
+     *  
+     * @param {*} selectedDate 
+     * @param {*} msg 
+     * @returns boolean
+     */
+    const validateDateTime = (selectedDate, msg) => {
         if (!selectedDate || new Date(selectedDate).getTime() <= new Date().getTime()) {
             showSnackbar("Please select a future date and time.", "error");
             return false;
@@ -71,9 +87,20 @@ export const Booking = ({spot_information, user_id}) => {
             showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
             return false;
         }
+        if(msg == "start") {
+            console.log("Start", isoString);
+            setIndianStartTime(isoString);
+        } else {
+            console.log("End", isoString);
+            setIndianEndTime(isoString);
+        }
         return true;
     };
-
+    /**
+     *  This function is used to convert the date and time to string
+     * @param {*} date 
+     * @returns 
+     */
     const dateTimeToString = (date) => {
         return date.toISOString().replace("T", " ").slice(0, 19);
     };
@@ -84,6 +111,15 @@ export const Booking = ({spot_information, user_id}) => {
         }
     }, [paymentStatus, navigate]);
 
+    /**
+     * This function is used to calculate the amount of the parking slot
+     * It will check the start time and end time and calculate the amount
+     * If the start time is greater than end time then it will show the error message
+     * If the total slot is less than 0 then it will show the error message
+     * If the start time and end time is not selected then it will show the error message
+     * 
+     * @returns boolean
+     */
     const calculateAmount = () => {
         if(paymentStatus) {
             return;
@@ -98,7 +134,7 @@ export const Booking = ({spot_information, user_id}) => {
             return false;
         }
         console.log(startTime, endTime);
-        if (!validateDateTime(startTime) || !validateDateTime(endTime)) {
+        if (!validateDateTime(startTime, "start") || !validateDateTime(endTime, "end")) {
             return false;
         }
 
@@ -117,6 +153,10 @@ export const Booking = ({spot_information, user_id}) => {
         return true;
     };
 
+    /**
+     * This function is used to load the razorpay sdk
+     * @returns 
+     */
     const loadRazorpay = async () => {
         return new Promise((resolve) => {
             if (window.Razorpay) {
@@ -130,7 +170,13 @@ export const Booking = ({spot_information, user_id}) => {
             document.body.appendChild(script);
         });
     };
-
+    /**
+     * This function is used to process the payment
+     * It will check the payment status if it is true then it will return
+     * It will check the spot information available slot is less than total slot then it will show the error message
+     * It will check the start time and end time is selected or not
+     * @returns 
+     */
     const processPayment = async () => {
         if(paymentStatus) {
             return;
@@ -155,8 +201,8 @@ export const Booking = ({spot_information, user_id}) => {
                 spot_id: spot_information.spot_id,
                 total_slots: totalSlots,
                 total_amount: totalAmount,
-                start_date_time: start_time,
-                end_date_time: end_time,
+                start_date_time: indianStartTime,
+                end_date_time: indianEndTime,
                 receipt: `booking_${Date.now()}`
             });
             if(orderResponse.status !== 200) {
@@ -206,7 +252,11 @@ export const Booking = ({spot_information, user_id}) => {
             }
         }
     };
-
+    
+    /**
+     * This function is used to download the pdf file
+     * @returns 
+     */
     const downloadPDF = () => {
         if (!paymentDetails) {
             return;
@@ -223,8 +273,8 @@ export const Booking = ({spot_information, user_id}) => {
         doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 70);
         doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 80);
         doc.text(`Total Amount: ₹${paymentDetails.amount}`, 20, 90);
-        doc.text(`Start Time: ${paymentDetails.start_time}`, 20, 100);
-        doc.text(`End Time: ${paymentDetails.end_time}`, 20, 110);
+        doc.text(`Start Time: ${indianStartTime}`, 20, 100);
+        doc.text(`End Time: ${indianEndTime}`, 20, 110);
         
         doc.save("booking_receipt.pdf");
     };

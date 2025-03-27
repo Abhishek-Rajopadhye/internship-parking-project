@@ -1802,6 +1802,11 @@ razorpay@^2.9.6:
   dependencies:
     scheduler "^0.25.0"
 
+react-geocode@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/react-geocode/-/react-geocode-2.0.1.tgz"
+  integrity sha512-fIjTaXK7Ta1kZKqS5n9vUCL6LPngSRlLfEj935mMhHivfsGQ8nXPo+NRoDnq63Yy1kQ6mdyFl78/8tAodERIHw==
+
 react-google-maps@^9.4.5:
   version "9.4.5"
   resolved "https://registry.npmjs.org/react-google-maps/-/react-google-maps-9.4.5.tgz"
