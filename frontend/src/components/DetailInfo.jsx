@@ -1,9 +1,11 @@
 import React from "react";
-import { Grid, Paper, Typography, Box, Rating, Avatar, colors, ImageList, ImageListItem, CardMedia, Card } from "@mui/material";
+import { Grid, Paper, Typography, Box, Rating, Avatar, colors, ImageList, ImageListItem, CardMedia, Card, Button } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
+import LocalParkingIcon from '@mui/icons-material/LocalParking';
+
 
 
 function Layout() {
@@ -38,34 +40,35 @@ function Layout() {
                             <Rating name="read-only" value={4} readOnly /> <Typography>(10)</Typography>
                         </Box>
 
-                        <Box bgcolor="skyblue" sx={{ padding: 2, borderRadius: 2 ,width:"100%"}}>
+                        <Box bgcolor="skyblue" sx={{ padding: 2, borderRadius: 2, width: "100%" }}>
                             <Typography variant="h6" fontWeight="bold">Review</Typography>
-                           
-                            <Grid container direction="column" spacing={2}>
-                               
+
+                            <Grid container direction="column" spacing={2} width="100%">
+
                                 <Grid item >
-                                    <Box sx={{ display: "flex",alignItems:"center",gap:1 }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                         <Typography fontWeight="bold">Pradeep </Typography>
                                         <Typography>20-8-2025</Typography>
                                         <Rating name="read-only" value={4} readOnly />
                                     </Box>
-                                    <Box bgcolor="gray" sx={{ padding: 2,borderRadius:4,marginTop:1 }}>
+                                    <Box bgcolor="gray" sx={{ padding: 2, borderRadius: 4, marginTop: 1 }}>
                                         <Typography color="white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quisquam ad commodi illum optio nemo eligendi vel molestiae doloribus consequu</Typography>
                                     </Box>
 
                                 </Grid>
                                 <Grid item >
-                                <Box sx={{ display: "flex",alignItems:"center",gap:1 }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                         <Typography fontWeight="bold">Pradeep </Typography>
                                         <Typography>20-8-2025</Typography>
                                         <Rating name="read-only" value={4} readOnly />
                                     </Box>
-                                    <Box bgcolor="gray" sx={{ padding: 2,borderRadius:4,marginTop:1 }}>
+                                    <Box bgcolor="gray" sx={{ padding: 2, borderRadius: 4, marginTop: 1 }}>
                                         <Typography color="white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quisquam ad commodi illum optio nemo eligendi vel molestiae doloribus consequu</Typography>
                                     </Box>
 
                                 </Grid>
                             </Grid>
+                            <Button variant="text">Read more ..</Button>
                         </Box>
                     </Paper>
                 </Grid>
@@ -74,13 +77,25 @@ function Layout() {
                 <Grid xs={12} md={6} sx={{ padding: 1 }}>
                     <Paper elevation="6" sx={{ padding: 3 }}>
                         <Typography variant="h6">Right Section</Typography>
-                        {/* <Box>
-                            <Typography>Owner</Typography>
-                            <Typography>Pradeep Kale</Typography>
-                            <Typography>+91 75583 83450</Typography>
-                        </Box> */}
-                        <Box>
 
+                        <Box >
+
+                            <Typography variant="h2">Pradeep Kale</Typography>
+                            <Typography variant="h5"><PhoneIcon />+91 75583 83450</Typography>
+
+                        </Box>
+
+                        <Box sx={{ display: "flex", padding: 2 }}>
+                            <LocationOnIcon /><Typography >The mint ,baner road pashan aund link road,Pune city,Maharashtra ,near Aund, India ,411016</Typography>
+                        </Box>
+                        <Box>
+                            <CalendarTodayIcon />
+                        </Box>
+                        <Box>
+                            <AccessTimeIcon />
+                        </Box>
+                        <Box>
+                            <LocalParkingIcon /><Typography>Total slots 2</Typography>
                         </Box>
                     </Paper>
                 </Grid>
