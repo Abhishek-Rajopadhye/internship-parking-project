@@ -1,6 +1,5 @@
 import pytest
 from datetime import datetime
-from sqlalchemy.types import LargeBinary
 from sqlalchemy.orm import Session
 from app.db.oauth_model import OAuthUser
 from app.db.payment_model import Payment
