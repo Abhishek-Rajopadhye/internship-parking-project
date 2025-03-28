@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from app.db.oauth_model import OAuthUser
-from app.core.oauth import get_oauth_user_info, get_oauth_token
 from tests.test_config import client, db
 
 # Helper function to create a mock OAuth user
