@@ -1,19 +1,15 @@
 import { InfoWindow } from '@react-google-maps/api';
-import { AiOutlineInfoCircle } from 'react-icons/ai';
-import { MdDirectionsWalk } from "react-icons/md";
-import { IoTime } from "react-icons/io5";
-import { IoLocationSharp } from "react-icons/io5";
-import { FaRupeeSign } from "react-icons/fa6";
-import { Box, Container, IconButton, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import InfoIcon from '@mui/icons-material/Info';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) => {
+    const navigate = useNavigate();
 
     const position = {
         lat: selectedMarker.location?.lat || selectedMarker.latitude,
@@ -24,48 +20,71 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
         (selectedMarker.name !== newMarker.name ||
             selectedMarker.spot_id !== newMarker.spot_id);
 
-    const showDetails = () => { }
+    const showDetails = () => {
+        navigate("/spotdetail", {
+            state: { markerDetails: selectedMarker }
+        })
+    }
 
     return (
-        <Container>
 
+        <Box>
             <InfoWindow
                 position={position}
                 onCloseClick={() => setSelectedMarker(null)}
             >
-                <div className='info-window' style={{ color: "black", padding: "5px", borderRadius: "5px", maxWidth: "250px" }}>
+                <Box
+                    sx={{
+                        bgcolor: "#ffffff", // White background
+                        color: "#333", // Dark text for contrast
+                        padding: 2,
+                        minWidth: 260,
+                    }}>
 
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h3 style={{ margin: "10px" }}>{selectedMarker.spot_title || "Destination"}</h3>
-                        <IconButton>
-                            <InfoIcon
-                                onClick={() => (showDetails)}
-                            />
-                        </IconButton>
-                        <Link to="/spotdetails" onClick={handleCreatePageClick}>
-                            <KeyboardArrowRight />
-                        </Link>
-                    </div>
-                    <Box style={{ margin: "10px", display: "flex" }}>
-                        <LocationOnIcon /><Typography> {selectedMarker.address || selectedMarker.name}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: "center", justifyContent: "space-between", padding: 1, mb: 2 }}>
+                        <Typography variant='h6' fontWeight="bold" color='primary' >
+                            {selectedMarker?.spot_title || "Destination"}
+                        </Typography>
+                        {isExistingMarker && (<IconButton
+                            size="small"
+                            component={Link}
+                            to="/spotdetail"
+                            onClick={showDetails}
+                            sx={{ marginRight: 1 }}>
+                            <InfoIcon color="primary" />
+                        </IconButton>)}
                     </Box>
-                    {isExistingMarker && (<>
-                        <Box sx={{ display: "flex", flexDirection: 'row' }}>
-                            <CurrencyRupeeIcon /><Typography>  {selectedMarker.hourly_rate} (1 Hr )</Typography>
-                            <AccessTimeFilledIcon /><Typography> {selectedMarker.open_time} to {selectedMarker.close_time}</Typography>
-                        </Box>
 
-                        <Box sx={{ display: "flex", padding: 2, alignItems: "center", justifyContent: "space-between" }} >
-                            <Typography variant="h6" fontWeight="bold" >
-                                ({calculateDistance(newMarker.location || newMarker, { lat: position.lat, lng: position.lng })} km )
-                            </Typography>
-                            <DirectionsWalkIcon />
+                    <Box sx={{ display: "flex", alignItems: "center", mb: 1, maxWidth: 260 }}>
+                        <LocationOnIcon sx={{ mr: 1, color: "red" }} />
+                        <Typography variant='body2'> {selectedMarker.address || selectedMarker.name}</Typography>
+                    </Box>
 
-                        </Box>
-                    </>)}
-                </div>
+                    {isExistingMarker && (
+                        <>
+                            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                                <CurrencyRupeeIcon sx={{ mr: 1, color: "green" }} />
+                                <Typography variant='body2'>  {selectedMarker.hourly_rate} (1 Hr )</Typography>
+                            </Box>
+
+                            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                                <AccessTimeFilledIcon sx={{ mr: 1, color: "#ff9800" }} />
+                                <Typography variant='body2'>  {selectedMarker.hourly_rate} (1 Hr )</Typography>
+                                <Typography > {selectedMarker.open_time} to {selectedMarker.close_time}</Typography>
+                            </Box>
+
+                            <Box sx={{ display: "flex", alignItems: "center" }} >
+                                <DirectionsWalkIcon sx={{ mr: 1, color: "#007bff" }} />
+                                <Typography variant="h6" fontWeight="bold" >
+                                    ({calculateDistance(newMarker.location || newMarker, { lat: position.lat, lng: position.lng })} km )
+                                </Typography>
+
+                            </Box>
+                        </>
+                    )}
+                </Box>
             </InfoWindow>
-        </Container>
+        </Box>
     );
 }
 
