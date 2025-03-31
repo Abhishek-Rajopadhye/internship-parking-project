@@ -9,11 +9,8 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
-<<<<<<< HEAD
 import { set } from "date-fns";
-=======
 
->>>>>>> d0256f2e434dd78d26c3c4a784a9fb1dbc4137c2
 //spot_information is object which hold the all information
 export const Booking = ({spot_information, user_id}) => {
     const navigate = useNavigate()
@@ -36,7 +33,6 @@ export const Booking = ({spot_information, user_id}) => {
      * This function is used to validate the date and time
      * It will check the selected date is future date or not
      * It will check the selected day is available day or not
-     * It will check the selected time is between open time and close time
      * It will check the selected time is between open time and close time
      *  
      * @param {*} selectedDate 
@@ -110,6 +106,7 @@ export const Booking = ({spot_information, user_id}) => {
             navigate("/booking");
         }
     }, [paymentStatus, navigate]);
+
 
     /**
      * This function is used to calculate the amount of the parking slot
@@ -191,11 +188,7 @@ export const Booking = ({spot_information, user_id}) => {
             console.log(startTime)
             const start_time = dateTimeToString(startTime);
             const end_time = dateTimeToString(endTime);
-
-            if(spot_information.available_slots < totalSlots){
-                showSnackbar("No Slots availables", "error");
-                return;
-            }
+            
             orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
                 user_id: user_id.toString(),
                 spot_id: spot_information.spot_id,
@@ -217,7 +210,7 @@ export const Booking = ({spot_information, user_id}) => {
             }
 
             const options = {
-                key: "rzp_test_JcFPR4o6XJnTf8",
+                key: "rzp_test_82K1eUDvrHocUu",
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: "Parking Service",

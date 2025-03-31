@@ -79,11 +79,12 @@ async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):
         return the booking details
     """
     try:
+        print(booking_data.__dict__)
         response = await create_booking(db, booking_data)
-        print(response)
+        # print(response)
         if "error" in response:
             raise HTTPException(status_code=400, detail=response["detail"])
         return response
     except Exception as exception:
         print(exception)
-        raise HTTPException(status_code=400, detail=exception.detail)
+        raise HTTPException(status_code=400, detail="Failed to book the spot")

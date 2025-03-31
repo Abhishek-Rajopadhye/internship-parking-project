@@ -123,12 +123,16 @@ const Spot = ({userId: userId}) => {
   };
   
   const handleAddSpot = async () => {
+    if(!(latitude >= 6.554607 && latitude <= 35.674545 && longitude >= 68.162385 && longitude <= 97.395561)) {
+      setOpenSnackbar({open:true, message: "Only India Coordinates allowed", severity: "error"});
+      return;
+    }
     const error = validateForm();
     if (error) {
       setOpenSnackbar({ open: true, message: error, severity: "error" });
       return;
     }
-    fetchCoordinates();
+    //fetchCoordinates();
     if(latitude === "" || longitude === "") {
       setOpenSnackbar({ open: true, message: "Invalid Address", severity: "error" });
       return;
@@ -179,6 +183,7 @@ const Spot = ({userId: userId}) => {
         setSpotTitle(""); setSpotAddress(""); setSpotDescription("");
         setOpenTime(""); setCloseTime(""); setHourlyRate("");
         setTotalSlots(""); setAvailableSlots(""); setImage(null); setImagePreview(null);
+        setLatitude("");setLongitude("");
         setOpenDays({ Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false });
       }
     } catch (error) {
@@ -192,7 +197,7 @@ const Spot = ({userId: userId}) => {
     <Box className="form-container">
       <Box className="form-container">
       
-        <IconButton
+        {/* <IconButton
           onClick={() => navigate(-1)}
           sx={{
           position: "relative",
@@ -202,17 +207,21 @@ const Spot = ({userId: userId}) => {
           border: "1px solid gray",
           "&:hover": { backgroundColor: "lightgray" }
           }}
-        >
-        <ArrowBackIcon />
-        </IconButton>
+        > */}
+        {/* <ArrowBackIcon />
+        </IconButton> */}
         <Box className="form-box">
-        <Typography variant="h5" gutterBottom align="center">
+        {/* <Typography variant="h5" gutterBottom align="center">
           Add Parking Spot
-        </Typography>
+        </Typography> */}
         <Grid container spacing={2}>
           <Grid item xs={12}><TextField fullWidth label="Spot Title" value={spotTitle} onChange={(e) => setSpotTitle(e.target.value)} /></Grid>
 
           <Grid item xs={12}><TextField fullWidth label="Spot Address" value={spotAddress} onChange={(e) => setSpotAddress(e.target.value)} /></Grid>
+
+          <Grid item xs={12}><TextField fullWidth label="Spot Latitude" value={latitude} onChange={(e) => setLatitude(e.target.value)} /></Grid>
+
+          <Grid item xs={12}><TextField fullWidth label="Spot Longitude" value={longitude} onChange={(e) => setLongitude(e.target.value)} /></Grid>
 
           <Grid item xs={12}><TextField fullWidth label="Spot Description" multiline rows={3} value={spotDescription} onChange={(e) => setSpotDescription(e.target.value)} /></Grid>
 
@@ -254,6 +263,13 @@ const Spot = ({userId: userId}) => {
           <Grid item xs={12}>
             <Button variant="contained" color="primary" fullWidth onClick={handleAddSpot} disabled={loading}>
               {loading ? <CircularProgress size={24} /> : "Add Spot"}
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button variant="contained" color="primary" fullWidth onClick={() => {
+              navigate(-1)
+            }}>
+              Go Back
             </Button>
           </Grid>
         </Grid>

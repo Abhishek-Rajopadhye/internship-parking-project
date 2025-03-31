@@ -7,6 +7,7 @@ from app.db.payment_model import Payment
 from app.db.spot_model import Spot  # Import Spot model
 from fastapi import HTTPException
 from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
 
 # Load Razorpay keys
 RAZORPAY_KEY_ID = settings.RAZORPAY_KEY_ID
@@ -108,12 +109,18 @@ async def create_booking(db: Session, booking_data):
         return booking details else raise an exception
     """
     try:
-        print("This is in service model");
-        # Step 1: Check slot availability
-        if not check_available_slots(db, booking_data.spot_id, booking_data.total_slots):
-            raise SlotUnavailableException()
+        print("This is in service model")
 
-        # Step 2: Create Razorpay Order
+        db.begin()
+        
+        slot = db.execute(text(
+            "SELECT * FROM spots WHERE spot_id = :spot_id AND available_slots >= :total_slots FOR UPDATE"),
+            {"spot_id": booking_data.spot_id, "total_slots": booking_data.total_slots}
+        ).fetchone()
+        
+        if not slot:
+            raise HTTPException(status_code=400, detail="No Slot Available")
+        
         try:
             order_data = {
                 "amount": booking_data.total_amount * 100,  # Convert INR to paise
@@ -123,31 +130,31 @@ async def create_booking(db: Session, booking_data):
             }
             razorpay_order = razorpay_client.order.create(order_data)
         except Exception as payment_error:
-            raise PaymentFailedException(f"Failed to create Razorpay order: {str(payment_error)}")
-
-        # Step 3: Store Payment Info in DB
+            db.rollback()
+            raise HTTPException(status_code=402, detail=f"Failed to create Razorpay order: {str(payment_error)}")
+        
         new_payment = Payment(
             user_id=booking_data.user_id,
             spot_id=booking_data.spot_id,
             amount=booking_data.total_amount,
             razorpay_order_id=razorpay_order["id"],
-            status="pending"  # Initial status
+            status="pending"
         )
         db.add(new_payment)
         db.commit()
         db.refresh(new_payment)
 
-        # Step 4: Simulate Payment Verification (to be replaced with actual webhook handling)
-        payment_status = "success"  # Simulating success
+        payment_status = "success"  # Simulating a successful payment (should be dynamic)
+        
         if payment_status == "success":
             new_payment.status = "success"
-            db.commit()
+            db.commit()  # Update payment status
         else:
             new_payment.status = "failed"
             db.commit()
-            raise PaymentFailedException("Payment verification failed.")
+            db.rollback()
+            raise HTTPException(status_code=402, detail="Payment verification failed.")
 
-        # Step 5: Store Booking in DB
         new_booking = Booking(
             user_id=booking_data.user_id,
             spot_id=booking_data.spot_id,
@@ -157,8 +164,11 @@ async def create_booking(db: Session, booking_data):
             payment_id=new_payment.id
         )
         db.add(new_booking)
+        db.execute(text(
+            "UPDATE spots SET available_slots = available_slots - :total_slots WHERE spot_id = :spot_id"),
+            {"spot_id": booking_data.spot_id, "total_slots": booking_data.total_slots}
+        )
         db.commit()
-        db.refresh(new_booking)
 
         return {
             "order_id": razorpay_order["id"], 
@@ -169,21 +179,17 @@ async def create_booking(db: Session, booking_data):
             "receipt": razorpay_order["receipt"]
         }
     
-    except SlotUnavailableException as slot_error:
+    except HTTPException as http_error:
         db.rollback()
-        raise HTTPException(status_code=400, detail="No Slot Available")
-    except PaymentFailedException as payment_error:
+        raise http_error
+
+    except IntegrityError as db_error:
         db.rollback()
-        raise HTTPException(status_code=402, detail=str(payment_error))  # 402 Payment Required
-    
-    except BookingFailedException as booking_error:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(booking_error))
-    
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
     except Exception as unexpected_error:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(unexpected_error)}")
-
 async def get_bookings(db: Session):
     """
     Retrieve all bookings from the database.
