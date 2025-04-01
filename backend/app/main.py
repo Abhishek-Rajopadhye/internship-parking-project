@@ -1,4 +1,3 @@
-from typing import List
 import fastapi
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.endpoints import auth, user, booking, spot, parking

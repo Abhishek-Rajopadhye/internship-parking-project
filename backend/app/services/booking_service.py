@@ -181,101 +181,206 @@ async def create_booking(db: Session, booking_data):
     
     except HTTPException as http_error:
         db.rollback()
-        raise http_error
-
+        raise HTTPException(status_code=402, detail=str(payment_error))  # 402 Payment Required
+    except BookingFailedException as booking_error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(booking_error))
     except IntegrityError as db_error:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
-
     except Exception as unexpected_error:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(unexpected_error)}")
+
 async def get_bookings(db: Session):
     """
-    Retrieve all bookings from the database.
+    Retrieve all bookings from the database with additional fields from Spot and Payment tables.
 
     Parameters:
         db (Session): SQLAlchemy database session
 
     Returns:
-        List[Booking]: List of all bookings
+        List[dict]: List of all bookings with additional fields
 
     Example:
         get_bookings(db)
         retrieve all bookings from the database
-        return list of all bookings
+        return list of all bookings with additional fields
     """
     try:
-        bookings = db.query(Booking).all()
-        return bookings
+        bookings = (
+            db.query(
+                Booking,
+                Spot.spot_title,
+                Payment.amount,
+                Payment.status.label("payment_status")
+            )
+            .join(Spot, Booking.spot_id == Spot.spot_id)
+            .join(Payment, Booking.payment_id == Payment.id)
+            .all()
+        )
+
+        return [
+            {
+                "id": booking.Booking.id,
+                "user_id": booking.Booking.user_id,
+                "spot_id": booking.Booking.spot_id,
+                "spot_title": booking.spot_title,
+                "total_slots": booking.Booking.total_slots,
+                "start_date_time": booking.Booking.start_date_time,
+                "end_date_time": booking.Booking.end_date_time,
+                "payment_id": booking.Booking.payment_id,
+                "payment_amount": booking.amount,
+                "payment_status": booking.payment_status,
+            }
+            for booking in bookings
+        ]
     except Exception as db_error:
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
 
+
 async def get_booking_by_user(db: Session, user_id: int):
     """
-    Retrieve all bookings for a specific user.
+    Retrieve all bookings for a specific user with additional fields from Spot and Payment tables.
 
     Parameters:
         db (Session): SQLAlchemy database session
         user_id (int): User ID
 
     Returns:
-        List[Booking]: List of bookings for the specified user
+        List[dict]: List of bookings for the specified user with additional fields
 
     Example:
         get_booking_by_user(db, 1)
         retrieve all bookings for user ID 1
-        return list of bookings for the user
+        return list of bookings for the user with additional fields
     """
     try:
-        bookings = db.query(Booking).filter(Booking.user_id == user_id).all()
-        return bookings
+        bookings = (
+            db.query(
+                Booking,
+                Spot.spot_title,
+                Payment.amount,
+                Payment.status.label("payment_status")
+            )
+            .join(Spot, Booking.spot_id == Spot.spot_id)
+            .join(Payment, Booking.payment_id == Payment.id)
+            .filter(Booking.user_id == str(user_id))
+            .all()
+        )
+
+        return [
+            {
+                "id": booking.Booking.id,
+                "user_id": booking.Booking.user_id,
+                "spot_id": booking.Booking.spot_id,
+                "spot_title": booking.spot_title,
+                "total_slots": booking.Booking.total_slots,
+                "start_date_time": booking.Booking.start_date_time,
+                "end_date_time": booking.Booking.end_date_time,
+                "payment_id": booking.Booking.payment_id,
+                "payment_amount": booking.amount,
+                "payment_status": booking.payment_status,
+            }
+            for booking in bookings
+        ]
     except Exception as db_error:
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
 
+
 async def get_booking_by_spot(db: Session, spot_id: int):
     """
-    Retrieve all bookings for a specific spot.
+    Retrieve all bookings for a specific spot with additional fields from Spot and Payment tables.
 
     Parameters:
         db (Session): SQLAlchemy database session
         spot_id (int): Spot ID
 
     Returns:
-        List[Booking]: List of bookings for the specified spot
+        List[dict]: List of bookings for the specified spot with additional fields
 
     Example:
         get_booking_by_spot(db, 1)
         retrieve all bookings for spot ID 1
-        return list of bookings for the spot
+        return list of bookings for the spot with additional fields
     """
     try:
-        bookings = db.query(Booking).filter(Booking.spot_id == spot_id).all()
-        return bookings
+        bookings = (
+            db.query(
+                Booking,
+                Spot.spot_title,
+                Payment.amount,
+                Payment.status.label("payment_status")
+            )
+            .join(Spot, Booking.spot_id == Spot.spot_id)
+            .join(Payment, Booking.payment_id == Payment.id)
+            .filter(Booking.spot_id == spot_id)
+            .all()
+        )
+
+        return [
+            {
+                "id": booking.Booking.id,
+                "user_id": booking.Booking.user_id,
+                "spot_id": booking.Booking.spot_id,
+                "spot_title": booking.spot_title,
+                "total_slots": booking.Booking.total_slots,
+                "start_date_time": booking.Booking.start_date_time,
+                "end_date_time": booking.Booking.end_date_time,
+                "payment_id": booking.Booking.payment_id,
+                "payment_amount": booking.amount,
+                "payment_status": booking.payment_status,
+            }
+            for booking in bookings
+        ]
     except Exception as db_error:
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
 
+
 async def get_bookings_of_spots_of_owner(db: Session, user_id: int):
     """
-    Retrieve all bookings for the spots of a specific owner.
+    Retrieve all bookings for the spots of a specific owner with additional fields from Spot and Payment tables.
 
     Parameters:
         db (Session): SQLAlchemy database session
         user_id (int): User ID
 
     Returns:
-        List[Booking]: List of bookings for the spots of the specified owner
+        List[dict]: List of bookings for the spots of the specified owner with additional fields
 
     Example:
         get_bookings_of_spots_of_owner(db, 1)
         retrieve all bookings for the spots of owner ID 1
-        return list of bookings for the spots of the owner
+        return list of bookings for the spots of the owner with additional fields
     """
     try:
-        spots = db.query(Spot).filter(Spot.owner_id == user_id).all()
-        spot_ids = [spot.spot_id for spot in spots]
-        bookings_matrix = [get_booking_by_spot(db, spot_id) for spot_id in spot_ids]
-        bookings = np.array(bookings_matrix).flatten().tolist()
-        return bookings
+        bookings = (
+            db.query(
+                Booking,
+                Spot.spot_title,
+                Payment.amount,
+                Payment.status.label("payment_status")
+            )
+            .join(Spot, Booking.spot_id == Spot.spot_id)
+            .join(Payment, Booking.payment_id == Payment.id)
+            .filter(Spot.owner_id == str(user_id))
+            .all()
+        )
+
+        return [
+            {
+                "id": booking.Booking.id,
+                "user_id": booking.Booking.user_id,
+                "spot_id": booking.Booking.spot_id,
+                "spot_title": booking.spot_title,
+                "total_slots": booking.Booking.total_slots,
+                "start_date_time": booking.Booking.start_date_time,
+                "end_date_time": booking.Booking.end_date_time,
+                "payment_id": booking.Booking.payment_id,
+                "payment_amount": booking.amount,
+                "payment_status": booking.payment_status,
+            }
+            for booking in bookings
+        ]
     except Exception as db_error:
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")

@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, BLOB
+from sqlalchemy import Column, Integer, String, DateTime, LargeBinary
 from sqlalchemy.sql import func
-from app.db.session import Base
+from app.db.db import Base
 
 class Review(Base):
     __tablename__ = "reviews"
@@ -10,6 +10,6 @@ class Review(Base):
     spot_id = Column(Integer, nullable=False)
     rating_score = Column(Integer, nullable=False)
     review_description = Column(String, nullable=True)
-    image = Column(BLOB, nullable=True)
+    image = Column(LargeBinary, nullable=True)
     owner_reply = Column(String, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
