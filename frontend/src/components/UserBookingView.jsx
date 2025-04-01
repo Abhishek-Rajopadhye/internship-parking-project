@@ -3,7 +3,7 @@ import { Typography, Paper, Box, Button, Divider, Table, TableContainer, TableHe
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { CurrencyRupee } from "@mui/icons-material";
-import { backend_url } from "../const";
+import { BACKEND_URL } from "../const";
 
 const UserBookingView = () => {
 	const [bookings, setBookings] = useState([]);
@@ -11,7 +11,7 @@ const UserBookingView = () => {
 
 	useEffect(() => {
 		const fetchDetails = async () => {
-			const response = await axios.get(`${backend_url}/bookings/user/${user.id}`);
+			const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
 			if (response.status == 200) {
 				setBookings(response.data);
 			}

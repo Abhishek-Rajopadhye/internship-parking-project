@@ -98,49 +98,54 @@ const AppLayout = () => {
 
 	return (
 		<Box sx={{ display: "flex", width: "100%" }}>
-			<AppBar position="fixed">
-				<Toolbar>
-					<IconButton
-						edge="start"
-						color="inherit"
-						aria-label="menu"
-						onClick={handleDrawerToggle}
-						sx={{ marginRight: 2 }}
-					>
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-						{getPageTitle()}
-					</Typography>
-					{getPageTitle() === "Home" && (
-						<Box sx={{ flexShrink: 0 }}>
-							<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
-						</Box>
-					)}
-				</Toolbar>
-			</AppBar>
-			<Drawer
-				variant="persistent"
-				anchor="left"
-				open={isDrawerOpen}
-				sx={{
-					// Help of auto generate for styling was used
-					width: 350,
-					flexShrink: 0,
-					"& .MuiDrawer-paper": {
+			<Box sx={{ flexGrow: 1 }}>
+				<AppBar position="fixed">
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							aria-label="menu"
+							onClick={handleDrawerToggle}
+							sx={{ marginRight: 2 }}
+						>
+							<MenuIcon />
+						</IconButton>
+						<Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
+							{getPageTitle()}
+						</Typography>
+						{getPageTitle() === "Home" && (
+							<Box sx={{ flexShrink: 0 }}>
+								<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
+							</Box>
+						)}
+					</Toolbar>
+				</AppBar>
+				<Toolbar />
+			</Box>
+			<Box sx={{ flexGrow: 1 }}>
+				<Drawer
+					variant="persistent"
+					anchor="left"
+					open={isDrawerOpen}
+					sx={{
+						// Help of auto generate for styling was used
 						width: 350,
-						boxSizing: "border-box",
-					},
-				}}
-			>
-				<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
-					<IconButton onClick={handleDrawerToggle}>
-						<ChevronLeftIcon />
-					</IconButton>
-				</Box>
-				<NavBar user={user} logout={logout} />
-			</Drawer>
-			<Box sx={{ flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
+						flexShrink: 0,
+						"& .MuiDrawer-paper": {
+							width: 350,
+							boxSizing: "border-box",
+						},
+					}}
+				>
+					<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
+						<IconButton onClick={handleDrawerToggle}>
+							<ChevronLeftIcon />
+						</IconButton>
+					</Box>
+					<NavBar user={user} logout={logout} />
+				</Drawer>
+			</Box>
+			<Box sx={{ p: 3, m:5, width: "100%" }} variant="main">
 				<Routes>
 					<Route path="/spot" element={<Spot/>}></Route>
 					<Route path="/profile" element={<Profile />} />

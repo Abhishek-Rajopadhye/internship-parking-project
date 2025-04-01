@@ -22,7 +22,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import axios from "axios";
-import { backend_url } from "../const";
+import { BACKEND_URL } from "../const";
 
 const DetailInfo = ({ selectedMarker, user }) => {
 	const [reviews, setReviews] = useState([]);
@@ -30,7 +30,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
-				const response = await axios.get(`${backend_url}/review/spot/${selectedMarker.spot_id}`);
+				const response = await axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`);
 				const data = await response.json();
 				console.log("Received data ", data);
 				setReviews(data);

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { backend_url } from "../const";
+import { BACKEND_URL } from "../const";
 
 const AddReview = ({ spotId, handleClose }) => {
 	const [formData, setFormData] = useState(null);
@@ -30,7 +30,7 @@ const AddReview = ({ spotId, handleClose }) => {
 	const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-			const response = await axios.post(`${backend_url}/reviews/`, formData, {
+			const response = await axios.post(`${BACKEND_URL}/reviews/`, formData, {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${localStorage.getItem("token")}`,

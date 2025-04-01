@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import axios from "axios";
 import { CurrencyRupee } from "@mui/icons-material";
-import { backend_url } from "../const";
+import { BACKEND_URL } from "../const";
 
 /**
  * Profile Component
@@ -82,7 +82,7 @@ const Profile = () => {
 	const handleSave = async (updatedUser) => {
 		try {
 			const user_id = String(localStorage.getItem("user_id"));
-			const response = await axios.put(`${backend_url}/users/profile/${user_id}`, updatedUser, {
+			const response = await axios.put(`${BACKEND_URL}/users/profile/${user_id}`, updatedUser, {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${localStorage.getItem("token")}`,

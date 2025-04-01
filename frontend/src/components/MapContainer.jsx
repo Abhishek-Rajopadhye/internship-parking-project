@@ -8,7 +8,7 @@ import { InfoWindowComponent } from "./InfoWindowComponent";
 import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
-import { backend_url } from "../const";
+import { BACKEND_URL } from "../const";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef }) {
 	const { isLoaded, loadError } = useJsApiLoader({
@@ -40,7 +40,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 	useEffect(() => {
 		const fetchMarkers = async () => {
 			try {
-				const response = await axios.get(`${backend_url}/spotdetails/getparkingspot`);
+				const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
 				setMarkers(response.data);
 				setError(null);
 			} catch (error) {
