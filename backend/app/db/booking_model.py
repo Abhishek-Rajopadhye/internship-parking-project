@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.sql import func
-from app.db.session import Base
+from app.db.db import Base
 
 class Booking(Base):
     __tablename__ = "bookings"
@@ -12,4 +12,5 @@ class Booking(Base):
     start_date_time = Column(String, nullable=False)
     end_date_time = Column(String, nullable=False)
     payment_id = Column(Integer, ForeignKey("payments.id"), nullable=False)
+    status = Column(String,nullable=False, insert_default="Pending")
     created_at = Column(DateTime, server_default=func.now())

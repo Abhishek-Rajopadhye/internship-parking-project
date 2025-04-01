@@ -1,8 +1,7 @@
 # app/db/oauth_model.py
 
 from sqlalchemy import Column, Integer, String
-from app.db.session import Base
-from sqlalchemy.orm import relationship
+from app.db.db import Base
 
 class OAuthUser(Base):
     __tablename__ = "oauth_users"

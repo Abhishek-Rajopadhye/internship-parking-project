@@ -2,6 +2,10 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
+from app.db.payment_model import Payment
+from app.db.booking_model import Booking
+from app.db.spot_model import Spot
 from app.db.session import get_db
 from app.db.oauth_model import OAuthUser
 from app.schemas.user import UserProfile, UserUpdate
@@ -38,11 +42,21 @@ async def get_profile(user_id: str, token: str = Depends(oauth2_scheme), db: Ses
         if not payload:
             raise HTTPException(status_code=401, detail="Invalid token")
         
+        # Calculate total earnings
+        total_earnings = (
+            db.query(func.sum(Payment.amount))
+            .join(Booking, Payment.id == Booking.payment_id)
+            .join(Spot, Booking.spot_id == Spot.spot_id)
+            .filter(Spot.owner_id == user_id)
+            .scalar()
+        ) or 0  # Default to 0 if no earnings
+
         return UserProfile(
             id=user.provider_id,
             name=user.name, 
             email=user.email, 
             phone=user.phone,
+            total_earnings=total_earnings,
             profile_picture=user.profile_picture
         )
     except HTTPException as http_error:
@@ -100,7 +114,8 @@ async def update_profile(user_id: str, user_update: UserUpdate, token: str = Dep
             name=user.name, 
             email=user.email, 
             phone=user.phone,
-            profile_picture=user.profile_picture
+            profile_picture=user.profile_picture,
+            total_earnings=user_update.total_earnings
         )
     except HTTPException as http_error:
         raise http_error

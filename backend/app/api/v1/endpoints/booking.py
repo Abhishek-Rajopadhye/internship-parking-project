@@ -15,7 +15,7 @@ async def get_booking(db: Session = Depends(get_db)):
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
-        List[Booking]: List of all bookings
+        List[dict]: List of all bookings
     """
     return await get_bookings(db)
 
@@ -43,7 +43,7 @@ async def get_booking_of_spots_of_owner(user_id: int, db: Session = Depends(get_
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
-        List[Booking]: List of bookings for the specified user
+        List[dict]: List of bookings for the specified user
     """
     return await get_bookings_of_spots_of_owner(db, user_id)
 
@@ -57,7 +57,7 @@ async def get_booking_by_spot_id(spot_id: int, db: Session = Depends(get_db)):
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
-        List[Booking]: List of bookings for the specified spot
+        List[dict]: List of bookings for the specified spot
     """
     return await get_booking_by_spot(db, spot_id)
 
@@ -79,11 +79,12 @@ async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):
         return the booking details
     """
     try:
+        print(booking_data.__dict__)
         response = await create_booking(db, booking_data)
-        print(response)
+        # print(response)
         if "error" in response:
             raise HTTPException(status_code=400, detail=response["detail"])
         return response
     except Exception as exception:
         print(exception)
-        raise HTTPException(status_code=400, detail=exception.detail)
+        raise HTTPException(status_code=400, detail="Failed to book the spot")

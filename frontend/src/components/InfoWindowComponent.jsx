@@ -1,3 +1,4 @@
+
 import { InfoWindow } from '@react-google-maps/api';
 import { Box, Typography, IconButton } from '@mui/material';
 import DirectionsWalkIcon from '@mui/icons-material/DirectionsWalk';
@@ -6,8 +7,6 @@ import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import InfoIcon from '@mui/icons-material/Info';
 import { Link, useNavigate } from 'react-router-dom';
-
-
 
 const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) => {
     const navigate = useNavigate();
@@ -90,7 +89,6 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
             </InfoWindow>
         </Box>
     );
-}
+};
 
-export default InfoWindowComponent;
-
+export { InfoWindowComponent };
