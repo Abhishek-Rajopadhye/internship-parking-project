@@ -1,17 +1,18 @@
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel
 
 class ParkingSpot(BaseModel):
     spot_id: int
+    address: str
     owner_id: str
     spot_title: str
-    address: str
     latitude: float
     longitude: float
-    hourly_rate: int
-    no_of_slots: int
     available_slots: int
+    no_of_slots: int
+    hourly_rate: int
     open_time: str
     close_time: str
-    description: str
-    available_days: List[str]
+    description: Optional[str] = None
+    available_days: list[str]
+    image: str

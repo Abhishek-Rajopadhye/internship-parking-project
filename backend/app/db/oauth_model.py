@@ -15,3 +15,5 @@ class OAuthUser(Base):
     profile_picture = Column(String, nullable=True)
     access_token = Column(String)
     refresh_token = Column(String, nullable=True)  # If provider supports refresh tokens
+
+ 

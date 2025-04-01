@@ -13,6 +13,7 @@ import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
+import  ParkingSpot from "./pages/ParkingSpotDetails";
 import { Spot } from "./pages/Spot";
 
 /**
