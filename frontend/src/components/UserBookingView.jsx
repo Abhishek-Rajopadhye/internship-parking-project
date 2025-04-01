@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState, useContext } from "react";
 import { Typography, Paper, Box, Button, Divider, Table, TableContainer, TableHead, TableRow, TableCell, TableBody, Collapse } from "@mui/material";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { CurrencyRupee } from "@mui/icons-material";
+import { backend_url } from "../const";
 
 const UserBookingView = () => {
 	const [bookings, setBookings] = useState([]);
@@ -11,7 +11,7 @@ const UserBookingView = () => {
 
 	useEffect(() => {
 		const fetchDetails = async () => {
-			const response = await axios.get(`http://localhost:8000/bookings/user/${user.id}`);
+			const response = await axios.get(`${backend_url}/bookings/user/${user.id}`);
 			if (response.status == 200) {
 				setBookings(response.data);
 			}

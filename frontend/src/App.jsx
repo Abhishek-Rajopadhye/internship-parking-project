@@ -38,7 +38,6 @@ const AppLayout = () => {
         available_slots: 50,
         description: "This is a convenient EV charging station located in the heart of the city with fast chargers. The station is open from 08:00 AM to 20:00 PM from Tuesday to Sunday. The hourly rate is $50. There are 5 charging slots available, out of which 3 are currently available. The station is located at Green Park, London.",
     };
-	const providerId = "111919577987638512190";
 
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
@@ -143,7 +142,7 @@ const AppLayout = () => {
 			</Drawer>
 			<Box sx={{ flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
 				<Routes>
-					<Route path="/spot" element={<Spot userId={providerId}></Spot>}></Route>
+					<Route path="/spot" element={<Spot/>}></Route>
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route path="/my-spots" element={<MySpots />} />

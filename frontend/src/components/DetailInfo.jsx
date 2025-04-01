@@ -22,6 +22,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import axios from "axios";
+import { backend_url } from "../const";
 
 const DetailInfo = ({ selectedMarker, user }) => {
 	const [reviews, setReviews] = useState([]);
@@ -29,7 +30,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 	useEffect(() => {
 		const fetchDetails = async () => {
 			try {
-				const response = await axios.get(`http://127.0.0.1:8000/review/spot/${selectedMarker.spot_id}`);
+				const response = await axios.get(`${backend_url}/review/spot/${selectedMarker.spot_id}`);
 				const data = await response.json();
 				console.log("Received data ", data);
 				setReviews(data);
@@ -69,7 +70,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
 								<AccountBoxIcon sx={{ mr: 2 }} /> {user.name}
 							</Typography>
 						</Box>
-            
+
 						<Box sx={{ mt: 2, padding: 1 }}>
 							<Typography variant="h4">
 								<PhoneIcon sx={{ mr: 2 }} />

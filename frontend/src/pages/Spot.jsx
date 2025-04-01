@@ -4,6 +4,7 @@ import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, CircularProg
 import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
+import { backend_url } from "../const";
 
 const Spot = () => {
 	const { user } = useContext(AuthContext);
@@ -127,7 +128,7 @@ const Spot = () => {
 		console.log("Open Days:", open_days);
 
 		try {
-			const response = await axios.post("http://localhost:8000/spots/add-spot/", {
+			const response = await axios.post(`${backend_url}/spots/add-spot/`, {
 				owner_id: user.id,
 				spot_title: spotTitle,
 				spot_address: spotAddress,
