@@ -13,8 +13,8 @@ import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
-import  ParkingSpot from "./pages/ParkingSpotDetails";
 import { Spot } from "./pages/Spot";
+import DetailInfo from "./components/DetailInfo";
 
 /**
  * A Routing Layout for the Application
@@ -74,12 +74,16 @@ const AppLayout = () => {
 				return "Booking History";
 			case "/my-spots":
 				return "My Spots";
+			case "/spot":
+				return "Add Spot"
 			case "/home":
 				return "Home";
 			case "/auth":
 				return "Auth";
 			case "/booking":
 				return "Booking";
+			case "/spotdetail":
+				return "Detailed Info";
 			default:
 				return "Home";
 		}
@@ -159,6 +163,8 @@ const AppLayout = () => {
 					/>
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={spot} user_id={user.id} />} />
+					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user}/>}/>
+					<Route path="/spot" element={<Spot/>}/>
 					<Route path="*" element={<Navigate to="/home" />} />
 				</Routes>
 			</Box>
