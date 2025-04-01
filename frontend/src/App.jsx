@@ -13,6 +13,7 @@ import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
+import  ParkingSpot from "./pages/ParkingSpotDetails";
 import { Spot } from "./pages/Spot";
 
 /**
@@ -21,22 +22,22 @@ import { Spot } from "./pages/Spot";
  * @returns {JSX.Element} AppLayout Component
  */
 const AppLayout = () => {
-	const spot = {
-		owner_id: 101,
-		spot_id: 2,
-		hourly_rate: 50,
-		spot_title: "Green Park Charging Spot",
-		address: "A convenient EV charging station located in the heart of the city with fast chargers.",
-		open_time: "08:00 am",
-		close_time: "20:00 pm",
-		available_days: ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-		latitude: 51.5074,
-		longitude: 0.1278,
-		no_of_slots: 5,
-		available_slots: 3,
-		description:
-			"This is a convenient EV charging station located in the heart of the city with fast chargers. The station is open from 08:00 AM to 20:00 PM from Tuesday to Sunday. The hourly rate is $50. There are 5 charging slots available, out of which 3 are currently available. The station is located at Green Park, London.",
-	};
+
+	 const spot = {
+        owner_id: 101,
+        spot_id: 3,
+        hourly_rate: 20,
+        spot_title: "Green Park Charging Spot",
+        address: "A convenient EV charging station located in the heart of the city with fast chargers.",
+        open_time: "08:00 am",
+        close_time: "20:00 pm",
+        available_days: ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        latitude: 51.5074,
+        longitude: 0.1278,
+        no_of_slots: 5,
+        available_slots: 50,
+        description: "This is a convenient EV charging station located in the heart of the city with fast chargers. The station is open from 08:00 AM to 20:00 PM from Tuesday to Sunday. The hourly rate is $50. There are 5 charging slots available, out of which 3 are currently available. The station is located at Green Park, London.",
+    };
 	const providerId = "111919577987638512190";
 
 	const { user, logout } = useContext(AuthContext);

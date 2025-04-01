@@ -1,128 +1,172 @@
-import { useEffect } from "react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import { Box, Button } from '@mui/material';
+import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import axios from 'axios';
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
-import Button from "@mui/material/Button";
 import { IoLocationSharp } from "react-icons/io5";
+import { useNavigate } from 'react-router-dom';
+import { CircularProgress } from '@mui/material';
 
-/**
- * MapContainer component renders a Google Map with markers and an info window.
- * It fetches parking spot data from an API, calculates distances between points,
- * and allows interaction with markers on the map.
- *
- * @component
- * @param {Object} props - The component props.
- * @param {Object} props.selectedMarker - The currently selected marker.
- * @param {Function} props.setSelectedMarker - Function to update the selected marker.
- * @param {Object} props.newMarker - The new marker to be added to the map.
- * @param {Array} props.markers - Array of marker objects to display on the map.
- * @param {Function} props.setMarkers - Function to update the markers array.
- * @param {Object} props.mapRef - A reference to the Google Map instance.
- *
- * @returns {JSX.Element} The rendered MapContainer component.
- */
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef }) {
-	const { isLoaded } = useJsApiLoader({
-		id: "google-map-script",
-		googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
-		libraries: ["places", "geometry"], // Added geometry library for distance calculation
-	});
+    const { isLoaded, loadError } = useJsApiLoader({
+        id: 'google-map-script',
+        googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
+        libraries: ['places', 'geometry'] // Added geometry library for distance calculation
+    });
+     const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-	const mapStyles = {
-		display: "flex",
-		featureType: "all",
-		elementType: "all",
-		width: "90vw",
-		height: "85vh",
-		position: "fixed",
-		top: 50,
-		left: -300,
-	};
+    const mapStyles = {
+        display: 'flex',
+        featureType: 'all',
+        elementType: 'all',
+        width: '90vw',
+        height: '85vh',
+        position: "fixed",
+        top: 50,
+        left: -300
+    };
 
-	const center = {
-		lat: 18.519584,
-		lng: 73.855421,
-	};
+    const defaultCenter = {
+        lat: 18.519584,
+        lng: 73.855421,
+    };
 
-	useEffect(() => {
-		const fetchMarkers = async () => {
-			try {
-				const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
-				setMarkers(response.data);
-			} catch (error) {
-				console.error("Error fetching markers", error);
-			}
-		};
+    useEffect(() => {
+        const fetchMarkers = async () => {
+            try {
+                const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
+                setMarkers(response.data);
+                setError(null);
 
-		fetchMarkers();
-	}, [setMarkers]);
+            } catch (error) {
+                console.error("Error fetching markers", error);
+                // SpeechSynthesisErrorEvent("failed to load parking spots. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-	// Calculate distance between two points
-	const calculateDistance = (origin, destination) => {
-		if (!window.google) return null;
+        fetchMarkers();
+    }, [setMarkers]);
 
-		const originLatLng = new window.google.maps.LatLng(origin.lat, origin.lng);
+    const onMarkerDragEnd = (event) => {
+        if (!event || !event.latLng) {
+            console.error("Error: event.latLng is undefined.", event);
+            return;
+        }
 
-		const destinationLatLng = new window.google.maps.LatLng(destination.lat, destination.lng);
+        const newLat = event.latLng.lat?.();
+        const newLng = event.latLng.lng?.();
 
-		// Distance in meters
-		const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(originLatLng, destinationLatLng);
+        if (newLat === undefined || newLng === undefined) {
+            console.error("Error: Could not retrieve lat/lng from event.", event);
+            return;
+        }
 
-		// Convert to kilometers with 2 decimal places
-		return (distanceInMeters / 1000).toFixed(2);
-	};
+        setDraggableMarker({ lat: newLat, lng: newLng });
 
-	return (
-		<div className="map-container">
-			{isLoaded && (
-				<>
-					<GoogleMap mapContainerStyle={mapStyles} center={center} zoom={10} onLoad={(map) => (mapRef.current = map)}>
-						{markers.map((marker, index) => (
-							<MarkerComponent key={index} marker={marker} setSelectedMarker={setSelectedMarker} />
-						))}
+        console.log("New Position:", newLat, newLng);
+    };
 
-						{newMarker && (
-							<MarkerComponent marker={newMarker} setSelectedMarker={setSelectedMarker} isSearchMarker={true} />
-						)}
+    // Calculate distance between selected marker and the seach point location 
+    const calculateDistance = (origin, destination) => {
+        if (!window.google?.maps?.geometry) return null;
 
-						{selectedMarker && (
-							<InfoWindowComponent
-								selectedMarker={selectedMarker}
-								newMarker={newMarker}
-								setSelectedMarker={setSelectedMarker}
-								calculateDistance={calculateDistance}
-							/>
-						)}
-					</GoogleMap>
-					<div
-						style={{
-							display: "flex",
-							position: "fixed",
-							bottom: "8%",
-							left: "10%",
-							// transform: 'translateX(-50%)',
-							// zIndex: 10,
-							alignContent: center,
-						}}
-					>
-						<Button variant="contained" disableElevation>
-							<IoLocationSharp size={20} />
-							<span
-								style={{
-									marginLeft: "10px",
-									paddingTop: "5px",
-									paddingBottom: "4px",
-								}}
-							>
-								Add Parking Spot
-							</span>
-						</Button>
-					</div>
-				</>
-			)}
-		</div>
-	);
+        try {
+            const originLatLng = new window.google.maps.LatLng(
+                origin.lat,
+                origin.lng
+            );
+
+            const destinationLatLng = new window.google.maps.LatLng(
+                destination.lat,
+                destination.lng
+            );
+
+            // Distance in meters
+            const distanceInMeters = window.google.maps.geometry.spherical.computeDistanceBetween(
+                originLatLng,
+                destinationLatLng
+            );
+
+            // Converting  km with 2 decimal places
+            return (distanceInMeters / 1000).toFixed(2);
+        } catch (error) {
+            console.error("Distance claculation error:", error);
+            return null;
+        }
+
+
+    };
+
+    if (!isLoaded) {
+        return <CircularProgress />
+    }
+
+    return (
+        <Box className='map-container' >
+            {loading ? (<CircularProgress />
+            ) : error ? (
+                <Alert severity="error">{error}</Alert>
+            ) : (
+
+                <>
+                    <GoogleMap
+                        mapContainerStyle={mapStyles}
+                        center={defaultCenter}
+                        zoom={12}
+                        onLoad={map => (mapRef.current = map)}
+                    >
+                        {markers.map((marker, index) => (
+                            <MarkerComponent
+                                key={index}
+                                marker={marker}
+                                setSelectedMarker={setSelectedMarker}
+                            />
+                        ))}
+
+                        {
+                            newMarker && <MarkerComponent
+                                marker={newMarker}
+                                setSelectedMarker={setSelectedMarker}
+                                isSearchMarker={true}
+                            />
+                        }
+
+                        {/* <Marker
+                            position={draggableMarker}
+                            draggable={true}
+                            onDragEnd={onMarkerDragEnd}
+                        /> */}
+
+
+                        {selectedMarker && (
+                            <InfoWindowComponent
+                                selectedMarker={selectedMarker}
+                                newMarker={newMarker}
+                                setSelectedMarker={setSelectedMarker}
+                                calculateDistance={calculateDistance}
+                            />
+                        )}
+                    </GoogleMap>
+
+
+                    <Button
+                        onClick={() => navigate("/spots")}
+                        variant="contained"
+                        disableElevation
+                        startIcon={<IoLocationSharp size={20} />}
+                    >Add Parking Spot
+                    </Button>
+
+                </>
+            )}
+        </Box>
+    );
 }
 
 export { MapContainer };

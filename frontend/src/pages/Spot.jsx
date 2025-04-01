@@ -95,8 +95,43 @@ const Spot = ({ userId: userId }) => {
 		if (parseInt(availableSlots) > parseInt(totalSlots)) return "Available Slots cannot exceed Total Slots";
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
 
-		return null;
-	};
+    return null;
+  };
+  
+  const handleAddSpot = async () => {
+    if(!(latitude >= 6.554607 && latitude <= 35.674545 && longitude >= 68.162385 && longitude <= 97.395561)) {
+      setOpenSnackbar({open:true, message: "Only India Coordinates allowed", severity: "error"});
+      return;
+    }
+    const error = validateForm();
+    if (error) {
+      setOpenSnackbar({ open: true, message: error, severity: "error" });
+      return;
+    }
+    //fetchCoordinates();
+    if(latitude === "" || longitude === "") {
+      setOpenSnackbar({ open: true, message: "Invalid Address", severity: "error" });
+      return;
+    }
+    setLoading(true);
+    console.log("Latitude:", latitude);
+    console.log("Longitude:", longitude);
+    console.log("Spot Title:", spotTitle);
+    console.log("Spot Address:", spotAddress);
+    console.log("Spot Description:", spotDescription);
+    console.log("Open Time:", openTime);
+    console.log("Close Time:", closeTime);
+    console.log("Hourly Rate:", hourlyRate);
+    console.log("Total Slots:", totalSlots);
+    console.log("Available Slots:", availableSlots);
+    let open_days = [];
+    for (const day in openDays) {
+      if (openDays[day]) {
+        open_days.push(day);
+      }
+    }
+    let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
+    let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
 
 	const handleAddSpot = async () => {
 		const error = validateForm();
@@ -129,26 +164,44 @@ const Spot = ({ userId: userId }) => {
 		let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
 		let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
 
-		let new_open_time = openTime + " " + open;
-		let new_close_time = closeTime + " " + close;
-		console.log("Open Days:", open_days);
+      if (response.status === 200) {
+        setOpenSnackbar({ open: true, message: "Parking spot added successfully!", severity: "success" });
+        setSpotTitle(""); setSpotAddress(""); setSpotDescription("");
+        setOpenTime(""); setCloseTime(""); setHourlyRate("");
+        setTotalSlots(""); setAvailableSlots(""); setImage(null); setImagePreview(null);
+        setLatitude("");setLongitude("");
+        setOpenDays({ Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false });
+      }
+    } catch (error) {
+      setOpenSnackbar({ open: true, message: "Error uploading data", severity: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-		try {
-			const response = await axios.post("http://localhost:8000/spots/add-spot/", {
-				owner_id: userId,
-				spot_title: spotTitle,
-				spot_address: spotAddress,
-				spot_description: spotDescription,
-				open_time: new_open_time,
-				close_time: new_close_time,
-				hourly_rate: hourlyRate,
-				total_slots: totalSlots,
-				available_slots: availableSlots,
-				latitude,
-				longitude,
-				available_days: open_days,
-				image: image,
-			});
+  return (
+    <Box className="form-container">
+      <Box className="form-container">
+      
+        {/* <IconButton
+          onClick={() => navigate(-1)}
+          sx={{
+          position: "relative",
+          bottom: '45%',
+          right: '5%',
+          backgroundColor: "white",
+          border: "1px solid gray",
+          "&:hover": { backgroundColor: "lightgray" }
+          }}
+        > */}
+        {/* <ArrowBackIcon />
+        </IconButton> */}
+        <Box className="form-box">
+        {/* <Typography variant="h5" gutterBottom align="center">
+          Add Parking Spot
+        </Typography> */}
+        <Grid container spacing={2}>
+          <Grid item xs={12}><TextField fullWidth label="Spot Title" value={spotTitle} onChange={(e) => setSpotTitle(e.target.value)} /></Grid>
 
 			if (response.status === 200) {
 				setOpenSnackbar({ open: true, message: "Parking spot added successfully!", severity: "success" });
@@ -172,35 +225,12 @@ const Spot = ({ userId: userId }) => {
 		}
 	};
 
-	return (
-		<Box className="form-container">
-			<Box className="form-container">
-				<IconButton
-					onClick={() => navigate(-1)}
-					sx={{
-						position: "relative",
-						bottom: "45%",
-						right: "5%",
-						backgroundColor: "white",
-						border: "1px solid gray",
-						"&:hover": { backgroundColor: "lightgray" },
-					}}
-				>
-					<ArrowBackIcon />
-				</IconButton>
-				<Box className="form-box">
-					<Typography variant="h5" gutterBottom align="center">
-						Add Parking Spot
-					</Typography>
-					<Grid container spacing={2}>
-						<Grid item xs={12}>
-							<TextField
-								fullWidth
-								label="Spot Title"
-								value={spotTitle}
-								onChange={(e) => setSpotTitle(e.target.value)}
-							/>
-						</Grid>
+          <Grid item xs={12}><TextField fullWidth label="Spot Latitude" value={latitude} onChange={(e) => setLatitude(e.target.value)} /></Grid>
+
+          <Grid item xs={12}><TextField fullWidth label="Spot Longitude" value={longitude} onChange={(e) => setLongitude(e.target.value)} /></Grid>
+
+          <Grid item xs={12}><TextField fullWidth label="Spot Description" multiline rows={3} value={spotDescription} onChange={(e) => setSpotDescription(e.target.value)} /></Grid>
+
 
 						<Grid item xs={12}>
 							<TextField
@@ -272,36 +302,30 @@ const Spot = ({ userId: userId }) => {
 							/>
 						</Grid>
 
-						<Grid item xs={12}>
-							<Typography variant="subtitle1">Select Open Days:</Typography>
-							<Grid container spacing={1} justifyContent="center">
-								{Object.keys(openDays).map((day) => (
-									<Grid item key={day}>
-										<Button
-											variant={openDays[day] ? "contained" : "outlined"}
-											color={openDays[day] ? "primary" : "default"}
-											onClick={() => toggleDay(day)}
-										>
-											{day}
-										</Button>
-									</Grid>
-								))}
-							</Grid>
-						</Grid>
-						<Grid item xs={12}>
-							<input
-								type="file"
-								accept=".png, .jpeg"
-								onChange={handleImageChange}
-								style={{ display: "none" }}
-								id="image-upload"
-							/>
-							<label htmlFor="image-upload">
-								<Button variant="outlined" color="primary" component="span">
-									Upload Image
-								</Button>
-							</label>
-						</Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <input type="file" accept=".png, .jpeg" onChange={handleImageChange} style={{ display: "none" }} id="image-upload" />
+            <label htmlFor="image-upload">
+              <Button variant="outlined" color="primary" component="span">Upload Image</Button>
+            </label>
+          </Grid>
+          
+          <Grid item xs={12}>
+            <Button variant="contained" color="primary" fullWidth onClick={handleAddSpot} disabled={loading}>
+              {loading ? <CircularProgress size={24} /> : "Add Spot"}
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <Button variant="contained" color="primary" fullWidth onClick={() => {
+              navigate(-1)
+            }}>
+              Go Back
+            </Button>
+          </Grid>
+        </Grid>
+        </Box>
+      </Box>
+
 
 						<Grid item xs={12}>
 							<Button variant="contained" color="primary" fullWidth onClick={handleAddSpot} disabled={loading}>
