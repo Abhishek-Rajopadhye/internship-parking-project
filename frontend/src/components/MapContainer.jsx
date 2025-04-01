@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import { Box, Button } from '@mui/material';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
@@ -14,7 +15,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries: ['places', 'geometry'] // Added geometry library for distance calculation
     });
-     const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
+	const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -156,7 +157,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
 
                     <Button
-                        onClick={() => navigate("/spots")}
+                        onClick={() => navigate("/spot")}
                         variant="contained"
                         disableElevation
                         startIcon={<IoLocationSharp size={20} />}
