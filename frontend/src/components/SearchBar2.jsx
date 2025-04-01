@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Autocomplete, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
 import { Search as SearchIcon, FilterAlt as FilterAltIcon } from "@mui/icons-material";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
@@ -8,12 +8,16 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
     const [suggestions, setSuggestions] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [searchOptions,setSearchoptions]=useState(null)
 
+    
+
+      
     const handleInputChange = (event, value) => {
         setAddress(value);
         if (value.length > 2) {
             const service = new window.google.maps.places.AutocompleteService();
-            service.getPlacePredictions({ input: value }, (predictions, status) => {
+            service.getPlacePredictions({ input: value ,componentRestrictions:{country:"IN"},types:["geocode"],}, (predictions, status) => {
                 if (status === window.google.maps.places.PlacesServiceStatus.OK) {
                     setSuggestions(predictions.map(prediction => prediction.description));
                 }
@@ -34,7 +38,7 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
         setSelectedMarker(newSearchMarker);
 
         if (mapRef.current) {
-            mapRef.current.panTo(latLng);
+             mapRef.current.panTo(latLng);
             mapRef.current.setZoom(14);
         }
     };

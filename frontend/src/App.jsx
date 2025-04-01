@@ -13,7 +13,7 @@ import { MySpots } from "./pages/MySpots";
 import { Home } from "./pages/Home";
 import SearchBar from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
-import { ParkingSpot } from "./pages/ParkingSpotDetails";
+import  ParkingSpot from "./pages/ParkingSpotDetails";
 import Spot from "./pages/Spot";
 
 
@@ -138,7 +138,7 @@ const AppLayout = () => {
                     <Route path="/my-spots" element={<MySpots />} />
                     <Route path="/home" element={<Home selectedMarker={selectedMarker} setSelectedMarker={setSelectedMarker} newMarker={newMarker} setNewMarker={setNewMarker} markers={markers} setMarkers={setMarkers} mapRef={mapRef} />} />
                     <Route path="/auth" element={<Auth />} />
-                    <Route path="/spotdetail" element={<ParkingSpot/>}/>
+                    <Route path="/spotdetail" element={<ParkingSpot selectedMarker={selectedMarker} user={user} />}/>
                     <Route path="/booking" element={<Booking spot_information={spot} user_id={user.id} />} />
                     <Route path="*" element={<Navigate to="/home" />} />
                 </Routes>

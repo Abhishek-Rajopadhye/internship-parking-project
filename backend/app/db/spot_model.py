@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Float, ARRAY, LargeBinary
 from sqlalchemy.sql import func
 from app.db.session import Base
+from sqlalchemy.orm import relationship
 
 class Spot(Base):
     __tablename__ = "spots"
@@ -18,5 +19,6 @@ class Spot(Base):
     close_time = Column(String , nullable=False)
     description = Column(String, nullable=True)
     available_days = Column(ARRAY(String), nullable=False)
-    image = Column(LargeBinary, nullable=False)
+    image = Column(LargeBinary, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    

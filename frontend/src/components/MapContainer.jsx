@@ -15,7 +15,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries: ['places', 'geometry'] // Added geometry library for distance calculation
     });
-    // const [draggleMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
+     const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -45,7 +45,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
             } catch (error) {
                 console.error("Error fetching markers", error);
-                SpeechSynthesisErrorEvent("failed to load parking spots. Please try again.");
+                // SpeechSynthesisErrorEvent("failed to load parking spots. Please try again.");
             } finally {
                 setLoading(false);
             }
@@ -54,24 +54,24 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         fetchMarkers();
     }, [setMarkers]);
 
-    // const onMarkerDragEnd = (event) => {
-    //     if (!event || !event.latLng) {
-    //         console.error("Error: event.latLng is undefined.", event);
-    //         return;
-    //     }
+    const onMarkerDragEnd = (event) => {
+        if (!event || !event.latLng) {
+            console.error("Error: event.latLng is undefined.", event);
+            return;
+        }
 
-    //     const newLat = event.latLng.lat?.();
-    //     const newLng = event.latLng.lng?.();
+        const newLat = event.latLng.lat?.();
+        const newLng = event.latLng.lng?.();
 
-    //     if (newLat === undefined || newLng === undefined) {
-    //         console.error("Error: Could not retrieve lat/lng from event.", event);
-    //         return;
-    //     }
+        if (newLat === undefined || newLng === undefined) {
+            console.error("Error: Could not retrieve lat/lng from event.", event);
+            return;
+        }
 
-    //     setDraggableMarker({ lat: newLat, lng: newLng });
+        setDraggableMarker({ lat: newLat, lng: newLng });
 
-    //     console.log("New Position:", newLat, newLng);
-    // };
+        console.log("New Position:", newLat, newLng);
+    };
 
     // Calculate distance between selected marker and the seach point location 
     const calculateDistance = (origin, destination) => {
@@ -137,6 +137,13 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
                                 isSearchMarker={true}
                             />
                         }
+
+                        {/* <Marker
+                            position={draggableMarker}
+                            draggable={true}
+                            onDragEnd={onMarkerDragEnd}
+                        /> */}
+
 
                         {selectedMarker && (
                             <InfoWindowComponent

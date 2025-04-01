@@ -1,11 +1,12 @@
 import DetailsInfo  from "../components/DetailInfo";
 import { Container } from "@mui/material";
-function ParkingSpot(){
+
+const ParkingSpot =({selectedMarker,user})=>{
     return (
         <Container>
-            <DetailsInfo/>
+            <DetailsInfo selectedMarker={selectedMarker} user={user}/>
         </Container>
     )
 }
 
-export { ParkingSpot };
+export default ParkingSpot;

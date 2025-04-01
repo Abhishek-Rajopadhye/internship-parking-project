@@ -8,6 +8,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import { Link, useNavigate } from 'react-router-dom';
 
 
+
 const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, calculateDistance }) => {
     const navigate = useNavigate();
 
@@ -21,9 +22,12 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
             selectedMarker.spot_id !== newMarker.spot_id);
 
     const showDetails = () => {
-        navigate("/spotdetail", {
-            state: { markerDetails: selectedMarker }
-        })
+        if (selectedMarker) {
+            console.log("Before navigating  ", selectedMarker)  // Ensure selectedMarker is not null
+            navigate("/spotdetail");
+        } else {
+            console.error("No marker selected to navigate!");
+        }
     }
 
     return (

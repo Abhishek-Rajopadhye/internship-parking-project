@@ -2,6 +2,7 @@
 
 from sqlalchemy import Column, Integer, String
 from app.db.session import Base
+from sqlalchemy.orm import relationship
 
 class OAuthUser(Base):
     __tablename__ = "oauth_users"
@@ -15,3 +16,5 @@ class OAuthUser(Base):
     profile_picture = Column(String, nullable=True)
     access_token = Column(String)
     refresh_token = Column(String, nullable=True)  # If provider supports refresh tokens
+
+ 

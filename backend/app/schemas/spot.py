@@ -13,5 +13,5 @@ class AddSpot(BaseModel):
     open_time: str
     close_time: str
     spot_description: Optional[str] = None
-    available_days: list[str]
-    image: str
+    available_days: list[str]=None
+    image: str = None

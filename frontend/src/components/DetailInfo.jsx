@@ -1,40 +1,135 @@
-import React from "react";
-import { Grid, Paper, Typography, Box, Rating, Avatar, colors, ImageList, ImageListItem, CardMedia, Card, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Grid, Paper, Typography, Chip, Box, Rating, Avatar, colors, ImageList, ImageListItem, CardMedia, Card, Button, ButtonBase } from "@mui/material";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from '@mui/icons-material/LocalParking';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import axios from 'axios';
+
+// const selectedMarker = {
+//     "spot_id": 4,
+//     "address": "Near the Main Building, SPPU, Pune",
+//     "owner_id": "114610398732037021788",
+//     "spot_title": "SPPU Campus Parking - Gate 1",
+//     "latitude": 18.534,
+//     "longitude": 73.856,
+//     "available_slots": 75,
+//     "no_of_slots": 100,
+//     "hourly_rate": 30,
+//     "open_time": "07:00",
+//     "close_time": "19:00",
+//     "description": "Official parking inside Pune University campus.",
+//     "available_days": [
+//         "Monday",
+//         "Tuesday",
+//         "Wednesday",
+//         "Thursday",
+//         "Friday"
+//     ],
+//     "image": ""
+// }
+
+
+// const user = {
+//     "id": "114610398732037021788",
+//     "name": "Pradeep Kale",
+//     "email": "lastspacehero@gmail.com",
+//     "phone": null,
+//     "profile_picture": "https://lh3.googleusercontent.com/a/ACg8ocIqZ4peUF4oPRYVzrom1hbe4J_5ICUNzgvcJ1_n9x_fPv-f1ZUI=s96-c"
+// }
+// useEffect(()=>{
+//     //load the owner info 
+//     //Load the reviews 
+// },[])
 
 
 
-function Layout() {
+
+const DetailInfo = ({ selectedMarker, user }) => {
+    const [reviews,setReviews]=useState([]);
+
+    useEffect(() => {
+        const fetchDetails  = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:8000/review/spot/${selectedMarker.spot_id}`);
+               const data= await  response.json()
+               console.log("Received data ",data);
+                setReviews(data);
+              
+    
+            } catch (error) {
+                console.error("Error fetching Reviews", error);
+                // SpeechSynthesisErrorEvent("failed to load parking spots. Please try again.");
+            
+        };
+    }
+    
+        fetchDetails();
+
+    }, []);
+    
+    console.log(reviews);
+    console.log("Received selected marker", selectedMarker, user)
     return (
         <Box sx={{ width: "80%", margin: "auto", padding: 3 }}>
             <Paper sx={{ padding: 2, textAlign: "center" }}>
-                <Typography variant="h4" fontWeight="bold">Parking Spot Details</Typography>
+                <CardMedia
+                    component="img"
+                    height="200"
+                    image="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e"
+                    alt="No images available  dish"
+                />
+                <Typography variant="h4" fontWeight="bold">{selectedMarker.spot_title}</Typography>
             </Paper>
+
             <Grid container sx={{ marginTop: 2, }}>
-                {/* left Section */}
+                {/* Left  */}
+                <Grid xs={12} md={6} sx={{ padding: 1 }}>
+                    <Paper elevation="6" sx={{ padding: 3 }}>
+                
+                        <Box sx={{mt:2,padding: 1}} >
+                          <Typography variant="h4"> < AccountBoxIcon sx={{mr:2}}/> {user.name}</Typography>  
+                     
+                        </Box>
+
+                        <Box sx={{mt:2,padding: 1}}>
+                        <Typography variant="h4"><PhoneIcon sx={{mr:2}}/>{user?.number || "Contact not available"}</Typography>
+                            
+                        <Typography variant="h5" sx={{ml:2}}>{user.email || "Email not provided "}</Typography>
+                        </Box>
+
+                        <Box sx={{ display: "flex", padding: 1 ,mt:2}}>
+                        <LocationOnIcon sx={{mr:2}}/><Typography variant="h5" fontWeight="bold" >{selectedMarker.address}</Typography>
+                        </Box>
+
+                        <Box sx={{  display: "flex",mt: 2 ,padding:1 }}>
+                        <CalendarTodayIcon sx={{mt:1,mr:2}}/>
+                            <Grid container spacing={1} sx={{ mt: 0,justifyContent:"flex-start" }}>  
+                                {selectedMarker.available_days.map((day, index) => (
+                                    <Grid item key={index}>
+                                        <Chip label={day.slice(0, 3).toUpperCase()} color="primary" size="small" />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+
+                        <Box sx={{mt:2,padding: 1}}>
+                           <Typography variant="h5">  <AccessTimeIcon sx={{mr:2}} />{selectedMarker.open_time} to {selectedMarker.close_time}</Typography>
+                        </Box>
+
+                        <Box sx={{mt:2,padding: 1}}>
+                            <Typography variant="h5"> <LocalParkingIcon sx={{mr:1}} /> Avalable Slots :{selectedMarker.available_slots} </Typography>
+                        </Box>
+                    </Paper>
+                </Grid>
+
+
+                {/* Right Section */}
                 <Grid item xs={12} md={6} sx={{ padding: 1 }} >
                     <Paper elevation="6" sx={{ padding: 3 }} >
                         <Typography variant="h6">Left Section</Typography>
-
-                        <Grid container spacing={0} >
-                            <ImageList sx={{ width: 500, height: 65 }} cols={3} >
-                                {itemData.map((item) => (
-                                    <ImageListItem key={item.img}>
-                                        <img
-                                            srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                                            src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-                                            alt={item.title}
-                                            loading="lazy"
-                                        />
-                                    </ImageListItem>
-                                ))}
-                            </ImageList>
-                        </Grid>
-
 
                         <Box padding={0} display="flex" sx={{ justifyContent: "flex-start" }}>
                             <Rating name="read-only" value={4} readOnly /> <Typography>(10)</Typography>
@@ -52,7 +147,7 @@ function Layout() {
                                         <Rating name="read-only" value={4} readOnly />
                                     </Box>
                                     <Box bgcolor="gray" sx={{ padding: 2, borderRadius: 4, marginTop: 1 }}>
-                                        <Typography color="white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quisquam ad commodi illum optio nemo eligendi vel molestiae doloribus consequu</Typography>
+                                        <Typography color="white">Lorem, ipnl molestiae {reviews}uu</Typography>
                                     </Box>
 
                                 </Grid>
@@ -63,7 +158,7 @@ function Layout() {
                                         <Rating name="read-only" value={4} readOnly />
                                     </Box>
                                     <Box bgcolor="gray" sx={{ padding: 2, borderRadius: 4, marginTop: 1 }}>
-                                        <Typography color="white">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quisquam ad commodi illum optio nemo eligendi vel molestiae doloribus consequu</Typography>
+                                        <Typography color="white">{reviews}</Typography>
                                     </Box>
 
                                 </Grid>
@@ -72,33 +167,11 @@ function Layout() {
                         </Box>
                     </Paper>
                 </Grid>
-
-                {/* Right  */}
-                <Grid xs={12} md={6} sx={{ padding: 1 }}>
-                    <Paper elevation="6" sx={{ padding: 3 }}>
-                        <Typography variant="h6">Right Section</Typography>
-
-                        <Box >
-
-                            <Typography variant="h2">Pradeep Kale</Typography>
-                            <Typography variant="h5"><PhoneIcon />+91 75583 83450</Typography>
-
-                        </Box>
-
-                        <Box sx={{ display: "flex", padding: 2 }}>
-                            <LocationOnIcon /><Typography >The mint ,baner road pashan aund link road,Pune city,Maharashtra ,near Aund, India ,411016</Typography>
-                        </Box>
-                        <Box>
-                            <CalendarTodayIcon />
-                        </Box>
-                        <Box>
-                            <AccessTimeIcon />
-                        </Box>
-                        <Box>
-                            <LocalParkingIcon /><Typography>Total slots 2</Typography>
-                        </Box>
-                    </Paper>
-                </Grid>
+            </Grid>
+            <Grid item xs={12} sx={{ display: "flex", justifyContent: "center" }}>
+                <Button variant="contained" disableElevation >
+                    Disable elevation
+                </Button>
             </Grid>
         </Box>
     );
@@ -145,6 +218,6 @@ const itemData = [
 
 const days = ["Monday", "tuesday", "wednesday"]
 
-export default Layout;
+export default DetailInfo;
 
 

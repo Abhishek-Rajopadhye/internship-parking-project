@@ -19,6 +19,7 @@ class ReviewUpdate(ReviewBase):
 class ReviewInDBBase(ReviewBase):
     id: int
     created_at: datetime
+    reviewer_name: Optional[str] = None
 
     class Config:
         orm_mode: True
