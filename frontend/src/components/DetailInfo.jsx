@@ -69,11 +69,11 @@ const DetailInfo = ({ selectedMarker, user }) => {
 								<AccountBoxIcon sx={{ mr: 2 }} /> {user.name}
 							</Typography>
 						</Box>
-
+            
 						<Box sx={{ mt: 2, padding: 1 }}>
 							<Typography variant="h4">
 								<PhoneIcon sx={{ mr: 2 }} />
-								{user?.number || "Contact not available"}
+								{user?.phone || "Contact not available"}
 							</Typography>
 
 							<Typography variant="h5" sx={{ ml: 2 }}>

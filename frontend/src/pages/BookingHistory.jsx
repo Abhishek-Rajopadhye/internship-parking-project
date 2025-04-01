@@ -10,16 +10,16 @@ const BookingHistory = () => {
 	const [tabIndex, setTabIndex] = useState("0");
 
 	return (
-		<Container sx={{ mt: 3, mr: 50 }}>
+		<Container sx={{ position:"relative", mt: 3, mr: 50, top:50, left:-200 }}>
 			<TabContext value={tabIndex}>
 				<TabList onChange={(e, newIndex) => setTabIndex(newIndex)} variant="fullWidth" centered>
 					<Tab label="User Bookings" value="0" sx={{ color: "white" }} />
 					<Tab label="Owner Bookings" value="1" sx={{ color: "white" }} />
 				</TabList>
-				<TabPanel value="0" index="0">
+				<TabPanel value="0">
 					<UserBookingView />
 				</TabPanel>
-				<TabPanel value="1" index="1">
+				<TabPanel value="1">
 					<OwnerBookingView />
 				</TabPanel>
 			</TabContext>
