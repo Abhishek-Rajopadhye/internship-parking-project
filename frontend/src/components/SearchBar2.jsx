@@ -1,16 +1,5 @@
-import { useState, useEffect } from "react";
-import { Autocomplete, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
-import {
-	Autocomplete,
-	TextField,
-	IconButton,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Button,
-	Container,
-} from "@mui/material";
+import { useState } from "react";
+import { Autocomplete, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Container } from "@mui/material";
 import { Search as SearchIcon, FilterAlt as FilterAltIcon } from "@mui/icons-material";
 import { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
@@ -28,7 +17,6 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
     const [suggestions, setSuggestions] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
-    const [searchOptions,setSearchoptions]=useState(null)
     
 	/**
 	 * Handles input changes and fetches location suggestions.

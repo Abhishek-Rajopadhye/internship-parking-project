@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, CircularProgress, IconButton } from "@mui/material";
-import { setKey, setDefaults, setLanguage, setRegion, fromAddress } from "react-geocode";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../style/spot.css";
 
-const Spot = ({ userId: userId }) => {
+const Spot = ({ userId }) => {
 	const navigate = useNavigate();
+	// eslint-disable-next-line no-unused-vars
+	const [imageSrc, setImageSrc] = useState(null);
 	const [latitude, setLatitude] = useState("");
 	const [longitude, setLongitude] = useState("");
 	const [spotTitle, setSpotTitle] = useState("");
@@ -32,36 +33,9 @@ const Spot = ({ userId: userId }) => {
 		Fri: false,
 		Sat: false,
 	});
+
 	const toggleDay = (day) => {
 		setOpenDays({ ...openDays, [day]: !openDays[day] });
-	};
-
-	const fetchCoordinates = async () => {
-		if (!spotAddress.trim()) {
-			setLatitude("");
-			setLongitude("");
-			return;
-		}
-
-		setDefaults({
-			key: "AIzaSyC_WDLc0-lq4i-vBsGcL0EEoyLVyN5LKa0", // Your API key here.
-			language: "en", // Default language for responses.
-			region: "es", // Default region for responses.
-		});
-
-		setKey("AIzaSyC_WDLc0-lq4i-vBsGcL0EEoyLVyN5LKa0"); // Your API key here.
-		setLanguage("en"); // Default language for responses.
-
-		setRegion("es"); // Default region for responses.
-
-		fromAddress(spotAddress)
-			.then(({ results }) => {
-				const { lat, lng } = results[0].geometry.location;
-				console.log(lat, lng);
-				setLatitude(lat);
-				setLongitude(lng);
-			})
-			.catch(console.error);
 	};
 
 	const handleImageChange = (event) => {
@@ -72,6 +46,7 @@ const Spot = ({ userId: userId }) => {
 			setImage(null);
 			return;
 		}
+
 		if (file) {
 			const reader = new FileReader();
 			reader.readAsDataURL(file);
@@ -81,156 +56,164 @@ const Spot = ({ userId: userId }) => {
 			};
 		}
 	};
-
 	// Validate form
+
 	const validateForm = () => {
 		if (!spotTitle.trim()) return "Spot Title is required";
+
 		if (!spotAddress.trim()) return "Address is required";
+
 		if (!openTime) return "Open Time is required";
+
 		if (!closeTime) return "Close Time is required";
+
 		if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
+
 		if (!totalSlots || totalSlots <= 0) return "Total Slots must be a positive number";
+
 		if (!availableSlots || availableSlots < 0) return "Available Slots cannot be negative";
-		if (!image) return "Please upload an image of the parking spot";
+
 		if (parseInt(availableSlots) > parseInt(totalSlots)) return "Available Slots cannot exceed Total Slots";
+
 		if (!Object.values(openDays).includes(true)) return "At least one open day must be selected";
 
-    return null;
-  };
-  
-  const handleAddSpot = async () => {
-    if(!(latitude >= 6.554607 && latitude <= 35.674545 && longitude >= 68.162385 && longitude <= 97.395561)) {
-      setOpenSnackbar({open:true, message: "Only India Coordinates allowed", severity: "error"});
-      return;
-    }
-    const error = validateForm();
-    if (error) {
-      setOpenSnackbar({ open: true, message: error, severity: "error" });
-      return;
-    }
-    //fetchCoordinates();
-    if(latitude === "" || longitude === "") {
-      setOpenSnackbar({ open: true, message: "Invalid Address", severity: "error" });
-      return;
-    }
-    setLoading(true);
-    console.log("Latitude:", latitude);
-    console.log("Longitude:", longitude);
-    console.log("Spot Title:", spotTitle);
-    console.log("Spot Address:", spotAddress);
-    console.log("Spot Description:", spotDescription);
-    console.log("Open Time:", openTime);
-    console.log("Close Time:", closeTime);
-    console.log("Hourly Rate:", hourlyRate);
-    console.log("Total Slots:", totalSlots);
-    console.log("Available Slots:", availableSlots);
-    let open_days = [];
-    for (const day in openDays) {
-      if (openDays[day]) {
-        open_days.push(day);
-      }
-    }
-    let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
-    let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
+		return null;
+	};
 
 	const handleAddSpot = async () => {
+		if (!(latitude >= 6.554607 && latitude <= 35.674545 && longitude >= 68.162385 && longitude <= 97.395561)) {
+			setOpenSnackbar({ open: true, message: "Only India Coordinates allowed", severity: "error" });
+
+			return;
+		}
+
 		const error = validateForm();
+
 		if (error) {
 			setOpenSnackbar({ open: true, message: error, severity: "error" });
+
 			return;
 		}
-		fetchCoordinates();
+
+		//fetchCoordinates();
+
 		if (latitude === "" || longitude === "") {
 			setOpenSnackbar({ open: true, message: "Invalid Address", severity: "error" });
+
 			return;
 		}
+
 		setLoading(true);
+
 		console.log("Latitude:", latitude);
+
 		console.log("Longitude:", longitude);
+
 		console.log("Spot Title:", spotTitle);
+
 		console.log("Spot Address:", spotAddress);
+
 		console.log("Spot Description:", spotDescription);
+
 		console.log("Open Time:", openTime);
+
 		console.log("Close Time:", closeTime);
+
 		console.log("Hourly Rate:", hourlyRate);
+
 		console.log("Total Slots:", totalSlots);
+
 		console.log("Available Slots:", availableSlots);
+
 		let open_days = [];
+
 		for (const day in openDays) {
 			if (openDays[day]) {
 				open_days.push(day);
 			}
 		}
+
 		let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
+
 		let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
 
-      if (response.status === 200) {
-        setOpenSnackbar({ open: true, message: "Parking spot added successfully!", severity: "success" });
-        setSpotTitle(""); setSpotAddress(""); setSpotDescription("");
-        setOpenTime(""); setCloseTime(""); setHourlyRate("");
-        setTotalSlots(""); setAvailableSlots(""); setImage(null); setImagePreview(null);
-        setLatitude("");setLongitude("");
-        setOpenDays({ Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false });
-      }
-    } catch (error) {
-      setOpenSnackbar({ open: true, message: "Error uploading data", severity: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
+		let new_open_time = openTime + " " + open;
 
-  return (
-    <Box className="form-container">
-      <Box className="form-container">
-      
-        {/* <IconButton
-          onClick={() => navigate(-1)}
-          sx={{
-          position: "relative",
-          bottom: '45%',
-          right: '5%',
-          backgroundColor: "white",
-          border: "1px solid gray",
-          "&:hover": { backgroundColor: "lightgray" }
-          }}
-        > */}
-        {/* <ArrowBackIcon />
-        </IconButton> */}
-        <Box className="form-box">
-        {/* <Typography variant="h5" gutterBottom align="center">
-          Add Parking Spot
-        </Typography> */}
-        <Grid container spacing={2}>
-          <Grid item xs={12}><TextField fullWidth label="Spot Title" value={spotTitle} onChange={(e) => setSpotTitle(e.target.value)} /></Grid>
+		let new_close_time = closeTime + " " + close;
+
+		console.log("Open Days:", open_days);
+
+		try {
+			const response = await axios.post("http://localhost:8000/spots/add-spot/", {
+				owner_id: userId,
+
+				spot_title: spotTitle,
+
+				spot_address: spotAddress,
+
+				spot_description: spotDescription,
+
+				open_time: new_open_time,
+
+				close_time: new_close_time,
+
+				hourly_rate: hourlyRate,
+
+				total_slots: totalSlots,
+
+				available_slots: availableSlots,
+
+				latitude,
+
+				longitude,
+
+				available_days: open_days,
+
+				image: image || "",
+			});
 
 			if (response.status === 200) {
 				setOpenSnackbar({ open: true, message: "Parking spot added successfully!", severity: "success" });
+
 				setSpotTitle("");
 				setSpotAddress("");
 				setSpotDescription("");
+
 				setOpenTime("");
 				setCloseTime("");
 				setHourlyRate("");
+
 				setTotalSlots("");
 				setAvailableSlots("");
 				setImage(null);
 				setImagePreview(null);
+
+				setLatitude("");
+				setLongitude("");
+
 				setOpenDays({ Sun: false, Mon: false, Tue: false, Wed: false, Thu: false, Fri: false, Sat: false });
 			}
 		} catch (error) {
-			setOpenSnackbar({ open: true, message: "Error uploading data", severity: "error" });
 			console.log(error);
+			setOpenSnackbar({ open: true, message: "Error uploading data", severity: "error" });
 		} finally {
 			setLoading(false);
 		}
 	};
 
-          <Grid item xs={12}><TextField fullWidth label="Spot Latitude" value={latitude} onChange={(e) => setLatitude(e.target.value)} /></Grid>
-
-          <Grid item xs={12}><TextField fullWidth label="Spot Longitude" value={longitude} onChange={(e) => setLongitude(e.target.value)} /></Grid>
-
-          <Grid item xs={12}><TextField fullWidth label="Spot Description" multiline rows={3} value={spotDescription} onChange={(e) => setSpotDescription(e.target.value)} /></Grid>
-
+	return (
+		<Box className="form-container">
+			<Box className="form-container">
+				<Box className="form-box">
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<TextField
+								fullWidth
+								label="Spot Title"
+								value={spotTitle}
+								onChange={(e) => setSpotTitle(e.target.value)}
+							/>
+						</Grid>
 
 						<Grid item xs={12}>
 							<TextField
@@ -238,6 +221,24 @@ const Spot = ({ userId: userId }) => {
 								label="Spot Address"
 								value={spotAddress}
 								onChange={(e) => setSpotAddress(e.target.value)}
+							/>
+						</Grid>
+
+						<Grid item xs={12}>
+							<TextField
+								fullWidth
+								label="Spot Latitude"
+								value={latitude}
+								onChange={(e) => setLatitude(e.target.value)}
+							/>
+						</Grid>
+
+						<Grid item xs={12}>
+							<TextField
+								fullWidth
+								label="Spot Longitude"
+								value={longitude}
+								onChange={(e) => setLongitude(e.target.value)}
 							/>
 						</Grid>
 
@@ -302,34 +303,56 @@ const Spot = ({ userId: userId }) => {
 							/>
 						</Grid>
 
-          </Grid>
-          <Grid item xs={12}>
-            <input type="file" accept=".png, .jpeg" onChange={handleImageChange} style={{ display: "none" }} id="image-upload" />
-            <label htmlFor="image-upload">
-              <Button variant="outlined" color="primary" component="span">Upload Image</Button>
-            </label>
-          </Grid>
-          
-          <Grid item xs={12}>
-            <Button variant="contained" color="primary" fullWidth onClick={handleAddSpot} disabled={loading}>
-              {loading ? <CircularProgress size={24} /> : "Add Spot"}
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <Button variant="contained" color="primary" fullWidth onClick={() => {
-              navigate(-1)
-            }}>
-              Go Back
-            </Button>
-          </Grid>
-        </Grid>
-        </Box>
-      </Box>
+						<Grid item xs={12}>
+							<Typography variant="subtitle1">Select Open Days:</Typography>
 
+							<Grid container spacing={1} justifyContent="center">
+								{Object.keys(openDays).map((day) => (
+									<Grid item key={day}>
+										<Button
+											variant={openDays[day] ? "contained" : "outlined"}
+											color={openDays[day] ? "primary" : "default"}
+											onClick={() => toggleDay(day)}
+										>
+											{day}
+										</Button>
+									</Grid>
+								))}
+							</Grid>
+						</Grid>
+
+						<Grid item xs={12}>
+							<input
+								type="file"
+								accept=".png, .jpeg"
+								onChange={handleImageChange}
+								style={{ display: "none" }}
+								id="image-upload"
+							/>
+
+							<label htmlFor="image-upload">
+								<Button variant="outlined" color="primary" component="span">
+									Upload Image
+								</Button>
+							</label>
+						</Grid>
 
 						<Grid item xs={12}>
 							<Button variant="contained" color="primary" fullWidth onClick={handleAddSpot} disabled={loading}>
 								{loading ? <CircularProgress size={24} /> : "Add Spot"}
+							</Button>
+						</Grid>
+
+						<Grid item xs={12}>
+							<Button
+								variant="contained"
+								color="primary"
+								fullWidth
+								onClick={() => {
+									navigate(-1);
+								}}
+							>
+								Go Back
 							</Button>
 						</Grid>
 					</Grid>
@@ -348,5 +371,4 @@ const Spot = ({ userId: userId }) => {
 		</Box>
 	);
 };
-
 export { Spot };

@@ -1,5 +1,5 @@
 
-from sqlalchemy import Column, Integer, String, DateTime, LargeBinary
+from sqlalchemy import Column, Integer, String, DateTime, LargeBinary, ForeignKey
 from sqlalchemy.sql import func
 from app.db.db import Base
 
