@@ -325,4 +325,4 @@ const Spot = ({ userId: userId }) => {
 	);
 };
 
-export default Spot;
+export { Spot };

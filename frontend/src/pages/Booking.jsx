@@ -289,6 +289,7 @@ const Booking = ({ spot_information, user_id }) => {
 	};
 
 	return (
+		<Dialog open={true}>
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<Box className="form-container">
 				<Box className="form-container">
@@ -395,6 +396,8 @@ const Booking = ({ spot_information, user_id }) => {
 				</Alert>
 			</Snackbar>
 		</LocalizationProvider>
+		</Dialog>
+
 	);
 };
 
