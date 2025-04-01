@@ -9,6 +9,7 @@ class UserProfile(BaseModel):
     email: EmailStr
     phone: Optional[str] = None
     profile_picture: Optional[str] = None
+    total_earnings: int
 
 class UserUpdate(BaseModel):
     id: int
@@ -16,3 +17,4 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     profile_picture: Optional[str] = None
+    total_earnings: int

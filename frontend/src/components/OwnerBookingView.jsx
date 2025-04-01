@@ -1,69 +1,85 @@
-import { useContext, useEffect, useState } from 'react';
-import { Box, Card, CardContent, Typography, List, ListItem, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import CancelIcon from '@mui/icons-material/Cancel';
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext'; // Adjust the import path as necessary
+import { useContext, useEffect, useState } from "react";
+import { Box, Button, Container, Typography, List, ListItem, ListItemText, Divider } from "@mui/material";
+import axios from "axios";
+import { AuthContext } from "../context/AuthContext"; // Adjust the import path as necessary
+import { CurrencyRupee } from "@mui/icons-material";
 
 const OwnerBookingView = () => {
-    const [bookings, setBookings] = useState([]);
-    const { user } = useContext(AuthContext);
-    useEffect(() => {
-        // Fetch bookings for all spots owned by the user from the API
-        const fetchBookings = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/bookings/owner/${user.id}`);
-                setBookings(response.data);
-            } catch (error) {
-                console.error('Error fetching bookings:', error);
-            }
-        };
+	const [bookings, setBookings] = useState([]);
+	const { user } = useContext(AuthContext);
 
-        fetchBookings();
-    }, [user.id]);
+	useEffect(() => {
+		const fetchDetails = async () => {
+			const response = await axios.get(`http://localhost:8000/bookings/owner/${user.id}`);
+			if (response.status == 200) {
+				setBookings(response.data);
+			}
+		};
 
-    const handleEdit = (bookingId) => {
-        // Handle edit booking action
-        console.log('Edit booking:', bookingId);
-    };
+		fetchDetails();
+	}, [user.id]);
 
-    const handleCancel = (bookingId) => {
-        // Handle cancel booking action
-        console.log('Cancel booking:', bookingId);
-    };
+	const handleEdit = (bookingId) => {
+		console.log("Edit booking", bookingId);
+		// Implement edit functionality
+	};
 
-    return (
-        <Box sx={{ padding: 2 }}>
-            <Typography variant="h4" gutterBottom>
-                Booking History for My Spots
-            </Typography>
-            <List>
-                {bookings.map((booking) => (
-                    <ListItem key={booking.id} sx={{ marginBottom: 2 }}
-                        secondaryAction={booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'in progress' && (
-                            <>
-                                <IconButton edge="end" aria-label="edit" onClick={() => handleEdit(booking.id)}>
-                                    <EditIcon />
-                                </IconButton>
-                                <IconButton edge="end" aria-label="cancel" onClick={() => handleCancel(booking.id)}>
-                                    <CancelIcon />
-                                </IconButton>
-                            </>
-                        )}
-                    >
-                        <Card sx={{ width: '100%' }}>
-                            <CardContent>
-                                <Typography variant="h6">{booking.spot_name}</Typography>
-                                <Typography variant="body2">Total Cost: ${booking.total_cost}</Typography>
-                                <Typography variant="body2">Status: {booking.status}</Typography>
-                                <Typography variant="body2">Booking Timings: {booking.start_time} - {booking.end_time}</Typography>
-                            </CardContent>
-                        </Card>
-                    </ListItem>
-                ))}
-            </List>
-        </Box>
-    );
+	const handleCancel = (bookingId) => {
+		console.log("Cancel booking", bookingId);
+		// Implement cancel functionality
+	};
+
+	return (
+		<Container>
+			<Typography variant="h5" gutterBottom>
+				Owner's Spots Booking History
+			</Typography>
+			<List>
+				{bookings != [] ? (
+					bookings.map((booking) => (
+						<ListItem
+							key={booking.id}
+							secondaryAction={
+								<Box>
+									<Button
+										onClick={() => handleEdit(booking.id)}
+										variant="contained"
+										color="primary"
+										size="small"
+										sx={{ mr: 1 }}
+									>
+										Edit
+									</Button>
+									<Button
+										onClick={() => handleCancel(booking.id)}
+										variant="contained"
+										color="secondary"
+										size="small"
+									>
+										Cancel
+									</Button>
+								</Box>
+							}
+						>
+							<ListItemText
+								secondary={`From: ${booking.start_date_time} - ${booking.end_date_time}`}
+								slotProps={{ secondary: { color: "info" } }}
+							>
+								<Typography>{booking.spot_title}</Typography>
+							</ListItemText>
+							<ListItemText>
+								<CurrencyRupee fontSize="small"></CurrencyRupee> {booking.payment_amount}
+							</ListItemText>
+							<ListItemText>{booking.payment_status}</ListItemText>
+							<Divider />
+						</ListItem>
+					))
+				) : (
+					<Typography>No bookings found.</Typography>
+				)}
+			</List>
+		</Container>
+	);
 };
 
 export { OwnerBookingView };

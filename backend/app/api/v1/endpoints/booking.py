@@ -15,7 +15,7 @@ async def get_booking(db: Session = Depends(get_db)):
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
-        List[Booking]: List of all bookings
+        List[dict]: List of all bookings
     """
     return await get_bookings(db)
 
@@ -43,7 +43,7 @@ async def get_booking_of_spots_of_owner(user_id: int, db: Session = Depends(get_
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
-        List[Booking]: List of bookings for the specified user
+        List[dict]: List of bookings for the specified user
     """
     return await get_bookings_of_spots_of_owner(db, user_id)
 
@@ -57,7 +57,7 @@ async def get_booking_by_spot_id(spot_id: int, db: Session = Depends(get_db)):
         db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
 
     Returns:
-        List[Booking]: List of bookings for the specified spot
+        List[dict]: List of bookings for the specified spot
     """
     return await get_booking_by_spot(db, spot_id)
 
