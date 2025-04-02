@@ -390,6 +390,21 @@ async def get_bookings_of_spots_of_owner(db: Session, user_id: int):
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
 
 async def cancel_booking(db: Session, booking_id):
+    """
+    Cancel a booking by updating its status to "Cancelled" in the database.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        booking_id (int): The ID of the booking to be cancelled
+
+    Returns:
+        int: The number of rows updated in the database (should be 1 if successful)
+
+    Example:
+        cancel_booking(db, 123)
+        cancel the booking with ID 123 by setting its status to "Cancelled"
+        return the number of rows updated
+    """
     try:
         booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
             "status": "Cancelled"

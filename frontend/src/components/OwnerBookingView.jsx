@@ -12,6 +12,15 @@ import {
 } from "@mui/material";
 import { CurrencyRupee } from "@mui/icons-material";
 
+/**
+ * Component to display booking details for the owner in a tabular format.
+ *
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Array} props.bookingDetails - An array of booking objects containing details about each booking.
+ *
+ * @returns {JSX.Element} A table displaying the booking details.
+ */
 const OwnerBookingView = ({ bookingDetails }) => {
 	return (
 		<TableContainer component={Paper}>

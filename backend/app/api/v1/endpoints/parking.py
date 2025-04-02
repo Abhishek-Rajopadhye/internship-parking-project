@@ -6,9 +6,7 @@ from app.schemas.parking import ParkingSpot
 from typing import List
 import base64
 
-
 router = APIRouter()
-
 
 @router.get("/getparkingspot", response_model=List[ParkingSpot])
 async def fetch_parking_spots(db: Session = Depends(get_db)):

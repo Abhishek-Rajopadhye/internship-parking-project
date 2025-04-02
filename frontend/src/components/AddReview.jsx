@@ -19,6 +19,15 @@ import { AuthContext } from "../context/AuthContext";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { BACKEND_URL } from "../const";
 
+/**
+ * AddReview component for submitting a review for a parking spot.
+ *
+ * Allows users to add a review with a description, rating, and optional image.
+ * Displays a confirmation message upon successful submission or an error message if the submission fails.
+ *
+ * @component
+ * @returns {JSX.Element} The AddReview component.
+ */
 const AddReview = () => {
 	const [formData, setFormData] = useState({
 		id: null,
@@ -37,6 +46,9 @@ const AddReview = () => {
 		severity: "info",
 	});
 
+	/**
+	 * Initializes the form data with the logged-in user's ID.
+	 */
 	useEffect(() => {
 		setFormData({
 			id: null,
@@ -50,6 +62,13 @@ const AddReview = () => {
 		});
 	}, [setFormData, user]);
 
+	/**
+	 * Handles the submission of the review form.
+	 *
+	 * Sends the review data to the backend API and displays a success or error message.
+	 *
+	 * @param {Object} event - The form submission event.
+	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		try {
@@ -73,6 +92,13 @@ const AddReview = () => {
 		}
 	};
 
+	/**
+	 * Handles changes to form input fields.
+	 *
+	 * Updates the form data state with the new values.
+	 *
+	 * @param {Object} event - The input change event.
+	 */
 	const handleChange = (event) => {
 		const { name, value } = event.target;
 		setFormData((prevData) => ({
@@ -81,6 +107,13 @@ const AddReview = () => {
 		}));
 	};
 
+	/**
+	 * Handles the image file upload.
+	 *
+	 * Validates the file size and converts the image to a Base64 string for submission.
+	 *
+	 * @param {Object} event - The file input change event.
+	 */
 	const handleImageChange = (event) => {
 		const file = event.target.files[0];
 		const maxSize = 2 * 1024 * 1024;

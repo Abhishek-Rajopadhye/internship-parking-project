@@ -91,8 +91,19 @@ async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):
 
 @router.delete("/{booking_id}")
 async def cancel_spot_booking(booking_id: str, db: Session = Depends(get_db)):
+    """
+    Cancel a specific spot booking.
+
+    Parameters:
+        booking_id (str): The ID of the booking to be canceled.
+        db (Session, optional): SQLAlchemy database session. Defaults to Depends(get_db).
+
+    Returns:
+        dict: Response data otherwise raise appropriate HTTPException and return the error message
+    """
     try:
         response = await cancel_booking(db, booking_id)
-        return response, 200
+        return response
     except Exception as exception:
         print(exception)
+        raise HTTPException(status_code=500, detail="Failed to cancel the booking")

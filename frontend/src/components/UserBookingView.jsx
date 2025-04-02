@@ -19,6 +19,18 @@ import {
 } from "@mui/material";
 import { CurrencyRupee } from "@mui/icons-material";
 
+/**
+ * UserBookingView Component
+ *
+ * This component displays a table of user booking details and allows users to cancel bookings.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Array} props.bookingDetails - An array of booking details to display.
+ * @param {Function} props.cancelBooking - A function to handle booking cancellation.
+ *
+ * @returns {JSX.Element} The rendered UserBookingView component.
+ */
 const UserBookingView = ({ bookingDetails, cancelBooking }) => {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [selectedBookingId, setSelectedBookingId] = useState(null);

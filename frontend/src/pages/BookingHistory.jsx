@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Tabs, Tab, AppBar } from "@mui/material";
+import { Container, Tab, AppBar } from "@mui/material";
 import { UserBookingView } from "../components/UserBookingView";
 import { OwnerBookingView } from "../components/OwnerBookingView";
 import TabContext from "@mui/lab/TabContext";
@@ -9,12 +9,24 @@ import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
 
+/**
+ * BookingHistory page component for displaying user and owner booking history.
+ *
+ * Fetches and displays booking details for the logged-in user, including both
+ * user bookings and owner bookings. Allows users to cancel bookings.
+ *
+ * @component
+ * @returns {JSX.Element} The BookingHistory page component.
+ */
 const BookingHistory = () => {
 	const [tabIndex, setTabIndex] = useState("0");
 	const { user } = useContext(AuthContext);
 	const [userBookings, setUserBookings] = useState([]);
 	const [ownerBookings, setOwnerBookings] = useState([]);
 
+	/**
+	 * Fetches booking details for the logged-in user and owner.
+	 */
 	useEffect(() => {
 		const fetchDetailsUserBookings = async () => {
 			const response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
@@ -34,6 +46,12 @@ const BookingHistory = () => {
 		fetchDetailsOwnerBookings();
 	}, [user.id]);
 
+	/**
+	 * Handles the cancellation of a booking.
+	 *
+	 * @param {number} bookingId - The ID of the booking to cancel.
+	 * @param {string} tab - The tab from which the cancellation is triggered ("user" or "owner").
+	 */
 	const handleCancelBooking = async (bookingId, tab) => {
 		const response = await axios.delete(`${BACKEND_URL}/bookings/${bookingId}`);
 		if (response.status == 200) {
