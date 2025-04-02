@@ -133,7 +133,7 @@ const BookingHistory = () => {
 						<Tab label="Owner Bookings" value="1" sx={{ color: "black", "&.Mui-selected": { color: "white" } }} />
 					</TabList>
 				</AppBar>
-				<TabPanel value="0" sx={{ height: "100vh", overflowY: "scroll" }}>
+				<TabPanel value="0" sx={{ height: "100vh" }}>
 					<UserBookingView
                         bookingDetails={userBookings}
                         cancelBooking={handleCancelBooking}
@@ -141,7 +141,7 @@ const BookingHistory = () => {
                         checkOut={handleCheckOut}
                     />				
 				</TabPanel>
-				<TabPanel value="1" sx={{ height: "100vh", overflowY: "scroll" }}>
+				<TabPanel value="1" sx={{ height: "100vh"}}>
 					<OwnerBookingView bookingDetails={ownerBookings} />
 				</TabPanel>
 			</TabContext>

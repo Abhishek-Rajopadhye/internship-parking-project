@@ -417,6 +417,10 @@ async def cancel_booking(db: Session, booking_id):
         booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
             "status": "Cancelled"
         })
+        spot = db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id)
+        spot.update({
+            "available_slots": spot.available_slots + 1
+        })
         db.commit()
         return booking
     except Exception as db_error:
@@ -466,6 +470,10 @@ async def check_out_booking(db: Session, booking_id):
     try:
         booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
             "status": "Completed"
+        })
+        spot = db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id)
+        spot.update({
+            "available_slots": spot.available_slots + 1
         })
         db.commit()
         return booking
