@@ -52,22 +52,64 @@ const BookingHistory = () => {
 	 * @param {number} bookingId - The ID of the booking to cancel.
 	 * @param {string} tab - The tab from which the cancellation is triggered ("user" or "owner").
 	 */
-	const handleCancelBooking = async (bookingId, tab) => {
+	const handleCancelBooking = async (bookingId) => {
 		const response = await axios.delete(`${BACKEND_URL}/bookings/${bookingId}`);
 		if (response.status == 200) {
-			if (tab == "owner") {
-				const owner_details_response = await axios.get(`${BACKEND_URL}/bookings/owner/${user.id}`);
-				if (owner_details_response.status == 200) {
-					setOwnerBookings(owner_details_response.data);
-				}
-			} else {
-				const user_details_response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
-				if (user_details_response.status == 200) {
-					setUserBookings(user_details_response.data);
-				}
+			const owner_details_response = await axios.get(`${BACKEND_URL}/bookings/owner/${user.id}`);
+			if (owner_details_response.status == 200) {
+				setOwnerBookings(owner_details_response.data);
+			}
+			const user_details_response = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+			if (user_details_response.status == 200) {
+				setUserBookings(user_details_response.data);
 			}
 		}
 	};
+
+	/**
+     * Handles the check-in of a booking.
+     *
+     * @param {number} bookingId - The ID of the booking to check in.
+     */
+    const handleCheckIn = async (bookingId) => {
+        const response = await axios.put(`${BACKEND_URL}/bookings/checkin/${bookingId}`);
+        if (response.status === 200) {
+            // Refresh user bookings
+            const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+            if (userDetailsResponse.status === 200) {
+                setUserBookings(userDetailsResponse.data);
+            }
+
+            // Refresh owner bookings
+            const ownerDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/owner/${user.id}`);
+            if (ownerDetailsResponse.status === 200) {
+                setOwnerBookings(ownerDetailsResponse.data);
+            }
+        }
+    };
+
+    /**
+     * Handles the check-out of a booking.
+     *
+     * @param {number} bookingId - The ID of the booking to check out.
+     */
+    const handleCheckOut = async (bookingId) => {
+        const response = await axios.put(`${BACKEND_URL}/bookings/checkout/${bookingId}`);
+        if (response.status === 200) {
+            // Refresh user bookings
+            const userDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/user/${user.id}`);
+            if (userDetailsResponse.status === 200) {
+                setUserBookings(userDetailsResponse.data);
+            }
+
+            // Refresh owner bookings
+            const ownerDetailsResponse = await axios.get(`${BACKEND_URL}/bookings/owner/${user.id}`);
+            if (ownerDetailsResponse.status === 200) {
+                setOwnerBookings(ownerDetailsResponse.data);
+            }
+        }
+    };
+
 
 	return (
 		<Container sx={{ position: "relative", mt: 30, mr: 150, width: "85%" }}>
@@ -91,7 +133,12 @@ const BookingHistory = () => {
 					</TabList>
 				</AppBar>
 				<TabPanel value="0" sx={{ height: "100vh" }}>
-					<UserBookingView bookingDetails={userBookings} cancelBooking={handleCancelBooking} />
+					<UserBookingView
+                        bookingDetails={userBookings}
+                        cancelBooking={handleCancelBooking}
+                        checkIn={handleCheckIn}
+                        checkOut={handleCheckOut}
+                    />				
 				</TabPanel>
 				<TabPanel value="1" sx={{ height: "100vh" }}>
 					<OwnerBookingView bookingDetails={ownerBookings} />

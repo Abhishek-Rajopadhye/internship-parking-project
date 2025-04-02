@@ -413,3 +413,53 @@ async def cancel_booking(db: Session, booking_id):
         return booking
     except Exception as db_error:
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
+async def check_in_booking(db: Session, booking_id):
+    """
+    Check in a booking by updating its status to "Checked In" in the database.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        booking_id (int): The ID of the booking to be checked in
+
+    Returns:
+        int: The number of rows updated in the database (should be 1 if successful)
+
+    Example:
+        check_in_booking(db, 123)
+        check in the booking with ID 123 by setting its status to "Checked In"
+        return the number of rows updated
+    """
+    try:
+        booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
+            "status": "Checked In"
+        })
+        db.commit()
+        return booking
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
+async def check_out_booking(db: Session, booking_id):
+    """
+    Check out a booking by updating its status to "Completed" in the database.
+
+    Parameters:
+        db (Session): SQLAlchemy database session
+        booking_id (int): The ID of the booking to be checked out
+
+    Returns:
+        int: The number of rows updated in the database (should be 1 if successful)
+
+    Example:
+        check_out_booking(db, 123)
+        check out the booking with ID 123 by setting its status to "Completed"
+        return the number of rows updated
+    """
+    try:
+        booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
+            "status": "Completed"
+        })
+        db.commit()
+        return booking
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
