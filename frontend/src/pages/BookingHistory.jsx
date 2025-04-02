@@ -8,6 +8,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { BACKEND_URL } from "../const";
+import "../style/booking_history.css"
 
 /**
  * BookingHistory page component for displaying user and owner booking history.
@@ -112,7 +113,7 @@ const BookingHistory = () => {
 
 
 	return (
-		<Container sx={{ position: "relative", mt: 30, mr: 150, width: "85%" }}>
+		<Container sx={{ position: "relative", mt: 30, mr: 150, width: "85%", maxWidth:"100%" }}>
 			<TabContext value={tabIndex}>
 				<AppBar sx={{ position: "relative", mt: 30, width: "100%", borderRadius: 2 }}>
 					<TabList
@@ -132,7 +133,7 @@ const BookingHistory = () => {
 						<Tab label="Owner Bookings" value="1" sx={{ color: "black", "&.Mui-selected": { color: "white" } }} />
 					</TabList>
 				</AppBar>
-				<TabPanel value="0" sx={{ height: "100vh" }}>
+				<TabPanel value="0" sx={{ height: "100vh", overflowY: "scroll" }}>
 					<UserBookingView
                         bookingDetails={userBookings}
                         cancelBooking={handleCancelBooking}
@@ -140,7 +141,7 @@ const BookingHistory = () => {
                         checkOut={handleCheckOut}
                     />				
 				</TabPanel>
-				<TabPanel value="1" sx={{ height: "100vh" }}>
+				<TabPanel value="1" sx={{ height: "100vh", overflowY: "scroll" }}>
 					<OwnerBookingView bookingDetails={ownerBookings} />
 				</TabPanel>
 			</TabContext>

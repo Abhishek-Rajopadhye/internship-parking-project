@@ -212,6 +212,7 @@ async def get_bookings(db: Session):
             db.query(
                 Booking,
                 Spot.spot_title,
+                Spot.address.label("spot_address"),
                 Payment.amount,
                 Payment.status.label("payment_status")
             )
@@ -226,6 +227,7 @@ async def get_bookings(db: Session):
                 "user_id": booking.Booking.user_id,
                 "spot_id": booking.Booking.spot_id,
                 "spot_title": booking.spot_title,
+                "spot_address":booking.spot_address,
                 "total_slots": booking.Booking.total_slots,
                 "start_date_time": booking.Booking.start_date_time,
                 "end_date_time": booking.Booking.end_date_time,
@@ -261,6 +263,7 @@ async def get_booking_by_user(db: Session, user_id: int):
             db.query(
                 Booking,
                 Spot.spot_title,
+                Spot.address.label("spot_address"),
                 Payment.amount,
                 Payment.status.label("payment_status")
             )
@@ -276,6 +279,7 @@ async def get_booking_by_user(db: Session, user_id: int):
                 "user_id": booking.Booking.user_id,
                 "spot_id": booking.Booking.spot_id,
                 "spot_title": booking.spot_title,
+                "spot_address":booking.spot_address,
                 "total_slots": booking.Booking.total_slots,
                 "start_date_time": booking.Booking.start_date_time,
                 "end_date_time": booking.Booking.end_date_time,
@@ -311,6 +315,7 @@ async def get_booking_by_spot(db: Session, spot_id: int):
             db.query(
                 Booking,
                 Spot.spot_title,
+                Spot.address.label("spot_address"),
                 Payment.amount,
                 Payment.status.label("payment_status")
             )
@@ -326,6 +331,7 @@ async def get_booking_by_spot(db: Session, spot_id: int):
                 "user_id": booking.Booking.user_id,
                 "spot_id": booking.Booking.spot_id,
                 "spot_title": booking.spot_title,
+                "spot_address":booking.spot_address,
                 "total_slots": booking.Booking.total_slots,
                 "start_date_time": booking.Booking.start_date_time,
                 "end_date_time": booking.Booking.end_date_time,
@@ -361,6 +367,7 @@ async def get_bookings_of_spots_of_owner(db: Session, user_id: int):
             db.query(
                 Booking,
                 Spot.spot_title,
+                Spot.address.label("spot_address"),
                 Payment.amount,
                 Payment.status.label("payment_status")
             )
@@ -376,6 +383,7 @@ async def get_bookings_of_spots_of_owner(db: Session, user_id: int):
                 "user_id": booking.Booking.user_id,
                 "spot_id": booking.Booking.spot_id,
                 "spot_title": booking.spot_title,
+                "spot_address":booking.spot_address,
                 "total_slots": booking.Booking.total_slots,
                 "start_date_time": booking.Booking.start_date_time,
                 "end_date_time": booking.Booking.end_date_time,

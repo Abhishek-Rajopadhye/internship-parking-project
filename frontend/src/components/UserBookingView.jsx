@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import {
 	Typography,
 	Paper,
@@ -40,13 +40,43 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	const [expandedRow, setExpandedRow] = useState(null); // Track which row is expanded
 
 	/**
+	 * Sorts the booking details in the desired priority order:
+	 * 1. Checked In bookings (chronologically).
+	 * 2. Pending bookings (chronologically).
+	 * 3. Cancelled/Completed bookings (chronologically).
+	 */
+	const sortedBookings = [...bookingDetails]
+		.sort((a, b) => new Date(a.start_date_time) - new Date(b.start_date_time)) // Sort chronologically
+		.sort((a, b) => {
+			// Sort by status priority: Checked In > Pending > Cancelled/Completed
+			if (a.status === "Checked In" && b.status !== "Checked In") return -1;
+			if (a.status !== "Checked In" && b.status === "Checked In") return 1;
+			if (a.status === "Pending" && b.status !== "Pending") return -1;
+			if (a.status !== "Pending" && b.status === "Pending") return 1;
+			return 0;
+		});
+
+	/**
+	 * Checks if the user can check in for a booking.
+	 * Users can only check in within 15 minutes before the start_date_time.
+	 *
+	 * @param {string} startDateTime - The start date and time of the booking.
+	 * @returns {boolean} True if the user can check in, false otherwise.
+	 */
+	const canCheckIn = (startDateTime) => {
+		const now = new Date();
+		const startTime = new Date(startDateTime);
+		const diffInMinutes = (startTime - now) / (1000 * 60); // Difference in minutes
+		return diffInMinutes <= 15 && diffInMinutes >= 0; // Allow check-in within 15 minutes before start time
+	};
+
+	/**
 	 * Handles opening the confirmation dialog.
 	 *
 	 * @param {number} bookingId - The ID of the booking.
 	 * @param {string} actionType - The type of action ("cancel", "checkIn", or "checkOut").
 	 */
 	const handleOpenDialog = (bookingId, actionType) => {
-
 		if (actionType === "cancel") {
 			setDialogMessage("Are you sure you want to cancel this booking?");
 			setDialogAction(() => () => cancelBooking(bookingId));
@@ -89,15 +119,14 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 							<TableCell>Name</TableCell>
 							<TableCell>Cost</TableCell>
 							<TableCell>Status</TableCell>
-							<TableCell>Payment Status</TableCell>
 							<TableCell>Actions</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{bookingDetails.length > 0 ? (
-							bookingDetails.map((booking) => (
-								<>
-									<TableRow key={booking.id}>
+						{sortedBookings.length > 0 ? (
+							sortedBookings.map((booking) => (
+								<Fragment key={booking.id}>
+									<TableRow>
 										<TableCell>
 											<IconButton
 												aria-label="expand row"
@@ -117,7 +146,6 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 											<CurrencyRupee fontSize="small" /> {booking.payment_amount}
 										</TableCell>
 										<TableCell>{booking.status}</TableCell>
-										<TableCell>{booking.payment_status}</TableCell>
 										<TableCell>
 											<Box display="flex" gap={1}>
 												{/* Show Cancel button only if status is Pending */}
@@ -132,12 +160,12 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 													</Button>
 												)}
 
-												{/* Show Check-In button if status is Pending */}
-												{booking.status === "Pending" && (
+												{/* Show Check-In button if status is Pending and within 15 minutes of start time */}
+												{booking.status === "Pending" && canCheckIn(booking.start_date_time) && (
 													<Button
 														onClick={() => handleOpenDialog(booking.id, "checkIn")}
 														variant="contained"
-														color="primary"
+														color="success"
 														size="small"
 													>
 														Check In
@@ -149,7 +177,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 													<Button
 														onClick={() => handleOpenDialog(booking.id, "checkOut")}
 														variant="contained"
-														color="success"
+														color="primary"
 														size="small"
 													>
 														Check Out
@@ -163,19 +191,19 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 											</Box>
 										</TableCell>
 									</TableRow>
-									<TableRow>
+									<TableRow key="expanded_row">
 										<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
 											<Collapse in={expandedRow === booking.id} timeout="auto" unmountOnExit>
 												<Box margin={1}>
 													<Typography variant="subtitle1" gutterBottom>
 														Address:
 													</Typography>
-													<Typography>{booking.address}</Typography>
+													<Typography>{booking.spot_address}</Typography>
 												</Box>
 											</Collapse>
 										</TableCell>
 									</TableRow>
-								</>
+								</Fragment>
 							))
 						) : (
 							<Typography>No bookings found.</Typography>
