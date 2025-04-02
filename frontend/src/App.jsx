@@ -14,6 +14,7 @@ import { Home } from "./pages/Home";
 import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
+import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
 
 /**
@@ -79,6 +80,8 @@ const AppLayout = () => {
 				return "Home";
 			case "/auth":
 				return "Auth";
+			case "/add-review":
+				return "Add Review"
 			case "/booking":
 				return "Booking";
 			case "/spotdetail":
@@ -151,6 +154,7 @@ const AppLayout = () => {
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route path="/my-spots" element={<MySpots />} />
+					<Route path="/add-review" element={<AddReview />} />
 					<Route
 						path="/home"
 						element={

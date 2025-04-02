@@ -1,12 +1,35 @@
-import { Button, Dialog, DialogContent, DialogTitle, Rating, TextField, Typography, Alert, Input, InputLabel } from "@mui/material";
+import {
+	Box,
+	Grid,
+	Button,
+	Snackbar,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+	Rating,
+	TextField,
+	Typography,
+	Alert,
+	Input,
+	InputLabel,
+} from "@mui/material";
 import axios from "axios";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { BACKEND_URL } from "../const";
 
-const AddReview = ({ spotId, handleClose }) => {
-	const [formData, setFormData] = useState(null);
+const AddReview = () => {
+	const [formData, setFormData] = useState({
+		id: null,
+		user_id: -1,
+		spot_id: 3,
+		review_description: "",
+		rating_score: 0,
+		image: null,
+		owner_reply: null,
+		created_at: null,
+	});
 	const { user } = useContext(AuthContext);
 	const [openSnackbar, setOpenSnackbar] = useState({
 		open: false,
@@ -18,18 +41,18 @@ const AddReview = ({ spotId, handleClose }) => {
 		setFormData({
 			id: null,
 			user_id: user.id,
-			spot_id: spotId,
+			spot_id: 3,
 			review_description: "",
 			rating_score: 0,
 			image: null,
 			owner_reply: null,
 			created_at: null,
 		});
-	}, [setFormData, spotId, user]);
+	}, [setFormData, user]);
 
 	const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
+		event.preventDefault();
+		try {
 			const response = await axios.post(`${BACKEND_URL}/reviews/`, formData, {
 				headers: {
 					"Content-Type": "application/json",
@@ -40,17 +63,15 @@ const AddReview = ({ spotId, handleClose }) => {
 			if (response.status !== 200) {
 				throw new Error("Failed to add review");
 			}
-
-			handleClose();
 		} catch (error) {
 			console.error("Error adding review:", error);
-            setOpenSnackbar({
+			setOpenSnackbar({
 				open: true,
 				message: error.message,
 				severity: "error",
 			});
 		}
-    };
+	};
 
 	const handleChange = (event) => {
 		const { name, value } = event.target;
@@ -86,37 +107,39 @@ const AddReview = ({ spotId, handleClose }) => {
 
 	return (
 		<>
-			<Dialog>
+			<Dialog open={true}>
 				<DialogTitle>Add Review</DialogTitle>
 				<DialogContent>
 					<Box component="form" sx={{ m: 2 }} onSubmit={handleSubmit}>
 						<TextField
 							fullWidth
-							label="Description"
+							label="Review"
 							name="review_description"
 							value={formData.review_description}
 							onChange={handleChange}
 						/>
+						<br />
 						<Typography> Enter a Rating Score</Typography>
 						<Rating name="rating_score" value={formData.rating_score} onChange={handleChange}></Rating>
+						<br />
 						<Grid item xs={12}>
-							<Button       
-                                variant="contained"
-                                color="primary"
-                                startIcon={<CloudUploadIcon />}
-                            >
-                                Upload
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                    sx={{ display: "none" }}
-                                    id="image-upload"
-                                />
-                            </Button>
-							<InputLabel htmlFor="image-upload">	Image </InputLabel>
+							<Input
+								type="file"
+								accept="image/*"
+								onChange={handleImageChange}
+								sx={{ display: "none" }}
+								id="image-upload"
+							/>
+							<Button variant="contained" color="primary" startIcon={<CloudUploadIcon />}>
+								<InputLabel htmlFor="image-upload" sx={{ color: "white" }}>
+									Upload Image
+								</InputLabel>
+							</Button>
 						</Grid>
-						<Button type="submit" variant="contained" color="primary" fullWidth>Submit Review</Button>
+						<br />
+						<Button type="submit" variant="contained" color="primary" fullWidth>
+							Submit Review
+						</Button>
 					</Box>
 				</DialogContent>
 			</Dialog>

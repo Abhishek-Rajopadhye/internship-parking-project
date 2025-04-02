@@ -232,6 +232,7 @@ async def get_bookings(db: Session):
                 "payment_id": booking.Booking.payment_id,
                 "payment_amount": booking.amount,
                 "payment_status": booking.payment_status,
+                "status":booking.Booking.status
             }
             for booking in bookings
         ]
@@ -281,6 +282,7 @@ async def get_booking_by_user(db: Session, user_id: int):
                 "payment_id": booking.Booking.payment_id,
                 "payment_amount": booking.amount,
                 "payment_status": booking.payment_status,
+                "status":booking.Booking.status
             }
             for booking in bookings
         ]
@@ -330,6 +332,7 @@ async def get_booking_by_spot(db: Session, spot_id: int):
                 "payment_id": booking.Booking.payment_id,
                 "payment_amount": booking.amount,
                 "payment_status": booking.payment_status,
+                "status":booking.Booking.status
             }
             for booking in bookings
         ]
@@ -379,8 +382,19 @@ async def get_bookings_of_spots_of_owner(db: Session, user_id: int):
                 "payment_id": booking.Booking.payment_id,
                 "payment_amount": booking.amount,
                 "payment_status": booking.payment_status,
+                "status":booking.Booking.status
             }
             for booking in bookings
         ]
+    except Exception as db_error:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")
+
+async def cancel_booking(db: Session, booking_id):
+    try:
+        booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
+            "status": "Cancelled"
+        })
+        db.commit()
+        return booking
     except Exception as db_error:
         raise HTTPException(status_code=500, detail=f"Database error: {str(db_error)}")

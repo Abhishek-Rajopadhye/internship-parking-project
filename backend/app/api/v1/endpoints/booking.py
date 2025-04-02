@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.services.booking_service import create_booking, get_bookings, get_booking_by_user, get_booking_by_spot, get_bookings_of_spots_of_owner
+from app.services.booking_service import create_booking, get_bookings, get_booking_by_user, get_booking_by_spot, get_bookings_of_spots_of_owner, cancel_booking
 from app.schemas.booking import BookingCreate
 
 router = APIRouter()
@@ -88,3 +88,11 @@ async def book_spot(booking_data: BookingCreate, db: Session = Depends(get_db)):
     except Exception as exception:
         print(exception)
         raise HTTPException(status_code=400, detail="Failed to book the spot")
+
+@router.delete("/{booking_id}")
+async def cancel_spot_booking(booking_id: str, db: Session = Depends(get_db)):
+    try:
+        response = await cancel_booking(db, booking_id)
+        return response, 200
+    except Exception as exception:
+        print(exception)
