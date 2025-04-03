@@ -9,6 +9,7 @@ import { BACKEND_URL } from "../const";
 const Spot = () => {
 	const { user } = useContext(AuthContext);
 	const navigate = useNavigate();
+	const {user} =useContext(AuthContext)
 	// eslint-disable-next-line no-unused-vars
 	const [imageSrc, setImageSrc] = useState(null);
 	const [latitude, setLatitude] = useState("");
@@ -128,6 +129,7 @@ const Spot = () => {
 		console.log("Open Days:", open_days);
 
 		try {
+
 			const response = await axios.post(`${BACKEND_URL}/spots/add-spot/`, {
 				owner_id: user.id,
 				spot_title: spotTitle,
