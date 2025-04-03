@@ -28,7 +28,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         elementType: 'all',
         width: '90vw',
         height: '85vh',
-        position: "fixed",
         top: 50,
         left: -300
     };

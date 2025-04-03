@@ -25,7 +25,7 @@ import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
 
 //spot_information is object which hold the all information
-const Booking = ({ spot_information, open }) => {
+const Booking = ({ spot_information, open, set_dialog}) => {
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext)
 	const [totalSlots, setTotalSlots] = useState(1);
@@ -118,7 +118,10 @@ const Booking = ({ spot_information, open }) => {
 
 	useEffect(() => {
 		if (paymentStatus) {
-			navigate("/booking");
+			setEndTime("");
+			setStartTime("");
+			setTotalSlots("");
+			// navigate("/booking");
 		}
 	}, [paymentStatus, navigate]);
 
@@ -347,6 +350,16 @@ const Booking = ({ spot_information, open }) => {
 										sx={{ mt: 2 }}
 									>
 										GO HOME
+									</Button>
+									<Button
+										variant="contained"
+										color="primary"
+										onClick={() => {
+											set_dialog();
+										}}
+										sx={{ mt: 2, ml: 2 }}
+									>
+										Cancel
 									</Button>
 								</Grid>
 							</Grid>
