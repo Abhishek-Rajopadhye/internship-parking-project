@@ -148,7 +148,7 @@ const Spot = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/spots/add-spot/",
+        `${BACKEND_URL}/spots/add-spot/`,
         {
           owner_id: user.id,
           spot_title: spotTitle,

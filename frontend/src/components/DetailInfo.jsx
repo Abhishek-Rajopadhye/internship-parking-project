@@ -23,20 +23,22 @@ import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import axios from "axios";
 import { BACKEND_URL } from "../const";
+import { Booking } from "../pages/Booking";
 
 const DetailInfo = ({ selectedMarker, user }) => {
-	  const [reviews, setReviews] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [ownerDetail, setOwnerDetail] = useState({});
     const [reviewImages, setReviewImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchDetails = async () => {
             try {
                 const [reviewsRes, ownerRes] = await Promise.all([
-                    axios.get(`http://127.0.0.1:8000/review/spot/${selectedMarker.spot_id}`),
-                    axios.get(`http://127.0.0.1:8000/users/owner/${selectedMarker.owner_id}`)
+                    axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`),
+                    axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`)
                 ]);
                 setReviews(reviewsRes.data);
                 // Extract images from reviews where image is not null
@@ -60,8 +62,8 @@ const DetailInfo = ({ selectedMarker, user }) => {
         : 0;
 
 
-    const showDetails = () => {
-        navigate("/booking");
+    const toggleDialogBooking = () => {
+        setDialogBookingOpen(!dialogBookingOpen);
     }
 
     return (
@@ -210,7 +212,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                     fullWidth
                     variant="contained"
                     color="secondary"
-                    sx={{ borderRadius: 2, mt: 2, fontSize: "large" }} onClick={showDetails} >Book Now</Button>
+                    sx={{ borderRadius: 2, mt: 2, fontSize: "large" }} onClick={toggleDialogBooking} >Book Now</Button>
                 <Button
                     variant="contained"
                     color="primary"
@@ -220,6 +222,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                     sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
                 >Go Home</Button>
             </Box>
+            <Booking open={dialogBookingOpen} spot_information={selectedMarker} />
 
         </Box>
     );
