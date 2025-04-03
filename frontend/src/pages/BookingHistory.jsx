@@ -113,9 +113,9 @@ const BookingHistory = () => {
 
 
 	return (
-		<Container sx={{ position: "relative", mt: 30, mr: 150, width: "85%", maxWidth:"100%" }}>
+		<Container sx={{ position: "relative", mt: 30, mr: 150, width:"100vw" }}>
 			<TabContext value={tabIndex}>
-				<AppBar sx={{ position: "relative", mt: 30, width: "100%", borderRadius: 2 }}>
+				<AppBar sx={{ position: "relative", mt: 30, ml:2, borderRadius: 2, width:"100vw" }}>
 					<TabList
 						slotProps={{
 							indicator: {
@@ -133,7 +133,7 @@ const BookingHistory = () => {
 						<Tab label="Owner Bookings" value="1" sx={{ color: "black", "&.Mui-selected": { color: "white" } }} />
 					</TabList>
 				</AppBar>
-				<TabPanel value="0" sx={{ height: "100vh" }}>
+				<TabPanel value="0" sx={{ height: "100vh", width:"100vw" }}>
 					<UserBookingView
                         bookingDetails={userBookings}
                         cancelBooking={handleCancelBooking}
@@ -141,7 +141,7 @@ const BookingHistory = () => {
                         checkOut={handleCheckOut}
                     />				
 				</TabPanel>
-				<TabPanel value="1" sx={{ height: "100vh"}}>
+				<TabPanel value="1" sx={{ height: "100vh", width:"100vw" }}>
 					<OwnerBookingView bookingDetails={ownerBookings} />
 				</TabPanel>
 			</TabContext>
