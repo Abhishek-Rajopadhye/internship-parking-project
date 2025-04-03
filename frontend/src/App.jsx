@@ -141,7 +141,7 @@ const AppLayout = () => {
 				</Box>
 				<NavBar user={user} logout={logout} />
 			</Drawer>
-			<Box sx={{ position: "fixed", flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
+			<Box sx={{  flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
 				<Routes>
 					<Route path="/spot" element={<Spot userId={providerId}></Spot>}></Route>
 					<Route path="/profile" element={<Profile />} />
@@ -162,7 +162,7 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/auth" element={<Auth />} />
-					<Route path="/booking" element={<Booking spot_information={spot} user_id={user.id} />} />
+					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user}/>}/>
 					<Route path="/spot" element={<Spot/>}/>
 					<Route path="*" element={<Navigate to="/home" />} />

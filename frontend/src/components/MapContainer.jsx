@@ -10,12 +10,14 @@ import { useNavigate } from 'react-router-dom';
 import { CircularProgress } from '@mui/material';
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef }) {
+
     const { isLoaded, loadError } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries: ['places', 'geometry'] // Added geometry library for distance calculation
     });
-	const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
+
+    const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -36,16 +38,23 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         lng: 73.855421,
     };
 
+    /**
+     * Fetch parking spot markers from the API
+     */
     useEffect(() => {
         const fetchMarkers = async () => {
             try {
                 const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
+                if (!response.data) {
+                    throw new Error("No data received from the server");
+                }
+
                 setMarkers(response.data);
                 setError(null);
 
             } catch (error) {
                 console.error("Error fetching markers", error);
-                // SpeechSynthesisErrorEvent("failed to load parking spots. Please try again.");
+                setError("Failed to load parking spots. Please try again later.");
             } finally {
                 setLoading(false);
             }
@@ -75,9 +84,13 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
     // Calculate distance between selected marker and the seach point location 
     const calculateDistance = (origin, destination) => {
-        if (!window.google?.maps?.geometry) return null;
-
         try {
+            if (!window.google?.maps?.geometry) return null;
+
+            if (!origin?.lat || !origin?.lng || !destination?.lat || !destination?.lng) {
+                throw new Error("Invalid coordinates provided for distance calculation");
+            }
+
             const originLatLng = new window.google.maps.LatLng(
                 origin.lat,
                 origin.lng
@@ -100,21 +113,32 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
             console.error("Distance claculation error:", error);
             return null;
         }
-
-
     };
 
-    if (!isLoaded) {
-        return <CircularProgress />
+    if (loadError) {
+        return <Alert severity="error">Error loading maps: {loadError.message}</Alert>;
     }
+
+    if (!isLoaded) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <CircularProgress />
+                <Box ml={2}>Loading Maps...</Box>
+            </Box>
+        );
+    }
+
 
     return (
         <Box className='map-container' >
-            {loading ? (<CircularProgress />
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                    <CircularProgress />
+                    <Box ml={2}>Loading parking spots...</Box>
+                </Box>
             ) : error ? (
                 <Alert severity="error">{error}</Alert>
             ) : (
-
                 <>
                     <GoogleMap
                         mapContainerStyle={mapStyles}
@@ -122,6 +146,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
                         zoom={12}
                         onLoad={map => (mapRef.current = map)}
                     >
+                        {/*Render existing parking spot markers */}
                         {markers.map((marker, index) => (
                             <MarkerComponent
                                 key={index}
@@ -129,14 +154,14 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
                                 setSelectedMarker={setSelectedMarker}
                             />
                         ))}
-
-                        {
-                            newMarker && <MarkerComponent
+                        {/* Render search result marker when searched  */}
+                        {newMarker && (
+                            <MarkerComponent
                                 marker={newMarker}
                                 setSelectedMarker={setSelectedMarker}
                                 isSearchMarker={true}
                             />
-                        }
+                        )}
 
                         {/* <Marker
                             position={draggableMarker}
@@ -155,15 +180,15 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
                         )}
                     </GoogleMap>
 
-
+                    {/* Navigation button to add new parking spot */}
                     <Button
                         onClick={() => navigate("/spot")}
                         variant="contained"
                         disableElevation
-                        startIcon={<IoLocationSharp size={20} />}
-                    >Add Parking Spot
+                        startIcon={<IoLocationSharp size={20} />}              
+                    >
+                        Add Parking Spot
                     </Button>
-
                 </>
             )}
         </Box>

@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, CircularProgress, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../style/spot.css";
+import { AuthContext } from "../context/AuthContext";
 
-const Spot = ({ userId }) => {
+const Spot = () => {
 	const navigate = useNavigate();
+	const {user} =useContext(AuthContext)
 	// eslint-disable-next-line no-unused-vars
 	const [imageSrc, setImageSrc] = useState(null);
 	const [latitude, setLatitude] = useState("");
@@ -145,7 +147,7 @@ const Spot = ({ userId }) => {
 
 		try {
 			const response = await axios.post("http://localhost:8000/spots/add-spot/", {
-				owner_id: userId,
+				owner_id: user.id,
 
 				spot_title: spotTitle,
 
