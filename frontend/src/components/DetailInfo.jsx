@@ -29,6 +29,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
     const [reviews, setReviews] = useState([]);
     const [ownerDetail, setOwnerDetail] = useState({});
     const [reviewImages, setReviewImages] = useState([]);
+    const [spotImage,setSpotImage]=useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
     const navigate = useNavigate();
@@ -41,19 +42,37 @@ const DetailInfo = ({ selectedMarker, user }) => {
                     axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`)
                 ]);
                 setReviews(reviewsRes.data);
+                
                 // Extract images from reviews where image is not null
                 const images = reviewsRes.data
                     .map(review => review.image)
                     .filter(img => img !== null && img !== ""); // Remove null/empty values
                 setReviewImages(images);
-                setOwnerDetail(ownerRes.data);
+                setOwnerDetail(ownerRes.data);       
+                console.log("recie review ",reviewsRes.data);
+                console.log("ll",ownerRes.data);
+                console.log("Review iamges ",reviewImages.data)
             } catch (error) {
                 console.error("Error fetching data", error);
             }
         };
 
-        if (selectedMarker.spot_id && selectedMarker.owner_id) {
+        const getImage = async () => {
+            try {
+             const response =await  axios.get(`${BACKEND_URL}/spotdetails/get-image/${selectedMarker.spot_id}`);
+              if (response.status === 200) {
+                const imageData = response.data.image; 
+                setSpotImage(`data:image/png;base64,${imageData}`);
+              }
+            } catch (error) {
+             console.error("error ",error)
+            } 
+            
+        
+          }
+          if (selectedMarker.spot_id && selectedMarker.owner_id) {
             fetchDetails();
+            getImage();
         }
     }, [selectedMarker.spot_id, selectedMarker.owner_id]);
 
@@ -65,7 +84,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
     const toggleDialogBooking = () => {
         setDialogBookingOpen(!dialogBookingOpen);
     }
-
+console.log("ownerrimages ",ownerDetail.profile_picture);
     return (
 
         <Box sx={{ position: "relative", width: "95%", margin: "auto", padding: 3, top: 200 }}>
@@ -73,7 +92,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                 <CardMedia
                     component="img"
                     height="300"
-                    image={selectedMarker.image || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
+                    image={spotImage || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
                     alt="Parking Spot"
                 />
                 <Typography variant="h4" fontWeight="bold" sx={{ mt: 2, ml: 1 }}>
@@ -86,7 +105,8 @@ const DetailInfo = ({ selectedMarker, user }) => {
                 <Grid item xs={12} md={6}>
                     <Paper elevation={6} sx={{ padding: 3, height: "500px", overflow: "hidden" }}>
                         <Box sx={{ display: "flex", alignItems: "center", mt: 2 }}>
-                            <Avatar alt="Owner" src={ownerDetail.profile_picture || "/default-avatar.png"} sx={{ mr: 2, width: 56, height: 56 }} />
+                            <Avatar alt="Owner" src={ownerDetail.profile_picture } sx={{ mr: 2, width: 56, height: 56 }} />
+                            
                             <Typography variant="h5">{ownerDetail.name || "Unknown Owner"}</Typography>
                         </Box>
 
@@ -147,6 +167,13 @@ const DetailInfo = ({ selectedMarker, user }) => {
                         <Typography variant="h5" fontWeight="bold" sx={{ mt: 2 }}>Reviews</Typography>
 
                         {/*Scroble review*/}
+                        {reviews.length===0 ? (
+                            <Typography variant="h6" sx={{ mt: 2, color: "gray", textAlign: "center" }}>
+                            No reviews available
+                        </Typography>
+                        ):( 
+
+                        
                         <Box sx={{ height: "400px", overflowY: "auto", padding: 2 }}>
                             <Grid container direction="column" spacing={2}>
                                 {reviews.map((review, index) => (
@@ -163,7 +190,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                                             <Rating name="read-only" value={review.rating_score} readOnly />
                                             <Typography fontWeight="bold" >{review.review_description}</Typography>
                                             <Box sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center", mt: 2 }}>
-                                                <Avatar alt="Owner" src={ownerDetail.profile_picture} sx={{ width: 24, height: 24, mr: 1 }} >P </Avatar>
+                                                <Avatar alt="Owner" src={ownerDetail.profile_picture} sx={{ width: 24, height: 24, mr: 1 }} >{ownerDetail.name.slice(0,1)}</Avatar>
                                                 <Typography color="white" variant="subtitle2">{review.owner_reply ? review.owner_reply : "No reply from owner"}</Typography>
                                             </Box>
                                         </Box>
@@ -172,6 +199,8 @@ const DetailInfo = ({ selectedMarker, user }) => {
 
                             </Grid>
                         </Box>
+                        )}
+
                     </Paper>
                 </Grid>
 
