@@ -133,13 +133,10 @@ const AppLayout = () => {
 					sx={{
 						// Help of auto generate for styling was used
 						width: 350,
-						flexShrink: 0,
-						"& .MuiDrawer-paper": {
-							width: 350,
-							boxSizing: "border-box",
-						},
-					}}
-				>
+						boxSizing: "border-box",
+					},
+				}}
+			>
 					<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
 						<IconButton onClick={handleDrawerToggle}>
 							<ChevronLeftIcon />
@@ -148,7 +145,7 @@ const AppLayout = () => {
 					<NavBar user={user} logout={logout} />
 				</Drawer>
 			</Box>
-			<Box sx={{ p: 3, m:5, width: "100%" }} variant="main">
+			<Box sx={{  flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
 				<Routes>
 					<Route path="/spot" element={<Spot/>}></Route>
 					<Route path="/profile" element={<Profile />} />
@@ -170,7 +167,7 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/auth" element={<Auth />} />
-					<Route path="/booking" element={<Booking spot_information={spot} user_id={user.id} />} />
+					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user}/>}/>
 					<Route path="/spot" element={<Spot/>}/>
 					<Route path="*" element={<Navigate to="/home" />} />
