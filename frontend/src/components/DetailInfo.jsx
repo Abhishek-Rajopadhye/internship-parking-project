@@ -39,9 +39,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
             try {
                 const [reviewsRes, ownerRes] = await Promise.all([
                     axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`),
-                    axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
-                     axios.get(`${BACKEND_URL}/spotdetails/get-image/${selectedMarker.spot_id}`),
-
+                    axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`)
                 ]);
                 setReviews(reviewsRes.data);
                 
@@ -50,19 +48,31 @@ const DetailInfo = ({ selectedMarker, user }) => {
                     .map(review => review.image)
                     .filter(img => img !== null && img !== ""); // Remove null/empty values
                 setReviewImages(images);
-                setOwnerDetail(ownerRes.data);
-                 setSpotImage(spotImage);
+                setOwnerDetail(ownerRes.data);       
                 console.log("recie review ",reviewsRes.data);
                 console.log("ll",ownerRes.data);
-                console.log("images",spotImage.data)
                 console.log("Review iamges ",reviewImages.data)
             } catch (error) {
                 console.error("Error fetching data", error);
             }
         };
 
-        if (selectedMarker.spot_id && selectedMarker.owner_id) {
+        const getImage = async () => {
+            try {
+             const response =await  axios.get(`${BACKEND_URL}/spotdetails/get-image/${selectedMarker.spot_id}`);
+              if (response.status === 200) {
+                const imageData = response.data.image; 
+                setSpotImage(`data:image/png;base64,${imageData}`);
+              }
+            } catch (error) {
+             console.error("error ",error)
+            } 
+            
+        
+          }
+          if (selectedMarker.spot_id && selectedMarker.owner_id) {
             fetchDetails();
+            getImage();
         }
     }, [selectedMarker.spot_id, selectedMarker.owner_id]);
 
