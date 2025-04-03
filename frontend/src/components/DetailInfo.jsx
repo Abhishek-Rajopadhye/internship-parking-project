@@ -22,9 +22,10 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocalParkingIcon from "@mui/icons-material/LocalParking";
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import axios from "axios";
+import { BACKEND_URL } from "../const";
 
 const DetailInfo = ({ selectedMarker, user }) => {
-    const [reviews, setReviews] = useState([]);
+	  const [reviews, setReviews] = useState([]);
     const [ownerDetail, setOwnerDetail] = useState({});
     const [reviewImages, setReviewImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);

@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
-import { Box, Button } from '@mui/material';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { Box, Button } from "@mui/material";
+import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import axios from "axios";
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
 import { IoLocationSharp } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
-import { CircularProgress } from '@mui/material';
+import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import { BACKEND_URL } from "../const";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef }) {
-
     const { isLoaded, loadError } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -168,7 +168,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
                             draggable={true}
                             onDragEnd={onMarkerDragEnd}
                         /> */}
-
 
                         {selectedMarker && (
                             <InfoWindowComponent

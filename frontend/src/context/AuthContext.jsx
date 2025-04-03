@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { BACKEND_URL } from "../const";
 
 /**
  * Authentication context to manage user state and authentication functions.
@@ -24,7 +25,7 @@ const AuthProvider = ({ children }) => {
 			const token = localStorage.getItem("token");
 			const user_id = String(localStorage.getItem("user_id"));
 			try {
-				const response = await axios.get(`http://localhost:8000/users/profile/${user_id}`, {
+				const response = await axios.get(`${BACKEND_URL}/users/profile/${user_id}`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 				const data = response.data;
