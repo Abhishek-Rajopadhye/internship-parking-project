@@ -22,6 +22,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "../style/booking.css";
+import { BACKEND_URL } from "../const";
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, user_id }) => {
@@ -205,7 +206,7 @@ const Booking = ({ spot_information, user_id }) => {
 				showSnackbar("No Slots availables", "error");
 				return;
 			}
-			orderResponse = await axios.post("http://127.0.0.1:8000/bookings/book-spot", {
+			orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
 				user_id: user_id.toString(),
 				spot_id: spot_information.spot_id,
 				total_slots: totalSlots,
