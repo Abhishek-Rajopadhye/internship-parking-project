@@ -23,6 +23,7 @@ import "jspdf-autotable";
 import "../style/booking.css";
 import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
+import dayjs from 'dayjs';
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog}) => {
@@ -42,6 +43,9 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	const showSnackbar = (message, severity = "info") => {
 		setOpenSnackbar({ open: true, message, severity });
 	};
+
+	const minDate = dayjs(); 
+	const maxDate = dayjs().add(14, 'day'); 
 
 	/**
 	 * This function is used to validate the date and time
@@ -205,7 +209,8 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			console.log(startTime);
 			const start_time = dateTimeToString(startTime);
 			const end_time = dateTimeToString(endTime);
-
+			console.log(startTime, start_time)
+			console.log(endTime, end_time)
 			if (spot_information.available_slots < totalSlots) {
 				showSnackbar("No Slots availables", "error");
 				return;
@@ -267,6 +272,21 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 		}
 	};
 
+	const checkStartTime = () => {
+		//console.log(selectedDate);
+		if (!startTime || new Date(startTime).getTime() <= new Date().getTime()) {
+			setStartTime(null);
+			showSnackbar("Please select a future date and time.", "error");
+		}
+	};
+
+	const checkEndTime = () => {
+		if (!endTime || new Date(endTime).getTime() <= new Date().getTime()) {
+			setEndTime(null)
+			showSnackbar("Please select a future date and timemmm.", "error");	
+		}
+	}
+
 	/**
 	 * This function is used to download the pdf file
 	 * @returns
@@ -319,6 +339,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 										label="Start Time"
 										value={startTime}
 										onChange={setStartTime}
+										onClose={checkStartTime}
 										renderInput={(params) => <TextField {...params} fullWidth />}
 									/>
 								</Grid>
@@ -328,6 +349,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 										label="End Time"
 										value={endTime}
 										onChange={setEndTime}
+										onClose={checkEndTime}
 										renderInput={(params) => <TextField {...params} fullWidth />}
 									/>
 								</Grid>

@@ -10,6 +10,9 @@ import {
   Alert,
   CircularProgress,
   IconButton,
+  Dialog,
+  DialogContent,
+  DialogActions
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import "../style/spot.css";
@@ -35,6 +38,7 @@ const Spot = () => {
   // eslint-disable-next-line no-unused-vars
   const [imagePreview, setImagePreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [openPreview, setOpenPreview] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState({
     open: false,
     message: "",
@@ -49,6 +53,7 @@ const Spot = () => {
     Fri: false,
     Sat: false,
   });
+  
 
   const toggleDay = (day) => {
     setOpenDays({ ...openDays, [day]: !openDays[day] });
@@ -73,6 +78,9 @@ const Spot = () => {
     }
 
     if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl); 
+      setOpenPreview(true); 
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = () => {
@@ -80,6 +88,11 @@ const Spot = () => {
         setImagePreview(reader.result);
       };
     }
+    setOpenSnackbar({
+      open: true,
+      message: "Photo upload successfully",
+      severity: "success",
+    });
   };
   /**
    *  validate a form checking title, address, open time, close time,
@@ -111,6 +124,7 @@ const Spot = () => {
    * @returns 
    */
   const handleAddSpot = async () => {
+    console.log(openTime);
     if (
       !(
         latitude >= 6.554607 &&
@@ -129,21 +143,7 @@ const Spot = () => {
     }
 
     const error = validateForm();
-
-    if (error) {
-      setOpenSnackbar({ open: true, message: error, severity: "error" });
-
-      return;
-    }
-    setLoading(true);
-
-    let open_days = [];
-
-    for (const day in openDays) {
-      if (openDays[day]) {
-        open_days.push(day);
-      }
-    }
+    
     if(parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
       setOpenSnackbar({
         open: true,
@@ -159,6 +159,22 @@ const Spot = () => {
       });
       return;
     }
+    if (error) {
+      setOpenSnackbar({ open: true, message: error, severity: "error" });
+
+      return;
+    }
+    setLoading(true);
+
+    let open_days = [];
+
+    for (const day in openDays) {
+      if (openDays[day]) {
+        open_days.push(day);
+      }
+    }
+    
+    console.log(openTime);
     let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
     let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
     let new_open_time = openTime + " " + open;
@@ -363,6 +379,12 @@ const Spot = () => {
                   Upload Image
                 </Button>
               </label>
+              {image != null ? (
+                <Typography onClick={() => setOpenPreview(true)} style={{ cursor: "pointer", color: "blue" }}>
+                  Preview Image
+                </Typography>
+              ) : null}
+
             </Grid>
 
             <Grid item xs={12}>
@@ -392,8 +414,17 @@ const Spot = () => {
             </Grid>
           </Grid>
         {/* </Box> */}
+        <Dialog open={openPreview} onClose={() => setOpenPreview(false)}>
+        <DialogContent>
+          {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: "100%", borderRadius: "8px" }} />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenPreview(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       </Box>
-
       <Snackbar
         open={openSnackbar.open}
         autoHideDuration={3000}
