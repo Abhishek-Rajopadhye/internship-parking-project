@@ -4,10 +4,9 @@ from app.db.session import get_db
 from app.services.parking_service import get_all_parking_spots
 from app.schemas.parking import ParkingSpot
 from typing import List
-
+import base64
 
 router = APIRouter()
-
 
 @router.get("/getparkingspot", response_model=List[ParkingSpot])
 async def fetch_parking_spots(db: Session = Depends(get_db)):
@@ -26,6 +25,9 @@ async def fetch_parking_spots(db: Session = Depends(get_db)):
     """
     try:
         spots = get_all_parking_spots(db)
+        for spot in spots:
+            if spot.image:  # Assuming `image` is a binary field
+                spot.image = base64.b64encode(spot.image).decode("utf-8")
         return spots
     except Exception as error:
         raise HTTPException(status_code=500,details=f"Could not get parking spots detail : {error}")

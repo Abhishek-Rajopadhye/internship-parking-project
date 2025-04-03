@@ -14,6 +14,7 @@ import { Home } from "./pages/Home";
 import { SearchBar } from "./components/SearchBar2";
 import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
+import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
 
 /**
@@ -38,7 +39,6 @@ const AppLayout = () => {
         available_slots: 50,
         description: "This is a convenient EV charging station located in the heart of the city with fast chargers. The station is open from 08:00 AM to 20:00 PM from Tuesday to Sunday. The hourly rate is $50. There are 5 charging slots available, out of which 3 are currently available. The station is located at Green Park, London.",
     };
-	const providerId = "111919577987638512190";
 
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
@@ -80,6 +80,8 @@ const AppLayout = () => {
 				return "Home";
 			case "/auth":
 				return "Auth";
+			case "/add-review":
+				return "Add Review"
 			case "/booking":
 				return "Booking";
 			case "/spotdetail":
@@ -99,54 +101,57 @@ const AppLayout = () => {
 
 	return (
 		<Box sx={{ display: "flex", width: "100%" }}>
-			<AppBar position="fixed">
-				<Toolbar>
-					<IconButton
-						edge="start"
-						color="inherit"
-						aria-label="menu"
-						onClick={handleDrawerToggle}
-						sx={{ marginRight: 2 }}
-					>
-						<MenuIcon />
-					</IconButton>
-					<Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-						{getPageTitle()}
-					</Typography>
-					{getPageTitle() === "Home" && (
-						<Box sx={{ flexShrink: 0 }}>
-							<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
-						</Box>
-					)}
-				</Toolbar>
-			</AppBar>
-			<Drawer
-				variant="persistent"
-				anchor="left"
-				open={isDrawerOpen}
-				sx={{
-					// Help of auto generate for styling was used
-					width: 350,
-					flexShrink: 0,
-					"& .MuiDrawer-paper": {
+			<Box sx={{ flexGrow: 1 }}>
+				<AppBar position="fixed" sx={{zIndex:"9999"}}>
+					<Toolbar>
+						<IconButton
+							edge="start"
+							color="inherit"
+							aria-label="menu"
+							onClick={handleDrawerToggle}
+							sx={{ marginRight: 2 }}
+						>
+							<MenuIcon />
+						</IconButton>
+						<Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
+							{getPageTitle()}
+						</Typography>
+						{getPageTitle() === "Home" && (
+							<Box sx={{ flexShrink: 0 }}>
+								<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
+							</Box>
+						)}
+					</Toolbar>
+				</AppBar>
+				<Toolbar />
+			</Box>
+			<Box sx={{ flexGrow: 1 }}>
+				<Drawer
+					variant="persistent"
+					anchor="left"
+					open={isDrawerOpen}
+					sx={{
+						// Help of auto generate for styling was used
 						width: 350,
 						boxSizing: "border-box",
 					},
 				}}
 			>
-				<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
-					<IconButton onClick={handleDrawerToggle}>
-						<ChevronLeftIcon />
-					</IconButton>
-				</Box>
-				<NavBar user={user} logout={logout} />
-			</Drawer>
-			<Box sx={{ flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
+					<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
+						<IconButton onClick={handleDrawerToggle}>
+							<ChevronLeftIcon />
+						</IconButton>
+					</Box>
+					<NavBar user={user} logout={logout} />
+				</Drawer>
+			</Box>
+			<Box sx={{  flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
 				<Routes>
-					<Route path="/spot" element={<Spot userId={providerId}></Spot>}></Route>
+					<Route path="/spot" element={<Spot/>}></Route>
 					<Route path="/profile" element={<Profile />} />
 					<Route path="/booking-history" element={<BookingHistory />} />
 					<Route path="/my-spots" element={<MySpots />} />
+					<Route path="/add-review" element={<AddReview />} />
 					<Route
 						path="/home"
 						element={
@@ -162,7 +167,7 @@ const AppLayout = () => {
 						}
 					/>
 					<Route path="/auth" element={<Auth />} />
-					<Route path="/booking" element={<Booking spot_information={spot} user_id={user.id} />} />
+					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user}/>}/>
 					<Route path="/spot" element={<Spot/>}/>
 					<Route path="*" element={<Navigate to="/home" />} />

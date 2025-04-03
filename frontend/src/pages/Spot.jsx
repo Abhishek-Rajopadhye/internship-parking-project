@@ -12,9 +12,9 @@ import {
   IconButton,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../style/spot.css";
-import {AuthContext} from "../context/AuthContext";
+import { AuthContext } from "../context/AuthContext";
+import { BACKEND_URL } from "../const";
 
 const Spot = () => {
   const navigate = useNavigate();
@@ -140,11 +140,8 @@ const Spot = () => {
     }
 
     let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
-
     let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
-
     let new_open_time = openTime + " " + open;
-
     let new_close_time = closeTime + " " + close;
 
     console.log("Open Days:", open_days);
@@ -154,29 +151,17 @@ const Spot = () => {
         "http://localhost:8000/spots/add-spot/",
         {
           owner_id: user.id,
-
           spot_title: spotTitle,
-
           spot_address: spotAddress,
-
           spot_description: spotDescription,
-
           open_time: new_open_time,
-
           close_time: new_close_time,
-
           hourly_rate: hourlyRate,
-
           total_slots: totalSlots,
-
           available_slots: availableSlots,
-
           latitude,
-
           longitude,
-
           available_days: open_days,
-
           image: image || "",
         }
       );
@@ -330,7 +315,6 @@ const Spot = () => {
 
             <Grid item xs={12}>
               <Typography variant="subtitle1">Select Open Days:</Typography>
-
               <Grid container spacing={1} justifyContent="center">
                 {Object.keys(openDays).map((day) => (
                   <Grid item key={day}>
@@ -402,4 +386,5 @@ const Spot = () => {
     </Box>
   );
 };
+
 export { Spot };

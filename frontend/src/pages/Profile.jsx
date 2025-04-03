@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { EditProfileModal } from "../components/EditProfileModal";
 import axios from "axios";
 import { CurrencyRupee } from "@mui/icons-material";
+import { BACKEND_URL } from "../const";
 
 /**
  * Profile Component
@@ -81,7 +82,7 @@ const Profile = () => {
 	const handleSave = async (updatedUser) => {
 		try {
 			const user_id = String(localStorage.getItem("user_id"));
-			const response = await axios.put(`http://localhost:8000/users/profile/${user_id}`, updatedUser, {
+			const response = await axios.put(`${BACKEND_URL}/users/profile/${user_id}`, updatedUser, {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -103,7 +104,7 @@ const Profile = () => {
 	if (!user) return <Typography variant="h5">Loading profile...</Typography>;
 
 	return (
-		<Container sx={{ textAlign: "center", mt: 10, mr: 50 }}>
+		<Container sx={{ position:"relative", textAlign: "center", left:-200}}>
 			<Avatar src={user.profile_picture} alt={user.name} sx={{ width: 100, height: 100, margin: "auto" }} />
 			<Typography variant="h4">{user.name}</Typography>
 			<Typography variant="h6">{user.email}</Typography>
