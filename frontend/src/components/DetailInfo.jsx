@@ -29,6 +29,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
     const [reviews, setReviews] = useState([]);
     const [ownerDetail, setOwnerDetail] = useState({});
     const [reviewImages, setReviewImages] = useState([]);
+    const [spotImage,setSpotImage]=useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
     const navigate = useNavigate();
@@ -36,9 +37,11 @@ const DetailInfo = ({ selectedMarker, user }) => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const [reviewsRes, ownerRes] = await Promise.all([
+                const [reviewsRes, ownerRes,spotImage] = await Promise.all([
                     axios.get(`${BACKEND_URL}/review/spot/${selectedMarker.spot_id}`),
-                    axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`)
+                    axios.get(`${BACKEND_URL}/users/owner/${selectedMarker.owner_id}`),
+                    axios.get(`${BACKEND_URL}/spotdetails/get-image/${selectedMarker.spot_id}`),
+
                 ]);
                 setReviews(reviewsRes.data);
                 // Extract images from reviews where image is not null
@@ -47,6 +50,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                     .filter(img => img !== null && img !== ""); // Remove null/empty values
                 setReviewImages(images);
                 setOwnerDetail(ownerRes.data);
+                setSpotImage(spotImage);
             } catch (error) {
                 console.error("Error fetching data", error);
             }
@@ -73,7 +77,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                 <CardMedia
                     component="img"
                     height="300"
-                    image={selectedMarker.image || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
+                    image={spotImage || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
                     alt="Parking Spot"
                 />
                 <Typography variant="h4" fontWeight="bold" sx={{ mt: 2, ml: 1 }}>

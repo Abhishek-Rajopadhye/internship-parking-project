@@ -111,7 +111,6 @@ const AppLayout = () => {
 			</Box>
 			<Box sx={{ flexGrow: 1 }}>
 				<Drawer
-					variant="persistent"
 					anchor="left"
 					open={isDrawerOpen}
 					sx={{
