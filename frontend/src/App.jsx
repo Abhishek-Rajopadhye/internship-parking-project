@@ -133,13 +133,10 @@ const AppLayout = () => {
 					sx={{
 						// Help of auto generate for styling was used
 						width: 350,
-						flexShrink: 0,
-						"& .MuiDrawer-paper": {
-							width: 350,
-							boxSizing: "border-box",
-						},
-					}}
-				>
+						boxSizing: "border-box",
+					},
+				}}
+			>
 					<Box sx={{ display: "flex", alignItems: "center", padding: 1 }}>
 						<IconButton onClick={handleDrawerToggle}>
 							<ChevronLeftIcon />
@@ -149,7 +146,6 @@ const AppLayout = () => {
 				</Drawer>
 			</Box>
 			<Box sx={{  flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
-
 				<Routes>
 					<Route path="/spot" element={<Spot/>}></Route>
 					<Route path="/profile" element={<Profile />} />
