@@ -222,7 +222,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
                     sx={{ borderRadius: 2, mt: 2, fontSize: "large" }}
                 >Go Home</Button>
             </Box>
-            <Booking open={dialogBookingOpen} spot_information={selectedMarker} />
+            <Booking open={dialogBookingOpen} spot_information={selectedMarker} set_dialog={toggleDialogBooking}/>
 
         </Box>
     );

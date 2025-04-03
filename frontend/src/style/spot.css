@@ -10,16 +10,19 @@ html, body {
 }
 
 .form-container {
-  right: 30%;
+  /* right: 30%; */
   display: flex;
   justify-content: center;
   align-items: center;
   width: 90vw;
   max-width: 600px;
   min-height: 80vh;
+  margin: auto;
 }
 
 .form-box {
+  position: relative;
+  /* left:50%; */
   margin-top: 50%;
   width: 100%;
   background: white;
@@ -30,6 +33,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-self: center;
 }
 
 /* Ensures form is centered properly */
@@ -45,6 +49,7 @@ html, body {
     padding: 10px;
   }
   .form-box {
+    /* left:30%; */
     padding-top: 20%;
   }
 }
@@ -54,16 +59,7 @@ html, body {
     width: 95vw;
   }
   .form-box {
+    /* left:5%; */
     padding-top: 32%;
   }
-}
-
-@media screen and (max-width: 480px) {
-    .form-container {
-        width: 95vw;
-    }
-
-    .form-box {
-        padding-top: 32%;
-    }
 }
