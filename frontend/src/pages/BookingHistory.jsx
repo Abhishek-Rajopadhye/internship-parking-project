@@ -113,9 +113,9 @@ const BookingHistory = () => {
 
 
 	return (
-		<Container sx={{ position: "relative", mt: 30, width:"100vw" }}>
+		<Container sx={{ position: "relative", width:"100vw", alignContent:"center" }}>
 			<TabContext value={tabIndex}>
-				<AppBar sx={{ position: "relative", mt: 30, borderRadius: 2 }}>
+				<AppBar sx={{ position: "relative", mt: 30, borderRadius: 2, zIndex:2 }}>
 					<TabList
 						slotProps={{
 							indicator: {
