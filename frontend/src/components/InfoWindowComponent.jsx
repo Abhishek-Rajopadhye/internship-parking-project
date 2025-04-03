@@ -30,6 +30,8 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
         (selectedMarker.name !== newMarker.name ||
             selectedMarker.spot_id !== newMarker.spot_id);
 
+    const isSearchLocation = !selectedMarker.spot_id;
+
     const showDetails = () => {
         try {
             if (selectedMarker) {
@@ -72,7 +74,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
                             {selectedMarker?.spot_title || "Destination"}
                         </Typography>
 
-                        {isExistingMarker && (
+                        {!isSearchLocation && (
                             <IconButton
                                 size="small"
                                 component={Link}
@@ -81,7 +83,8 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
                                 sx={{ marginRight: 1 }}
                             >
                                 <InfoIcon color="primary" />
-                            </IconButton>)}
+                            </IconButton>
+                        )}
                     </Box>
 
                     <Box sx={{ display: "flex", alignItems: "center", mb: 1, maxWidth: 260 }}>
@@ -91,7 +94,7 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
                         </Typography>
                     </Box>
 
-                    {isExistingMarker && (
+                    {!isSearchLocation && (
                         <>
                             {/* Pricing information */}
                             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
@@ -108,7 +111,10 @@ const InfoWindowComponent = ({ selectedMarker, newMarker, setSelectedMarker, cal
                                     {selectedMarker.open_time} to {selectedMarker.close_time}
                                 </Typography>
                             </Box>
-
+                        </>
+                    )}
+                    {!isSearchLocation && isExistingMarker && (
+                        <>
                             {/* Distance information */}
                             <Box sx={{ display: "flex", alignItems: "center" }} >
                                 <DirectionsWalkIcon sx={{ mr: 1, color: "#007bff" }} />

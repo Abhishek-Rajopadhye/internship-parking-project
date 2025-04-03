@@ -53,7 +53,12 @@ const Spot = () => {
   const toggleDay = (day) => {
     setOpenDays({ ...openDays, [day]: !openDays[day] });
   };
-
+  /**
+   * checking size of photo and reading a Base64 data
+   * If file size greater than 2 MB gives a warning
+   * @param {*} event 
+   * @returns 
+   */
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     const maxSize = 2 * 1024 * 1024;
@@ -102,6 +107,7 @@ const Spot = () => {
   /**
    * checking latitude and longitude are within India
    * converting open time close time in indian standard time
+   * Adding spot into databases after adding making every filed empty
    * @returns 
    */
   const handleAddSpot = async () => {
@@ -138,12 +144,25 @@ const Spot = () => {
         open_days.push(day);
       }
     }
-
+    if(parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
+      setOpenSnackbar({
+        open: true,
+        message: "Open time must be before close time",
+        severity: "error",
+      });
+      return;
+    } else if(parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) && parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])) {
+      setOpenSnackbar({
+        open: true,
+        message: "Open time must be before close time",
+        severity: "error",
+      });
+      return;
+    }
     let open = parseInt(openTime.split(":")[0]) >= 12 ? "PM" : "AM";
     let close = closeTime.split(":")[0] >= 12 ? "PM" : "AM";
     let new_open_time = openTime + " " + open;
     let new_close_time = closeTime + " " + close;
-
     console.log("Open Days:", open_days);
 
     try {
@@ -352,9 +371,10 @@ const Spot = () => {
                 color="primary"
                 fullWidth
                 onClick={handleAddSpot}
-                disabled={loading}
+                // disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : "Add Spot"}
+                {/* {loading ? <CircularProgress size={24} /> : "Add Spot"} */}
+                Add Spot
               </Button>
             </Grid>
 
