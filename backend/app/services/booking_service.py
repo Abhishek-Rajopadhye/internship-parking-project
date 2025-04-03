@@ -1,10 +1,9 @@
 import razorpay
-import numpy as np
 from sqlalchemy.orm import Session
 from app.core.config import settings
 from app.db.booking_model import Booking
 from app.db.payment_model import Payment
-from app.db.spot_model import Spot  # Import Spot model
+from app.db.spot_model import Spot
 from fastapi import HTTPException
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
