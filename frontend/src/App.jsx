@@ -84,7 +84,7 @@ const AppLayout = () => {
 	}
 
 	return (
-		<Box sx={{ display: "flex", width: "100%" }}>
+		<Box sx={{ display: "flex", width: "100vw" }}>
 			<Box sx={{ flexGrow: 1 }}>
 				<AppBar position="fixed" sx={{zIndex:"9999"}}>
 					<Toolbar>
@@ -111,7 +111,6 @@ const AppLayout = () => {
 			</Box>
 			<Box sx={{ flexGrow: 1 }}>
 				<Drawer
-					variant="persistent"
 					anchor="left"
 					open={isDrawerOpen}
 					sx={{
@@ -129,7 +128,7 @@ const AppLayout = () => {
 					<NavBar user={user} logout={logout} />
 				</Drawer>
 			</Box>
-			<Box sx={{  flexGrow: 1, p: 3, top: 15, left: 150, width: "100%" }} variant="main">
+			<Box sx={{  flexGrow: 1, p: 3, top: 15, width: "100vw" }} variant="main">
 				<Routes>
 					<Route path="/spot" element={<Spot/>}></Route>
 					<Route path="/profile" element={<Profile />} />
