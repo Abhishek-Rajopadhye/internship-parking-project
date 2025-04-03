@@ -86,7 +86,7 @@ const AppLayout = () => {
 	return (
 		<Box sx={{ display: "flex", width: "100vw" }}>
 			<Box sx={{ flexGrow: 1 }}>
-				<AppBar position="fixed" sx={{zIndex:"9999"}}>
+				<AppBar position="fixed" sx={{zIndex:"3"}}>
 					<Toolbar>
 						<IconButton
 							edge="start"

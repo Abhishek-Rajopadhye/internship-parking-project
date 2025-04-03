@@ -1,8 +1,7 @@
 html, body {
-  margin: 0;
+  margin: auto;
   padding: 0;
   min-height: 100vh; /* Ensures proper height on all devices */
-  display: flex;
   justify-content: center;
   align-items: center;
   overflow: auto;
@@ -10,13 +9,13 @@ html, body {
 }
 
 .form-container {
-  right: 30%;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 90vw;
   max-width: 600px;
   min-height: 80vh;
+  margin: auto;
 }
 
 .form-box {
