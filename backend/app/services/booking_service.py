@@ -418,7 +418,7 @@ async def cancel_booking(db: Session, booking_id):
         })
         booking = db.query(Booking).filter(Booking.id == str(booking_id)).one()
         spot = db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id).one()
-        spot.update({
+        db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id).update({
             "available_slots": spot.available_slots + booking.total_slots
         })
         db.commit()
