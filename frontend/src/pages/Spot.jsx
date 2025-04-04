@@ -34,6 +34,7 @@ const Spot = () => {
   const [image, setImage] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [imagePreview, setImagePreview] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState({
     open: false,
