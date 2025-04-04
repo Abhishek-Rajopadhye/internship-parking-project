@@ -16,6 +16,7 @@ import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
 import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
+import FilterPanel from "./components/filterPanel";
 
 /**
  * A Routing Layout for the Application
@@ -31,6 +32,8 @@ const AppLayout = () => {
 	const [selectedMarker, setSelectedMarker] = useState(null);
 	const [newMarker, setNewMarker] = useState(null);
 	const [markers, setMarkers] = useState([]);
+	const [filteredMarkers,setFilteredMarkers]=useState([]);
+	const [filters,setFilters]=useState({});
 	const mapRef = useRef(null);
 
 	useEffect(() => {
@@ -44,6 +47,36 @@ const AppLayout = () => {
 		}
 	}, [navigate]);
 
+
+	useEffect(()=>{
+		let result = markers;
+		console.log("Filter received ",filters);
+
+		if(filters.hourly_rate){
+			result=result.filter(marker=>marker.hourly_rate <=filters.hourly_rate);
+			console.log("result",result);
+		}
+
+		if(filters.open_time){
+			result=result.filter(marker=>marker.open_time <=filters.open_time);
+			console.log("result",result);
+		}
+
+		if (filters.close_time) {
+			result = result.filter(marker => marker.close_time >= filters.close_time);
+		}
+
+		if (filters.available_days && filters.available_days.length > 0) {
+			
+			result = result.filter(marker => {
+				const spotDays = marker.available_days || [];
+				return filters.available_days.every(day => {console.log(spotDays); spotDays.includes(day)});
+			});
+		}
+		console.log("Final result ",result);
+		setFilteredMarkers(result);
+
+	},[filters,markers]);
 	//Handles the toggle for when the navbar drawer should be shown or not
 	const handleDrawerToggle = () => {
 		setIsDrawerOpen(!isDrawerOpen);
@@ -84,7 +117,7 @@ const AppLayout = () => {
 	}
 
 	return (
-		<Box sx={{ display: "flex", width: "100vw" }}>
+		<Box sx={{ display: "flex", width: "100%" }}>
 			<Box sx={{ flexGrow: 1 }}>
 				<AppBar position="fixed" sx={{zIndex:"3"}}>
 					<Toolbar>
@@ -103,6 +136,7 @@ const AppLayout = () => {
 						{getPageTitle() === "Home" && (
 							<Box sx={{ flexShrink: 0 }}>
 								<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
+								<FilterPanel filters={filters} setFilters={setFilters}/>
 							</Box>
 						)}
 					</Toolbar>
@@ -146,6 +180,7 @@ const AppLayout = () => {
 								markers={markers}
 								setMarkers={setMarkers}
 								mapRef={mapRef}
+								filteredMarkers={filteredMarkers}
 							/>
 						}
 					/>

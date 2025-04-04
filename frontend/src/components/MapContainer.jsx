@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { BACKEND_URL } from "../const";
 
-function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef }) {
+function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef ,filteredMarkers}) {
     const { isLoaded, loadError } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -21,6 +21,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+
 
     const mapStyles = {
         display: 'flex',
@@ -127,6 +128,8 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         );
     }
 
+console.log("MArker before  ",filteredMarker);
+console.log("Marker after ",markers);
 
     return (
         <Box className='map-container' >
@@ -146,13 +149,28 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
                         onLoad={map => (mapRef.current = map)}
                     >
                         {/*Render existing parking spot markers */}
-                        {markers.map((marker, index) => (
+
+
+                        {filteredMarkers ? filteredMarkers.map((marker, index) => (
+                           <MarkerComponent
+                                key={index}
+                                marker={marker}
+                                setSelectedMarker={setSelectedMarker}
+                            />
+                        )) : markers.map((marker, index) => (
                             <MarkerComponent
                                 key={index}
                                 marker={marker}
                                 setSelectedMarker={setSelectedMarker}
                             />
                         ))}
+                        {/* {markers.map((marker, index) => (
+                            <MarkerComponent
+                                key={index}
+                                marker={marker}
+                                setSelectedMarker={setSelectedMarker}
+                            />
+                        ))} */}
                         {/* Render search result marker when searched  */}
                         {newMarker && (
                             <MarkerComponent
