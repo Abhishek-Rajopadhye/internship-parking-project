@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap } from "@react-google-maps/api";
 import axios from "axios";
 import { MarkerComponent } from "./MarkerComponent";
 import { InfoWindowComponent } from "./InfoWindowComponent";
@@ -9,15 +9,11 @@ import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { BACKEND_URL } from "../const";
+import { useMap } from "../context/MapContext";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef ,filteredMarkers}) {
-    const { isLoaded, loadError } = useJsApiLoader({
-        id: 'google-map-script',
-        googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
-        libraries: ['places', 'geometry'] // Added geometry library for distance calculation
-    });
-
-    const [draggableMarker, setDraggableMarker] = useState({ lat: 18.519584, lng: 73.855421 })
+   
+    const {isLoaded,loadError}=useMap();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -62,25 +58,6 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
 
         fetchMarkers();
     }, [setMarkers]);
-
-    const onMarkerDragEnd = (event) => {
-        if (!event || !event.latLng) {
-            console.error("Error: event.latLng is undefined.", event);
-            return;
-        }
-
-        const newLat = event.latLng.lat?.();
-        const newLng = event.latLng.lng?.();
-
-        if (newLat === undefined || newLng === undefined) {
-            console.error("Error: Could not retrieve lat/lng from event.", event);
-            return;
-        }
-
-        setDraggableMarker({ lat: newLat, lng: newLng });
-
-        console.log("New Position:", newLat, newLng);
-    };
 
     // Calculate distance between selected marker and the seach point location 
     const calculateDistance = (origin, destination) => {
@@ -128,8 +105,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         );
     }
 
-console.log("MArker before  ",filteredMarker);
-console.log("Marker after ",markers);
+
 
     return (
         <Box className='map-container' >
@@ -164,13 +140,7 @@ console.log("Marker after ",markers);
                                 setSelectedMarker={setSelectedMarker}
                             />
                         ))}
-                        {/* {markers.map((marker, index) => (
-                            <MarkerComponent
-                                key={index}
-                                marker={marker}
-                                setSelectedMarker={setSelectedMarker}
-                            />
-                        ))} */}
+        
                         {/* Render search result marker when searched  */}
                         {newMarker && (
                             <MarkerComponent

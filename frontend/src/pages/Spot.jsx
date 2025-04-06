@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext ,useEffect} from "react";
 import axios from "axios";
 import {
   Box,
@@ -11,14 +11,15 @@ import {
   CircularProgress,
   IconButton,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useLocation} from "react-router-dom";
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 
 const Spot = () => {
+  const location =useLocation();
   const navigate = useNavigate();
-	const {user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
   // eslint-disable-next-line no-unused-vars
   const [imageSrc, setImageSrc] = useState(null);
   const [latitude, setLatitude] = useState("");
@@ -49,6 +50,16 @@ const Spot = () => {
     Fri: false,
     Sat: false,
   });
+
+useEffect(()=>{
+  if(location.state?.lat && location.state?.lng){
+    setLatitude(location.state.lat);
+    setLongitude(location.state.lng);
+    console.log("Lat and LOng receive " ,latitude,longitude)
+  }
+  console.log("Vai Lat and LOng receive " ,location.state)
+  
+},[location.state]);
 
   const toggleDay = (day) => {
     setOpenDays({ ...openDays, [day]: !openDays[day] });
@@ -90,7 +101,7 @@ const Spot = () => {
   const validateForm = () => {
     if (!spotTitle.trim()) return "Spot Title is required";
     if (!spotAddress.trim()) return "Address is required";
-    if(latitude == "" || longitude == "") return "Enter the latitude longitude";
+    if (latitude == "" || longitude == "") return "Enter the latitude longitude";
     if (!openTime) return "Open Time is required";
     if (!closeTime) return "Close Time is required";
     if (!hourlyRate || hourlyRate <= 0) return "Hourly Rate must be positive";
@@ -144,14 +155,14 @@ const Spot = () => {
         open_days.push(day);
       }
     }
-    if(parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
+    if (parseInt(openTime.split(":")[0]) > parseInt(closeTime.split(":")[0])) {
       setOpenSnackbar({
         open: true,
         message: "Open time must be before close time",
         severity: "error",
       });
       return;
-    } else if(parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) && parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])) {
+    } else if (parseInt(openTime.split(":")[0]) == parseInt(closeTime.split(":")[0]) && parseInt(openTime.split(":")[1]) >= parseInt(closeTime.split(":")[1])) {
       setOpenSnackbar({
         open: true,
         message: "Open time must be before close time",
@@ -164,6 +175,7 @@ const Spot = () => {
     let new_open_time = openTime + " " + open;
     let new_close_time = closeTime + " " + close;
     console.log("Open Days:", open_days);
+    
 
     try {
       const response = await axios.post(
@@ -232,165 +244,171 @@ const Spot = () => {
 
   return (
     // <Box className="main">
-      <Box className="form-container">
-        <Box className="form-box">
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Spot Title"
-                value={spotTitle}
-                onChange={(e) => setSpotTitle(e.target.value)}
-              />
-            </Grid>
+    <Box className="form-container">
+      <Box className="form-box">
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Spot Title"
+              value={spotTitle}
+              onChange={(e) => setSpotTitle(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Spot Address"
-                value={spotAddress}
-                onChange={(e) => setSpotAddress(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Spot Address"
+              value={spotAddress}
+              onChange={(e) => setSpotAddress(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Spot Latitude"
-                value={latitude}
-                onChange={(e) => setLatitude(e.target.value)}
-              />
-            </Grid>
+          {/* <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Spot Latitude"
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+            />
+          </Grid> */}
+          <Grid item xs={12}>
+            <Button 
+            variant="outlined"
+            onClick={() => navigate("/pin",{state:{from:"spot"}})}>
+              Select Location on Map
+            </Button>
+          </Grid>
+          {/* <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Spot Longitude"
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+            />
+          </Grid> */}
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Spot Longitude"
-                value={longitude}
-                onChange={(e) => setLongitude(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              label="Spot Description"
+              multiline
+              rows={3}
+              value={spotDescription}
+              onChange={(e) => setSpotDescription(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                label="Spot Description"
-                multiline
-                rows={3}
-                value={spotDescription}
-                onChange={(e) => setSpotDescription(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Open Time"
+              type="time"
+              value={openTime}
+              onChange={(e) => setOpenTime(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Open Time"
-                type="time"
-                value={openTime}
-                onChange={(e) => setOpenTime(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Close Time"
+              type="time"
+              value={closeTime}
+              onChange={(e) => setCloseTime(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Close Time"
-                type="time"
-                value={closeTime}
-                onChange={(e) => setCloseTime(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Hourly Rate (₹)"
+              type="number"
+              value={hourlyRate}
+              onChange={(e) => setHourlyRate(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Hourly Rate (₹)"
-                type="number"
-                value={hourlyRate}
-                onChange={(e) => setHourlyRate(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Total Slots"
+              type="number"
+              value={totalSlots}
+              onChange={(e) => setTotalSlots(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Total Slots"
-                type="number"
-                value={totalSlots}
-                onChange={(e) => setTotalSlots(e.target.value)}
-              />
-            </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="Available Slots"
+              type="number"
+              value={availableSlots}
+              onChange={(e) => setAvailableSlots(e.target.value)}
+            />
+          </Grid>
 
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                label="Available Slots"
-                type="number"
-                value={availableSlots}
-                onChange={(e) => setAvailableSlots(e.target.value)}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Typography variant="subtitle1">Select Open Days:</Typography>
-              <Grid container spacing={1} justifyContent="center">
-                {Object.keys(openDays).map((day) => (
-                  <Grid item key={day}>
-                    <Button
-                      variant={openDays[day] ? "contained" : "outlined"}
-                      color={openDays[day] ? "primary" : "default"}
-                      onClick={() => toggleDay(day)}
-                    >
-                      {day}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </Grid>
-
-            <Grid item xs={12}>
-              <input
-                type="file"
-                accept=".png, .jpeg"
-                onChange={handleImageChange}
-                style={{ display: "none" }}
-                id="image-upload"
-              />
-
-              <label htmlFor="image-upload">
-                <Button variant="outlined" color="primary" component="span">
-                  Upload Image
-                </Button>
-              </label>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={handleAddSpot}
-                // disabled={loading}
-              >
-                {/* {loading ? <CircularProgress size={24} /> : "Add Spot"} */}
-                Add Spot
-              </Button>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                onClick={() => {
-                  navigate(-1);
-                }}
-              >
-                Go Back
-              </Button>
+          <Grid item xs={12}>
+            <Typography variant="subtitle1">Select Open Days:</Typography>
+            <Grid container spacing={1} justifyContent="center">
+              {Object.keys(openDays).map((day) => (
+                <Grid item key={day}>
+                  <Button
+                    variant={openDays[day] ? "contained" : "outlined"}
+                    color={openDays[day] ? "primary" : "default"}
+                    onClick={() => toggleDay(day)}
+                  >
+                    {day}
+                  </Button>
+                </Grid>
+              ))}
             </Grid>
           </Grid>
+
+          <Grid item xs={12}>
+            <input
+              type="file"
+              accept=".png, .jpeg"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+              id="image-upload"
+            />
+
+            <label htmlFor="image-upload">
+              <Button variant="outlined" color="primary" component="span">
+                Upload Image
+              </Button>
+            </label>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleAddSpot}
+            // disabled={loading}
+            >
+              {/* {loading ? <CircularProgress size={24} /> : "Add Spot"} */}
+              Add Spot
+            </Button>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={() => {
+                navigate("/home");
+              }}
+            >
+              Go Back
+            </Button>
+          </Grid>
+        </Grid>
         {/* </Box> */}
       </Box>
 

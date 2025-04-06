@@ -1,7 +1,10 @@
 import { Marker } from "@react-google-maps/api";
 import parkingIcon from "../assets/Images/car.png";
+import { AuthContext } from "../context/AuthContext";
+import {  useContext } from "react";
 
 const MarkerComponent = ({ marker, setSelectedMarker, isSearchMarker = false }) => {
+	const { user } = useContext(AuthContext)
 	const position = isSearchMarker
 		? { lat: marker.location.lat, lng: marker.location.lng }
 		: { lat: marker.latitude, lng: marker.longitude };
