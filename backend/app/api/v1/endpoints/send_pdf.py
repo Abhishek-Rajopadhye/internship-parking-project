@@ -17,7 +17,7 @@ async def send_receipt_with_pdf(
     print("Sending email to:", email)
     msg['Subject'] = "Your Parking Receipt"
     msg['From'] = EMAIL_ADDRESS
-    msg['To'] = "shreyark.0108@gamil.com"
+    msg['To'] = email
     msg.set_content("Attached is your receipt for Smart Parking. Thank you!")
 
     # Read PDF and attach it
