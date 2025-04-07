@@ -46,7 +46,7 @@ const AuthProvider = ({ children }) => {
 	 * @param {string} provider - The OAuth provider (e.g., "google", "facebook").
 	 */
 	const login = (provider) => {
-		window.location.href = `http://localhost:8000/api/v1/auth/${provider}/login`;
+		window.location.href = `${BACKEND_URL}/api/v1/auth/${provider}/login`;
 	};
 
 	/**

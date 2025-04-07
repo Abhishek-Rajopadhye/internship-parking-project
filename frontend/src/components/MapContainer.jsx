@@ -43,7 +43,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
     useEffect(() => {
         const fetchMarkers = async () => {
             try {
-                const response = await axios.get("http://127.0.0.1:8000/spotdetails/getparkingspot");
+                const response = await axios.get(`${BACKEND_URL}/spotdetails/getparkingspot`);
                 if (!response.data) {
                     throw new Error("No data received from the server");
                 }
