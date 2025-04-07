@@ -69,7 +69,7 @@ const OwnerBookingView = ({ bookingDetails }) => {
                                         </Collapse>
                                     </TableCell>
                                     <TableCell>
-                                        <CurrencyRupee fontSize="small" /> {booking.payment_amount}
+                                        <CurrencyRupee fontSize="tiny" /> {booking.payment_amount}
                                     </TableCell>
                                     <TableCell>{booking.status}</TableCell>
                                 </TableRow>

@@ -111,11 +111,10 @@ const BookingHistory = () => {
         }
     };
 
-
 	return (
 		<Container sx={{ position: "relative", width:"100vw", alignContent:"center" }}>
 			<TabContext value={tabIndex}>
-				<AppBar sx={{ position: "relative", mt: 30, borderRadius: 2, zIndex:2 }}>
+				<AppBar sx={{ position: "relative", mt: 30, borderRadius: 2, zIndex:2, backgroundColor:"black" }}>
 					<TabList
 						slotProps={{
 							indicator: {
@@ -127,10 +126,10 @@ const BookingHistory = () => {
 						onChange={(e, newIndex) => setTabIndex(newIndex)}
 						variant="fullWidth"
 						centered
-						sx={{ borderRadius: 2, "&.Mui-selected": { color: "black" } }}
+						sx={{ borderRadius: 2, "&.Mui-selected": { color: "#1976d2" } }}
 					>
-						<Tab label="User Bookings" value="0" sx={{ color: "black", "&.Mui-selected": { color: "white" } }} />
-						<Tab label="Owner Bookings" value="1" sx={{ color: "black", "&.Mui-selected": { color: "white" } }} />
+						<Tab label="User Bookings" value="0" sx={{ color: "#1976d2", "&.Mui-selected": { color: "white" } }} />
+						<Tab label="Owner Bookings" value="1" sx={{ color: "#1976d2", "&.Mui-selected": { color: "white" } }} />
 					</TabList>
 				</AppBar>
 				<TabPanel value="0" sx={{ height: "100vh" }}>
