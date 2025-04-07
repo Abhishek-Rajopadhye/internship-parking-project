@@ -23,15 +23,15 @@ import "jspdf-autotable";
 import "../style/booking.css";
 import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 //spot_information is object which hold the all information
-const Booking = ({ spot_information, open, set_dialog}) => {
+const Booking = ({ spot_information, open, set_dialog }) => {
 	console.log(spot_information.available_days);
-	
+
 	const navigate = useNavigate();
-	const { user } = useContext(AuthContext)
-	console.log(user.email)
+	const { user } = useContext(AuthContext);
+	console.log(user.email);
 	const [totalSlots, setTotalSlots] = useState(1);
 	const [startTime, setStartTime] = useState(null);
 	const [endTime, setEndTime] = useState(null);
@@ -48,7 +48,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	yesterday.setHours(0, 0, 0, 0);
 	const showSnackbar = (message, severity = "info") => {
 		setOpenSnackbar({ open: true, message, severity });
-	}; 
+	};
 
 	/**
 	 * This function is used to validate the date and time
@@ -80,7 +80,12 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 		closeTimeHour = parseInt(closeTimeHour);
 		closeTimeMin = parseInt(closeTimeMin);
 
-		if ((hours < openTimeHour || hours > closeTimeHour) || (hours === openTimeHour && minutes < openTimeMin) || (hours === closeTimeHour && minutes > closeTimeMin)) {
+		if (
+			hours < openTimeHour ||
+			hours > closeTimeHour ||
+			(hours === openTimeHour && minutes < openTimeMin) ||
+			(hours === closeTimeHour && minutes > closeTimeMin)
+		) {
 			showSnackbar(`Slot not available.`, "warning");
 			return false;
 		}
@@ -100,6 +105,91 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	 */
 	const dateTimeToString = (date) => {
 		return date.toISOString().replace("T", " ").slice(0, 19);
+	};
+
+	/**
+	 * This function is used to download the pdf file
+	 * @returns
+	 */
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const downloadPDF = async () => {
+		const doc = new jsPDF();
+		doc.setFontSize(20);
+		doc.setFont("helvetica", "bold");
+		doc.text("Parking Booking Receipt", 60, 20);
+		doc.setLineWidth(0.5);
+		doc.line(20, 25, 190, 25);
+		doc.setFontSize(14);
+		doc.setFont("helvetica", "bold");
+		doc.text("Booking Information", 20, 35);
+		doc.setFontSize(12);
+		doc.setFont("helvetica", "normal");
+
+		let y = 45;
+		const lineSpacing = 8;
+
+		doc.text(`Spot Name: ${spot_information.spot_title}`, 20, y);
+		y += lineSpacing;
+		doc.text(`Address: ${spot_information.address}`, 20, y);
+		y += lineSpacing;
+		doc.text(`Total Slots: ${totalSlots}`, 20, y);
+		y += lineSpacing;
+		y += 10;
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(14);
+		doc.text("Payment Details", 20, y);
+
+		doc.setFontSize(12);
+		doc.setFont("helvetica", "normal");
+		y += 10;
+
+		doc.text(`Order ID: ${paymentDetails.order_id}`, 20, y);
+		y += lineSpacing;
+		doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, y);
+		y += lineSpacing;
+		doc.text(`Amount Paid: ${paymentDetails.amount} Rs.`, 20, y);
+		y += lineSpacing;
+		y += 10;
+		doc.setFont("helvetica", "bold");
+		doc.setFontSize(14);
+		doc.text("Timing", 20, y);
+
+		doc.setFontSize(12);
+		doc.setFont("helvetica", "normal");
+		y += 10;
+
+		doc.text(`Start Time: ${indianStartTime}`, 20, y);
+		y += lineSpacing;
+		doc.text(`End Time: ${indianEndTime}`, 20, y);
+		y += lineSpacing;
+		y += 15;
+		doc.setFontSize(10);
+		doc.setFont("helvetica", "italic");
+		doc.text("Thank you for using Smart Parking!", 20, y);
+
+		//doc.save("booking_receipt.pdf");
+
+		const pdfBlob = doc.output("blob");
+
+		const formData = new FormData();
+		const userEmail = user.email;
+		formData.append("file", pdfBlob, "booking_receipt.pdf");
+		formData.append("email", userEmail);
+		// alert("Sending receipt to your email...");
+		try {
+			const res = await fetch("http://localhost:8000/send-pdf/send-receipt-with-pdf", {
+				method: "POST",
+				body: formData,
+			});
+			const result = await res.json();
+			if (result.error) {
+				showSnackbar("Failed to send receipt to email", "error");
+			}
+		} catch (err) {
+			showSnackbar("Fail to Send Receipt to mail", "error");
+		}
+
+		showSnackbar("Booking successfully and Receipt sent to your register email!", "success");
 	};
 
 	useEffect(() => {
@@ -172,84 +262,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 		});
 	};
 
-		/**
-	 * This function is used to download the pdf file
-	 * @returns
-	 */
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		const downloadPDF = async () => {
-			const doc = new jsPDF();
-			doc.setFontSize(20);
-			doc.setFont("helvetica", "bold");
-			doc.text("Parking Booking Receipt", 60, 20);
-			doc.setLineWidth(0.5);
-			doc.line(20, 25, 190, 25);
-			doc.setFontSize(14);
-			doc.setFont("helvetica", "bold");
-			doc.text("Booking Information", 20, 35);
-			doc.setFontSize(12);
-			doc.setFont("helvetica", "normal");
-	
-			let y = 45;
-			const lineSpacing = 8;
-	
-			doc.text(`Spot Name: ${spot_information.spot_title}`, 20, y); y += lineSpacing;
-			doc.text(`Address: ${spot_information.address}`, 20, y); y += lineSpacing;
-			doc.text(`Total Slots: ${totalSlots}`, 20, y); y += lineSpacing;
-			y += 10;
-			doc.setFont("helvetica", "bold");
-			doc.setFontSize(14);
-			doc.text("Payment Details", 20, y);
-	
-			doc.setFontSize(12);
-			doc.setFont("helvetica", "normal");
-			y += 10;
-	
-			doc.text(`Order ID: ${paymentDetails.order_id}`, 20, y); y += lineSpacing;
-			doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, y); y += lineSpacing;
-			doc.text(`Amount Paid: ${paymentDetails.amount} Rs.`, 20, y); y += lineSpacing;
-			y += 10;
-			doc.setFont("helvetica", "bold");
-			doc.setFontSize(14);
-			doc.text("Timing", 20, y);
-	
-			doc.setFontSize(12);
-			doc.setFont("helvetica", "normal");
-			y += 10;
-	
-			doc.text(`Start Time: ${indianStartTime}`, 20, y); y += lineSpacing;
-			doc.text(`End Time: ${indianEndTime}`, 20, y); y += lineSpacing;
-			y += 15;
-			doc.setFontSize(10);
-			doc.setFont("helvetica", "italic");
-			doc.text("Thank you for using Smart Parking!", 20, y);
-	
-			//doc.save("booking_receipt.pdf");
-	
-			const pdfBlob = doc.output("blob");
-	
-			const formData = new FormData();
-			const userEmail = user.email;
-			formData.append("file", pdfBlob, "booking_receipt.pdf");
-			formData.append("email", userEmail);
-			// alert("Sending receipt to your email...");
-			try {
-				const res = await fetch("http://localhost:8000/send-pdf/send-receipt-with-pdf", {
-					method: "POST",
-					body: formData,
-				});
-				const result = await res.json();
-				if(result.error) {
-					showSnackbar("Failed to send receipt to email", "error");
-				}
-			} catch (err) {
-				showSnackbar("Fail to Send Receipt to mail", "error");
-			}
-			
-			showSnackbar("Booking successfully and Receipt sent to your register email!", "success");
-	
-		};
-
 	/**
 	 * This function is used to process the payment
 	 * It will check the payment status if it is true then it will return
@@ -268,8 +280,8 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			console.log(startTime);
 			const start_time = dateTimeToString(startTime);
 			const end_time = dateTimeToString(endTime);
-			console.log(startTime, start_time)
-			console.log(endTime, end_time)
+			console.log(startTime, start_time);
+			console.log(endTime, end_time);
 
 			if (spot_information.available_slots < totalSlots) {
 				showSnackbar("No Slots availables", "error");
@@ -329,14 +341,13 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 				showSnackbar("An unexpected error occurred.", "error");
 			}
 		}
-		
 	};
 	return (
 		<Dialog open={open}>
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<Box className="form-container">
 					<Box className="form-container">
-						<Box className="form-box" 	sx={{mt:0}}>
+						<Box className="form-box" sx={{ mt: 0 }}>
 							<Typography variant="h5" gutterBottom align="center">
 								Book Your Parking Spot
 							</Typography>
@@ -450,7 +461,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 				</Snackbar>
 			</LocalizationProvider>
 		</Dialog>
-
 	);
 };
 
