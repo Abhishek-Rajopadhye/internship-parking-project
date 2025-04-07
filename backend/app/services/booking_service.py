@@ -471,6 +471,7 @@ async def check_out_booking(db: Session, booking_id):
         db.query(Booking).filter(Booking.id == str(booking_id)).update({
             "status": "Completed"
         })
+
         booking = db.query(Booking).filter(Booking.id == str(booking_id)).one()
         spot = db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id).one()
         db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id).update({

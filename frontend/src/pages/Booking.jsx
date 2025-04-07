@@ -23,11 +23,15 @@ import "jspdf-autotable";
 import "../style/booking.css";
 import { BACKEND_URL } from "../const";
 import { AuthContext } from "../context/AuthContext";
+import dayjs from 'dayjs';
 
 //spot_information is object which hold the all information
 const Booking = ({ spot_information, open, set_dialog}) => {
+	console.log(spot_information.available_days);
+	
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext)
+	console.log(user.email)
 	const [totalSlots, setTotalSlots] = useState(1);
 	const [startTime, setStartTime] = useState(null);
 	const [endTime, setEndTime] = useState(null);
@@ -39,9 +43,12 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	const [paymentStatus, setPaymentStatus] = useState(false);
 	const [indianStartTime, setIndianStartTime] = useState(null);
 	const [indianEndTime, setIndianEndTime] = useState(null);
+	const yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
+	yesterday.setHours(0, 0, 0, 0);
 	const showSnackbar = (message, severity = "info") => {
 		setOpenSnackbar({ open: true, message, severity });
-	};
+	}; 
 
 	/**
 	 * This function is used to validate the date and time
@@ -55,17 +62,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	 * @returns boolean
 	 */
 	const validateDateTime = (selectedDate, msg) => {
-		if (!selectedDate || new Date(selectedDate).getTime() <= new Date().getTime()) {
-			showSnackbar("Please select a future date and time.", "error");
-			return false;
-		}
-		const openDay = new Date(selectedDate).toDateString().split(" ")[0];
-
-		if (!spot_information.available_days.includes(openDay)) {
-			showSnackbar(`Spot is closed on ${openDay}.`, "warning");
-			return false;
-		}
-
 		const isoString = selectedDate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }); //
 		console.log(isoString);
 		const dateParts = isoString.split(",")[0].split("/");
@@ -84,18 +80,8 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 		closeTimeHour = parseInt(closeTimeHour);
 		closeTimeMin = parseInt(closeTimeMin);
 
-		if (hours < openTimeHour || hours > closeTimeHour) {
-			showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
-			return false;
-		}
-
-		if (hours === openTimeHour && minutes < openTimeMin) {
-			showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
-			return false;
-		}
-
-		if (hours === closeTimeHour && minutes > closeTimeMin) {
-			showSnackbar(`Spot is open from ${spot_information.open_time} to ${spot_information.close_time}.`, "warning");
+		if ((hours < openTimeHour || hours > closeTimeHour) || (hours === openTimeHour && minutes < openTimeMin) || (hours === closeTimeHour && minutes > closeTimeMin)) {
+			showSnackbar(`Slot not available.`, "warning");
 			return false;
 		}
 		if (msg == "start") {
@@ -118,9 +104,10 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 
 	useEffect(() => {
 		if (paymentStatus) {
+			downloadPDF();
 			setEndTime("");
 			setStartTime("");
-			setTotalSlots("");
+			setPaymentStatus(false);
 			// navigate("/booking");
 		}
 	}, [paymentStatus, navigate]);
@@ -184,6 +171,84 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			document.body.appendChild(script);
 		});
 	};
+
+		/**
+	 * This function is used to download the pdf file
+	 * @returns
+	 */
+		const downloadPDF = async () => {
+			const doc = new jsPDF();
+			doc.setFontSize(20);
+			doc.setFont("helvetica", "bold");
+			doc.text("Parking Booking Receipt", 60, 20);
+			doc.setLineWidth(0.5);
+			doc.line(20, 25, 190, 25);
+			doc.setFontSize(14);
+			doc.setFont("helvetica", "bold");
+			doc.text("Booking Information", 20, 35);
+			doc.setFontSize(12);
+			doc.setFont("helvetica", "normal");
+	
+			let y = 45;
+			const lineSpacing = 8;
+	
+			doc.text(`Spot Name: ${spot_information.spot_title}`, 20, y); y += lineSpacing;
+			doc.text(`Address: ${spot_information.address}`, 20, y); y += lineSpacing;
+			doc.text(`Total Slots: ${totalSlots}`, 20, y); y += lineSpacing;
+			y += 10;
+			doc.setFont("helvetica", "bold");
+			doc.setFontSize(14);
+			doc.text("Payment Details", 20, y);
+	
+			doc.setFontSize(12);
+			doc.setFont("helvetica", "normal");
+			y += 10;
+	
+			doc.text(`Order ID: ${paymentDetails.order_id}`, 20, y); y += lineSpacing;
+			doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, y); y += lineSpacing;
+			doc.text(`Amount Paid: ${paymentDetails.amount} Rs.`, 20, y); y += lineSpacing;
+			y += 10;
+			doc.setFont("helvetica", "bold");
+			doc.setFontSize(14);
+			doc.text("Timing", 20, y);
+	
+			doc.setFontSize(12);
+			doc.setFont("helvetica", "normal");
+			y += 10;
+	
+			doc.text(`Start Time: ${indianStartTime}`, 20, y); y += lineSpacing;
+			doc.text(`End Time: ${indianEndTime}`, 20, y); y += lineSpacing;
+			y += 15;
+			doc.setFontSize(10);
+			doc.setFont("helvetica", "italic");
+			doc.text("Thank you for using Smart Parking!", 20, y);
+	
+			//doc.save("booking_receipt.pdf");
+	
+			const pdfBlob = doc.output("blob");
+	
+			const formData = new FormData();
+			const userEmail = user.email;
+			formData.append("file", pdfBlob, "booking_receipt.pdf");
+			formData.append("email", userEmail);
+			// alert("Sending receipt to your email...");
+			try {
+				const res = await fetch("http://localhost:8000/send-pdf/send-receipt-with-pdf", {
+					method: "POST",
+					body: formData,
+				});
+				const result = await res.json();
+				if(result.error) {
+					showSnackbar("Failed to send receipt to email", "error");
+				}
+			} catch (err) {
+				showSnackbar("Fail to Send Receipt to mail", "error");
+			}
+			
+			showSnackbar("Booking successfully and Receipt sent to your register email!", "success");
+	
+		};
+
 	/**
 	 * This function is used to process the payment
 	 * It will check the payment status if it is true then it will return
@@ -192,9 +257,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	 * @returns
 	 */
 	const processPayment = async () => {
-		if (paymentStatus) {
-			return;
-		}
 		let orderResponse;
 		try {
 			const razorpayLoaded = await loadRazorpay();
@@ -205,6 +267,8 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			console.log(startTime);
 			const start_time = dateTimeToString(startTime);
 			const end_time = dateTimeToString(endTime);
+			console.log(startTime, start_time)
+			console.log(endTime, end_time)
 
 			if (spot_information.available_slots < totalSlots) {
 				showSnackbar("No Slots availables", "error");
@@ -248,7 +312,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 						end_time,
 					});
 					setPaymentStatus(true);
-					showSnackbar("Booking Successful!", "success");
 				},
 				theme: { color: "#4F46E5" },
 			};
@@ -265,34 +328,8 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 				showSnackbar("An unexpected error occurred.", "error");
 			}
 		}
+		
 	};
-
-	/**
-	 * This function is used to download the pdf file
-	 * @returns
-	 */
-	const downloadPDF = () => {
-		if (!paymentDetails) {
-			return;
-		}
-
-		const doc = new jsPDF();
-		doc.setFontSize(18);
-		doc.text("Parking Booking Receipt", 70, 20);
-
-		doc.setFontSize(12);
-		doc.text(`Spot Name: ${spot_information.spot_title}`, 20, 40);
-		doc.text(`Spot Address: ${spot_information.address}`, 20, 50);
-		doc.text(`Total Slots: ${totalSlots}`, 20, 60);
-		doc.text(`Order ID: ${paymentDetails.order_id}`, 20, 70);
-		doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, 80);
-		doc.text(`Total Amount: ₹${paymentDetails.amount}`, 20, 90);
-		doc.text(`Start Time: ${indianStartTime}`, 20, 100);
-		doc.text(`End Time: ${indianEndTime}`, 20, 110);
-
-		doc.save("booking_receipt.pdf");
-	};
-
 	return (
 		<Dialog open={open}>
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -320,6 +357,13 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 										value={startTime}
 										onChange={setStartTime}
 										renderInput={(params) => <TextField {...params} fullWidth />}
+										minDateTime={new Date()}
+										shouldDisableDate={(date) => {
+											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+											const day = date.getDay();
+											const dayName = days[day];
+											return !spot_information.available_days.includes(dayName);
+										}}
 									/>
 								</Grid>
 
@@ -329,6 +373,13 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 										value={endTime}
 										onChange={setEndTime}
 										renderInput={(params) => <TextField {...params} fullWidth />}
+										minDateTime={new Date()}
+										shouldDisableDate={(date) => {
+											const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+											const day = date.getDay();
+											const dayName = days[day];
+											return !spot_information.available_days.includes(dayName);
+										}}
 									/>
 								</Grid>
 
@@ -336,11 +387,11 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 									<Button variant="contained" color="secondary" fullWidth onClick={calculateAmount}>
 										Book Spot
 									</Button>
-									{paymentDetails && (
+									{/* {paymentDetails && (
 										<Button variant="contained" color="primary" onClick={downloadPDF} sx={{ mt: 2, mr: 2 }}>
 											Download Receipt
 										</Button>
-									)}
+									)} */}
 									<Button
 										variant="contained"
 										color="primary"

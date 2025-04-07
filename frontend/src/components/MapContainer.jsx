@@ -33,7 +33,7 @@ function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, s
         width: '90vw',
         height: '85vh',
         top: 50,
-        left: -150,
+        left: -150
     };
 
     const defaultCenter = {
