@@ -31,8 +31,6 @@ def upgrade() -> None:
     op.drop_index('ix_spots_spot_id', table_name='spots')
     op.drop_index('ix_spots_spot_title', table_name='spots')
     op.drop_table('spots')
-    op.drop_constraint('bookings_payment_id_fkey', 'bookings', type_='foreignkey')
-
     op.drop_index('ix_payments_id', table_name='payments')
     op.drop_table('payments')
     op.drop_index('ix_bookings_id', table_name='bookings')
@@ -84,9 +82,6 @@ def downgrade() -> None:
     sa.PrimaryKeyConstraint('id', name='payments_pkey'),
     sa.UniqueConstraint('razorpay_order_id', name='payments_razorpay_order_id_key'),
     sa.UniqueConstraint('razorpay_payment_id', name='payments_razorpay_payment_id_key')
-    )
-    op.create_foreign_key(
-        'bookings_payment_id_fkey', 'bookings', 'payments', ['payment_id'], ['id']
     )
     op.create_index('ix_payments_id', 'payments', ['id'], unique=False)
     op.create_table('spots',

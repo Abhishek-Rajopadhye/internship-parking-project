@@ -43,6 +43,7 @@ def get_reviews_by_spot(db: Session, spot_id: int) -> List[ReviewInDB]:
         )
         for r in reviews
     ]
+
 def create_review(db: Session, review: ReviewCreate) -> ReviewInDB:
     """
     Create a new review.
