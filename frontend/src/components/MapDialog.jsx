@@ -1,10 +1,9 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useContext } from 'react';
 import {
   GoogleMap,
   Marker,
-  useJsApiLoader,
   Autocomplete,
-  InfoWindow
+  InfoWindow,
 } from '@react-google-maps/api';
 
 import {
@@ -19,7 +18,7 @@ import {
   TextField
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { set } from 'date-fns';
+import { MapContext } from '../context/MapContext';
 
 const containerStyle = {
   width: '100%',
@@ -33,6 +32,7 @@ const defaultCenter = {
   lng: 73.85537
 };
 
+// eslint-disable-next-line no-unused-vars
 const dialogStyle = {
   position: 'absolute',
   zIndex: 9999
@@ -43,14 +43,11 @@ function MapDialog({ open, onClose, onSave }) {
   const [mapCenter, setMapCenter] = useState(defaultCenter);
   const [infoOpen, setInfoOpen] = useState(false);
   const autocompleteRef = useRef(null);
+  const { isLoaded } = useContext(MapContext);
   const [openSnackbar, setOpenSnackbar] = useState({
     open: false,
     message: "",
     severity: "info",
-  });
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: 'AIzaSyC_WDLc0-lq4i-vBsGcL0EEoyLVyN5LKa0',
-    libraries: ['places']
   });
 
   const handleMapClick = useCallback((event) => {

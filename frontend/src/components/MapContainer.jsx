@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Button,Alert,Snackbar } from "@mui/material";
 import { GoogleMap } from "@react-google-maps/api";
 import axios from "axios";
@@ -9,15 +9,16 @@ import { IoLocationSharp } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { BACKEND_URL } from "../const";
-import { useMap } from "../context/MapContext";
+import { MapContext } from "../context/MapContext";
 
 function MapContainer({ selectedMarker, setSelectedMarker, newMarker, markers, setMarkers, mapRef ,filteredMarkers}) {
    
-    const {isLoaded,loadError}=useMap();
+    const {isLoaded,loadError}=useContext(MapContext);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const [currentPosition, setCurrentPosition] = useState(null);
+    const [draggableMarker, setDraggableMarker] = useState(null);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: "",
