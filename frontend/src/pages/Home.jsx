@@ -16,7 +16,7 @@ import { MapContainer as Map } from "../components/MapContainer";
  *
  * @returns {JSX.Element} The rendered Home component.
  */
-function Home({ selectedMarker, setSelectedMarker, newMarker, setNewMarker, markers, setMarkers, mapRef,filteredMarkers }) {
+function Home({ selectedMarker, setSelectedMarker, newMarker, setNewMarker, markers, setMarkers, mapRef, filteredMarkers }) {
 	return (
 		<Container>
 			<Map
