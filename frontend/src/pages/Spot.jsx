@@ -1,12 +1,24 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext ,useEffect} from "react";
 import axios from "axios";
-import { Box, Typography, TextField, Button, Grid, Snackbar, Alert, CircularProgress, IconButton } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  IconButton,
+} from "@mui/material";
+import { useNavigate ,useLocation} from "react-router-dom";
+
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 
 const Spot = () => {
+
 	const navigate = useNavigate();
 	const { user } = useContext(AuthContext);
 	// eslint-disable-next-line no-unused-vars
