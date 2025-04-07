@@ -38,6 +38,7 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
+
 }
 
 /* Media queries remain mostly unchanged */

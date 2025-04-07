@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext ,useEffect} from "react";
 import axios from "axios";
 import {
   Box,
@@ -17,7 +17,9 @@ import {
 } from "@mui/material";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
+
+import { useNavigate ,useLocation} from "react-router-dom";
+
 import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
@@ -465,6 +467,7 @@ const Spot = () => {
       </Snackbar>
     </Box>
   );
+
 };
 
 export { Spot };

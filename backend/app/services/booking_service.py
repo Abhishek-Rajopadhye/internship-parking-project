@@ -468,9 +468,11 @@ async def check_out_booking(db: Session, booking_id):
         return the number of rows updated
     """
     try:
-        booking = db.query(Booking).filter(Booking.id == str(booking_id)).update({
+        db.query(Booking).filter(Booking.id == str(booking_id)).update({
             "status": "Completed"
         })
+
+        booking = db.query(Booking).filter(Booking.id == str(booking_id)).one()
         spot = db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id).one()
         db.query(Spot).filter(Booking.id == str(booking_id)).filter(Booking.spot_id == Spot.spot_id).update({
             "available_slots": spot.available_slots + booking.total_slots
