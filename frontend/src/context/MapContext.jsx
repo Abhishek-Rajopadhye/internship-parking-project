@@ -1,9 +1,9 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
 
 const MapContext = createContext();
 
-export const MapProvider = ({ children }) => {
+const MapProvider = ({ children }) => {
   const { isLoaded, loadError } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: import.meta.env.VITE_REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -17,4 +17,4 @@ export const MapProvider = ({ children }) => {
   );
 };
 
-export const useMap = () => useContext(MapContext);
+export {MapContext, MapProvider};

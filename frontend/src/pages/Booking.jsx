@@ -110,7 +110,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			setPaymentStatus(false);
 			// navigate("/booking");
 		}
-	}, [paymentStatus, navigate]);
+	}, [paymentStatus, navigate, downloadPDF]);
 
 	/**
 	 * This function is used to calculate the amount of the parking slot
@@ -176,6 +176,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	 * This function is used to download the pdf file
 	 * @returns
 	 */
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		const downloadPDF = async () => {
 			const doc = new jsPDF();
 			doc.setFontSize(20);
