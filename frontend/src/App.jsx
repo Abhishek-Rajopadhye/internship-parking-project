@@ -101,8 +101,6 @@ const AppLayout = () => {
 				return "Home";
 			case "/auth":
 				return "Auth";
-			case "/add-review":
-				return "Add Review"
 			case "/booking":
 				return "Booking";
 			case "/spotdetail":

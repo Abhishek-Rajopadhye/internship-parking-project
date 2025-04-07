@@ -7,7 +7,7 @@ class ReviewBase(BaseModel):
     spot_id: int
     rating_score: int = Field(..., ge=1, le=5, description="Rating score must be between 1 and 5")
     review_description: Optional[str] = None
-    image: Optional[bytes] = None
+    images: Optional[list[bytes]] = None
     owner_reply: Optional[str] = None
 
 class ReviewCreate(ReviewBase):

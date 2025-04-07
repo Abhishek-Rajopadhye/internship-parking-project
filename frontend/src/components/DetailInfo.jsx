@@ -77,7 +77,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
             fetchDetails();
             getImages();
         }
-    }, [selectedMarker.spot_id, selectedMarker.owner_id]);
+    }, [selectedMarker.spot_id, selectedMarker.owner_id, reviewImages.data]);
 
     const averageRating = reviews.length > 0
         ? reviews.reduce((acc, review) => acc + review.rating_score, 0) / reviews.length

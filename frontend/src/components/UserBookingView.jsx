@@ -66,7 +66,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 	const canCheckIn = (startDateTime) => {
 		const now = new Date();
 		const startTime = new Date(startDateTime);
-		const diffInMinutes = (startTime - now) / (1000 * 60); // Difference in minutes
+		const diffInMinutes = Math.floor(Math.abs((startTime - now) / (1000 * 60))); // Difference in minutes
 		return diffInMinutes <= 15 && diffInMinutes >= 0; // Allow check-in within 15 minutes before start time
 	};
 
@@ -143,7 +143,7 @@ const UserBookingView = ({ bookingDetails, cancelBooking, checkIn, checkOut }) =
 											</Collapse>
 										</TableCell>
 										<TableCell>
-											<CurrencyRupee fontSize="small" /> {booking.payment_amount}
+											<CurrencyRupee fontSize="tiny" /> {booking.payment_amount}
 										</TableCell>
 										<TableCell>{booking.status}</TableCell>
 										<TableCell>
