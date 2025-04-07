@@ -22,7 +22,10 @@ def add_spot(spot: AddSpot, db: Session):
     """
     try:
         #   print(spot)
-        image_data = base64.b64decode(spot.image)
+        image_blobs = []
+        for image_b64 in (spot.image or []):
+            image_data = base64.b64decode(image_b64)
+            image_blobs.append(image_data)
         new_spot = Spot(
             address=spot.spot_address,
             owner_id=spot.owner_id,
@@ -36,7 +39,7 @@ def add_spot(spot: AddSpot, db: Session):
             close_time=spot.close_time,
             description=spot.spot_description,
             available_days=spot.available_days,
-            image=image_data
+            image=image_blobs
         )
         db.add(new_spot)
         db.commit()

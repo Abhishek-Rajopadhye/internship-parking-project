@@ -18,6 +18,6 @@ class Spot(Base):
     close_time = Column(String , nullable=False)
     description = Column(String, nullable=True)
     available_days = Column(ARRAY(String), nullable=False)
-    image = Column(LargeBinary, nullable=True)
+    image = Column(ARRAY(LargeBinary), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     

@@ -94,10 +94,7 @@ const SearchBar = ({ setNewMarker, setSelectedMarker, mapRef }) => {
 					/>
 				)}
 			/>
-			<IconButton onClick={handleFilter}>
-				<FilterAltIcon />
-			</IconButton>
-
+			
 			<Dialog open={showFilter} onClose={handleFilter}>
 				<DialogTitle>Filter Options</DialogTitle>
 				<DialogContent>

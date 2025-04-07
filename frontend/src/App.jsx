@@ -16,6 +16,9 @@ import { Auth } from "./pages/Auth";
 import { Spot } from "./pages/Spot";
 import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
+import FilterPanel from "./components/filterPanel";
+import PinMarkerSelecter from "./components/PinMarkerSelecter";
+import { MapProvider, useMap } from "./context/MapContext";
 
 /**
  * A Routing Layout for the Application
@@ -24,6 +27,7 @@ import DetailInfo from "./components/DetailInfo";
  */
 const AppLayout = () => {
 
+	const {isLoaded,loadError}= useMap();
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -31,6 +35,8 @@ const AppLayout = () => {
 	const [selectedMarker, setSelectedMarker] = useState(null);
 	const [newMarker, setNewMarker] = useState(null);
 	const [markers, setMarkers] = useState([]);
+	const [filteredMarkers,setFilteredMarkers]=useState([]);
+	const [filters,setFilters]=useState({});
 	const mapRef = useRef(null);
 
 	useEffect(() => {
@@ -43,6 +49,37 @@ const AppLayout = () => {
 			navigate("/home");
 		}
 	}, [navigate]);
+
+	useEffect(()=>{
+		let result = markers;
+
+		if(filters.hourly_rate){
+			result=result.filter(marker=>marker.hourly_rate <=filters.hourly_rate);
+			
+		}
+
+		if(filters.open_time){
+			result=result.filter(marker=>marker.open_time <=filters.open_time && marker.close_time>=filters.open_time);
+		
+		}
+
+		if (filters.close_time) {
+			result = result.filter(marker => marker.close_time >= filters.close_time && marker.open_time <=filters.close_time);
+			
+		}
+
+		if (filters.available_days && filters.available_days.length > 0) {
+			result = result.filter(marker => {
+				const spotDays = marker.available_days ;
+				console.log("Spot days of marker ",spotDays);
+				return filters.available_days.every(day => {  return spotDays.includes(day)});
+			});
+		
+		}
+		
+		setFilteredMarkers(result);
+
+	},[filters,markers]);
 
 	//Handles the toggle for when the navbar drawer should be shown or not
 	const handleDrawerToggle = () => {
@@ -82,7 +119,7 @@ const AppLayout = () => {
 	}
 
 	return (
-		<Box sx={{ display: "flex", width: "100vw" }}>
+		<Box sx={{ display: "flex", width: "100%" }}>
 			<Box sx={{ flexGrow: 1 }}>
 				<AppBar position="fixed" sx={{zIndex:"3"}}>
 					<Toolbar>
@@ -99,8 +136,9 @@ const AppLayout = () => {
 							{getPageTitle()}
 						</Typography>
 						{getPageTitle() === "Home" && (
-							<Box sx={{ flexShrink: 0 }}>
+							<Box sx={{ display:"flex",flexShrink: 0 }}>
 								<SearchBar setNewMarker={setNewMarker} setSelectedMarker={setSelectedMarker} mapRef={mapRef} />
+								<FilterPanel filters={filters} setFilters={setFilters}/>
 							</Box>
 						)}
 					</Toolbar>
@@ -144,9 +182,11 @@ const AppLayout = () => {
 								markers={markers}
 								setMarkers={setMarkers}
 								mapRef={mapRef}
+								filteredMarkers={filteredMarkers}
 							/>
 						}
 					/>
+					<Route path="/pin" element={<PinMarkerSelecter />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user}/>}/>
@@ -165,6 +205,7 @@ const AppLayout = () => {
  */
 const App = () => {
 	return (
+		<MapProvider>
 		<AuthProvider>
 			<Router>
 				<Routes>
@@ -173,6 +214,7 @@ const App = () => {
 				</Routes>
 			</Router>
 		</AuthProvider>
+		</MapProvider>
 	);
 };
 
