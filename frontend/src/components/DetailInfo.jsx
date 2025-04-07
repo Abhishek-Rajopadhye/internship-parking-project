@@ -29,7 +29,7 @@ const DetailInfo = ({ selectedMarker, user }) => {
     const [reviews, setReviews] = useState([]);
     const [ownerDetail, setOwnerDetail] = useState({});
     const [reviewImages, setReviewImages] = useState([]);
-    const [spotImage,setSpotImage]=useState(null);
+    const [spotImages, setSpotImages] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [dialogBookingOpen, setDialogBookingOpen] = useState(false);
     const navigate = useNavigate();
@@ -57,22 +57,25 @@ const DetailInfo = ({ selectedMarker, user }) => {
             }
         };
 
-        const getImage = async () => {
+        const getImages = async () => {
             try {
-             const response =await  axios.get(`${BACKEND_URL}/spotdetails/get-image/${selectedMarker.spot_id}`);
-              if (response.status === 200) {
-                const imageData = response.data.image; 
-                setSpotImage(`data:image/png;base64,${imageData}`);
+              const { data, status } = await axios.get(
+                `${BACKEND_URL}/spotdetails/get-images/${selectedMarker.spot_id}`
+              );
+              if (status === 200 && Array.isArray(data.images)) {
+                // data.images is ["iVBORw0KG…", "R0lGODlh…", …]
+                setSpotImages(
+                  data.images.map((b64) => `data:image/png;base64,${b64}`)
+                );
               }
             } catch (error) {
-             console.error("error ",error)
-            } 
-            
-        
-          }
+              console.error("Error fetching spot images:", error);
+            }
+          };
+
           if (selectedMarker.spot_id && selectedMarker.owner_id) {
             fetchDetails();
-            getImage();
+            getImages();
         }
     }, [selectedMarker.spot_id, selectedMarker.owner_id]);
 
@@ -92,7 +95,7 @@ console.log("ownerrimages ",ownerDetail.profile_picture);
                 <CardMedia
                     component="img"
                     height="300"
-                    image={spotImage || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
+                    image={spotImages[0] || "https://cdn.pixabay.com/photo/2020/05/31/09/12/park-5241887_1280.jpg"}
                     alt="Parking Spot"
                 />
                 <Typography variant="h4" fontWeight="bold" sx={{ mt: 2, ml: 1 }}>
@@ -206,14 +209,14 @@ console.log("ownerrimages ",ownerDetail.profile_picture);
 
                 {/* Image Section */}
                 <Box>
-                    {itemData.length > 0 && (
+                    {spotImages.length > 0 && (
                         <Box sx={{ mt: 3, padding: 3 }}>
                             <Typography variant="h4" fontWeight="bold">User Uploaded Images</Typography>
                             <ImageList cols={3} gap={8} sx={{ width: "100%", height: 170 }}>
-                                {itemData.map((img, index) => (
-                                    <ImageListItem key={index} onClick={() => setSelectedImage(img.img)}>
+                                {spotImages.map((img, index) => (
+                                    <ImageListItem key={index} onClick={() => setSelectedImage(img)}>
                                         <img
-                                            src={img.img}
+                                            src={img}
                                             alt={`Review ${index}`}
                                             loading="lazy"
                                             style={{ cursor: 'pointer' }} />

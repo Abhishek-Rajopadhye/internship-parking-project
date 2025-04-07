@@ -265,14 +265,6 @@ useEffect(()=>{
             />
           </Grid>
 
-          {/* <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Spot Latitude"
-              value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
-            />
-          </Grid> */}
           <Grid item xs={12}>
             <Button 
             variant="outlined"
@@ -280,15 +272,7 @@ useEffect(()=>{
               Select Location on Map
             </Button>
           </Grid>
-          {/* <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Spot Longitude"
-              value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
-            />
-          </Grid> */}
-
+          
           <Grid item xs={12}>
             <TextField
               fullWidth
