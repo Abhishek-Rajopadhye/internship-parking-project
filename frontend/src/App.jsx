@@ -17,8 +17,8 @@ import { Spot } from "./pages/Spot";
 import { AddReview } from "./components/AddReview";
 import DetailInfo from "./components/DetailInfo";
 import FilterPanel from "./components/filterPanel";
-import PinMarkerSelecter from "./components/PinMarkerSelecter";
-import { MapProvider, useMap } from "./context/MapContext";
+import { MapProvider } from "./context/MapContext";
+import { MapContext } from "@react-google-maps/api";
 
 /**
  * A Routing Layout for the Application
@@ -27,7 +27,6 @@ import { MapProvider, useMap } from "./context/MapContext";
  */
 const AppLayout = () => {
 
-	const {isLoaded,loadError}= useMap();
 	const { user, logout } = useContext(AuthContext);
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -186,7 +185,6 @@ const AppLayout = () => {
 							/>
 						}
 					/>
-					<Route path="/pin" element={<PinMarkerSelecter />} />
 					<Route path="/auth" element={<Auth />} />
 					<Route path="/booking" element={<Booking spot_information={selectedMarker} user_id={user.id} />} />
 					<Route path="/spotdetail" element={<DetailInfo selectedMarker={selectedMarker} user={user}/>}/>
@@ -206,14 +204,14 @@ const AppLayout = () => {
 const App = () => {
 	return (
 		<MapProvider>
-		<AuthProvider>
-			<Router>
-				<Routes>
-					<Route path="/" element={<Login />} />
-					<Route path="/*" element={<AppLayout />} />
-				</Routes>
-			</Router>
-		</AuthProvider>
+			<AuthProvider>
+				<Router>
+					<Routes>
+						<Route path="/" element={<Login />} />
+						<Route path="/*" element={<AppLayout />} />
+					</Routes>
+				</Router>
+			</AuthProvider>
 		</MapProvider>
 	);
 };

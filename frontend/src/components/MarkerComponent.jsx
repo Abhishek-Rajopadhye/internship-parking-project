@@ -1,5 +1,4 @@
 import { Marker } from "@react-google-maps/api";
-import parkingIcon from "../assets/Images/car.png";
 import bluePin from "../assets/Images/bluePin.png";
 import car from "../assets/Images/car.png";
 import { AuthContext } from "../context/AuthContext";
