@@ -107,6 +107,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			downloadPDF();
 			setEndTime("");
 			setStartTime("");
+			setPaymentStatus(false);
 			// navigate("/booking");
 		}
 	}, [paymentStatus, navigate]);
@@ -176,10 +177,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	 * @returns
 	 */
 		const downloadPDF = async () => {
-			// if (!paymentDetails) {
-			// 	return;
-			// }
-			//alert("Bye");
 			const doc = new jsPDF();
 			doc.setFontSize(20);
 			doc.setFont("helvetica", "bold");
@@ -234,7 +231,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			const userEmail = user.email;
 			formData.append("file", pdfBlob, "booking_receipt.pdf");
 			formData.append("email", userEmail);
-			alert("Sending receipt to your email...");
+			// alert("Sending receipt to your email...");
 			try {
 				const res = await fetch("http://localhost:8000/send-pdf/send-receipt-with-pdf", {
 					method: "POST",
@@ -247,6 +244,7 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 			} catch (err) {
 				showSnackbar("Fail to Send Receipt to mail", "error");
 			}
+			
 			showSnackbar("Booking successfully and Receipt sent to your register email!", "success");
 	
 		};
@@ -259,9 +257,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 	 * @returns
 	 */
 	const processPayment = async () => {
-		// if (paymentStatus) {
-		// 	return;
-		// }
 		let orderResponse;
 		try {
 			const razorpayLoaded = await loadRazorpay();
@@ -317,7 +312,6 @@ const Booking = ({ spot_information, open, set_dialog}) => {
 						end_time,
 					});
 					setPaymentStatus(true);
-					//downloadPDF();
 				},
 				theme: { color: "#4F46E5" },
 			};
