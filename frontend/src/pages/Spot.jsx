@@ -24,6 +24,7 @@ import "../style/spot.css";
 import { AuthContext } from "../context/AuthContext";
 import { BACKEND_URL } from "../const";
 import MapDialog from "../components/MapDialog";
+import { set } from "date-fns";
 
 const Spot = () => {
   const [mapOpen, setMapOpen] = useState(false);
@@ -375,10 +376,10 @@ const Spot = () => {
                 id="image-upload"
               />
               <label htmlFor="image-upload" style={{ marginBottom: "5px" }}>
-                <Button variant="outlined" color="primary" component="span">
+                <Button variant="outlined" color="primary" component="span" sx={{mt:1}}>
                   Upload Images
                 </Button>
-                <Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ml:2}}>
+                <Button variant="outlined" onClick={() => setMapOpen(true)} sx={{ml:2, mt:1}}>
                   Set Location
                 </Button>
                 
@@ -386,7 +387,10 @@ const Spot = () => {
                 open={mapOpen}
                 onClose={() => setMapOpen(false)}
                 onSave={(coords, msg) => {
+                  console.log(coords);
                   setLocation(coords)
+                  setLatitude(coords.lat);
+                  setLongitude(coords.lng);
                   if(msg == "success") {
                     setOpenSnackbar({
                       open: true,

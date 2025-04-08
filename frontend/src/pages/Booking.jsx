@@ -106,7 +106,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 	const dateTimeToString = (date) => {
 		return date.toISOString().replace("T", " ").slice(0, 19);
 	};
-
+	
 	/**
 	 * This function is used to download the pdf file
 	 * @returns
@@ -114,61 +114,159 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const downloadPDF = async () => {
 		const doc = new jsPDF();
-		doc.setFontSize(20);
+		const primaryColor = "#007bff";
+		const lightGray = "#f2f2f2";
+		const darkGray = "#333";
+		
+		const currentDate = new Date().toLocaleDateString("en-IN", {
+				day: "2-digit",
+				month: "short",
+				year: "numeric",
+				timeZone: "Asia/Kolkata",
+		});
+		
+		//Base64 logo (example placeholder — replace with real one)
+		// const logoBase64 = convertImageToBase64(".../logo_smart_parking.png", (logoBase64) => {
+		// 	// Logo + Header
+		// 	doc.addImage(logoBase64, "PNG", 20, 10, 20, 20);
+		// });
+		
+
+		// Header with colored background
+		doc.setFillColor(primaryColor);
+		doc.rect(0, 0, 210, 30, "F"); // Full-width colored header
+		
+		doc.setFontSize(22);
+		doc.setTextColor(255, 255, 255);
 		doc.setFont("helvetica", "bold");
-		doc.text("Parking Booking Receipt", 60, 20);
-		doc.setLineWidth(0.5);
-		doc.line(20, 25, 190, 25);
-		doc.setFontSize(14);
-		doc.setFont("helvetica", "bold");
-		doc.text("Booking Information", 20, 35);
-		doc.setFontSize(12);
-		doc.setFont("helvetica", "normal");
-
-		let y = 45;
-		const lineSpacing = 8;
-
-		doc.text(`Spot Name: ${spot_information.spot_title}`, 20, y);
-		y += lineSpacing;
-		doc.text(`Address: ${spot_information.address}`, 20, y);
-		y += lineSpacing;
-		doc.text(`Total Slots: ${totalSlots}`, 20, y);
-		y += lineSpacing;
-		y += 10;
-		doc.setFont("helvetica", "bold");
-		doc.setFontSize(14);
-		doc.text("Payment Details", 20, y);
-
-		doc.setFontSize(12);
-		doc.setFont("helvetica", "normal");
-		y += 10;
-
-		doc.text(`Order ID: ${paymentDetails.order_id}`, 20, y);
-		y += lineSpacing;
-		doc.text(`Payment ID: ${paymentDetails.payment_id}`, 20, y);
-		y += lineSpacing;
-		doc.text(`Amount Paid: ${paymentDetails.amount} Rs.`, 20, y);
-		y += lineSpacing;
-		y += 10;
-		doc.setFont("helvetica", "bold");
-		doc.setFontSize(14);
-		doc.text("Timing", 20, y);
-
-		doc.setFontSize(12);
-		doc.setFont("helvetica", "normal");
-		y += 10;
-
-		doc.text(`Start Time: ${indianStartTime}`, 20, y);
-		y += lineSpacing;
-		doc.text(`End Time: ${indianEndTime}`, 20, y);
-		y += lineSpacing;
-		y += 15;
-		doc.setFontSize(10);
+		doc.text("Smart Parking", 105, 12, null, null, "center");
+		
+		doc.setFontSize(13);
 		doc.setFont("helvetica", "italic");
-		doc.text("Thank you for using Smart Parking!", 20, y);
+		doc.text("Parking Booking Receipt", 105, 22, null, null, "center");
+		
+		doc.setFont("helvetica", "normal");
+		doc.setTextColor(255);
+		doc.text(`Date: ${currentDate}`, 190, 10, { align: "right" });
+		
+		let y = 40;
+		const lineHeight = 8;
+		
+		// Helper: Draw colored section title
+		const drawSectionTitle = (title, yPos) => {
+				doc.setFillColor(primaryColor);
+				doc.setTextColor(255, 255, 255);
+				doc.setFontSize(13);
+				doc.setFont("helvetica", "bold");
+				doc.rect(20, yPos - 6, 170, 10, "F");
+				doc.text(title, 25, yPos + 1);
+				return yPos + 10;
+		};
+	
 
-		//doc.save("booking_receipt.pdf");
-
+		const drawTable = (headers, dataRows, startY) => {
+				// Header row background
+				doc.setFillColor(lightGray);
+				doc.setTextColor(darkGray);
+				doc.setFontSize(11);
+				doc.setFont("helvetica", "bold");
+				doc.rect(20, startY, 170, lineHeight, "F");
+				headers.forEach((header, i) => {
+						doc.text(header, 25 + i * 85, startY + 6);
+				});
+		
+				startY += lineHeight;
+		
+				// Data rows
+				doc.setFont("helvetica", "normal");
+				doc.setTextColor(0, 0, 0);
+				dataRows.forEach((row) => {
+						row.forEach((cell, i) => {
+								doc.text(String(cell), 25 + i * 85, startY + 6);
+						});
+						doc.rect(20, startY, 170, lineHeight);
+						startY += lineHeight;
+				});
+		
+				return startY + 10;
+		};
+		
+		y = drawSectionTitle("Booking Information", y);
+		y = drawTable(
+				["Details", "Value"],
+				[
+						["Spot Name", spot_information.spot_title],
+						["Address", spot_information.address],
+						["Total Slots", totalSlots]
+				],
+				y
+		);
+		
+		y = drawSectionTitle("Payment Details", y);
+		y = drawTable(
+				["Details", "Value"],
+				[
+						["Order ID", paymentDetails.order_id],
+						["Payment ID", paymentDetails.payment_id],
+						["Amount Paid", `${paymentDetails.amount}`]
+				],
+				y
+		);
+		
+		y = drawSectionTitle("Timing", y);
+		y = drawTable(
+				["Details", "Value"],
+				[
+						["Start Time", indianStartTime],
+						["End Time", indianEndTime]
+				],
+				y
+		);
+		
+		// Charges
+		const hourlyRate = ratePerHour;
+		
+		//const tax = Math.ceil(totalAmount * 0.18);
+		//const amount = totalAmount + tax;
+		
+		y = drawSectionTitle("Charges Breakdown", y);
+		y = drawTable(
+				["Description", "Amount"],
+				[
+						[`${hourlyRate}/hr x ${Math.ceil(totalAmount / ratePerHour)} hrs`, totalAmount],
+						["GST (0%)", 0],
+						["Total Amount", totalAmount]
+				],
+				y
+		);
+		
+		// Rules Section
+		y = drawSectionTitle("Important Rules & Policies", y);
+		doc.setTextColor(50);
+		doc.setFontSize(10);
+		doc.setFont("helvetica", "normal");
+		const rules = [
+				"1. Cancellations not allowed after start time.",
+				"2. Arrive 5 minutes early to avoid delays.",
+				"3. Vehicles left beyond booking may incur fees."
+		];
+		
+		rules.forEach(rule => {
+				doc.rect(20, y, 170, 6);
+				doc.text(rule, 25, y + 4);
+				y += 8;
+		});
+		
+		// Footer
+		y += 10;
+		doc.setFont("helvetica", "italic");
+		doc.setTextColor(primaryColor);
+		doc.setFontSize(11);
+		doc.text("Thank you for using Smart Parking!", 105, y, null, null, "center");
+		
+		// Save the file
+		//doc.save("SmartParking_Receipt.pdf");
+		
 		const pdfBlob = doc.output("blob");
 
 		const formData = new FormData();
@@ -235,7 +333,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 		let hours = Math.ceil(diffInMs / (1000 * 60 * 60));
 
 		if (hours <= 0) {
-			showSnackbar("End time must be after start time.", "error");
+			showSnackbar("No Slots availables.", "error");
 			return false;
 		}
 
@@ -287,6 +385,8 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 				showSnackbar("No Slots availables", "error");
 				return;
 			}
+			// const tax = Math.ceil(totalAmount * 0.18);
+			// const amount = totalAmount + tax;
 			orderResponse = await axios.post(`${BACKEND_URL}/bookings/book-spot`, {
 				user_id: user.id.toString(),
 				spot_id: spot_information.spot_id,
@@ -352,7 +452,7 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 								Book Your Parking Spot
 							</Typography>
 
-							<Grid container spacing={2}>
+							<Grid container spacing={2} >
 								<Grid item xs={12}>
 									<TextField
 										fullWidth
@@ -363,8 +463,10 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 									/>
 								</Grid>
 
-								<Grid item xs={12}>
+								<Grid item xs={12} sx={{ml:2}}>
 									<DateTimePicker
+										sx={{mt:2 ,mr:2}}
+										fullWidth
 										label="Start Time"
 										value={startTime}
 										onChange={setStartTime}
@@ -377,10 +479,11 @@ const Booking = ({ spot_information, open, set_dialog }) => {
 											return !spot_information.available_days.includes(dayName);
 										}}
 									/>
-								</Grid>
-
-								<Grid item xs={12}>
+								{/* </Grid> */}
+								{/* <Grid item xs={12}> */}
 									<DateTimePicker
+										sx={{mt:2}}
+										fullWidth
 										label="End Time"
 										value={endTime}
 										onChange={setEndTime}
